@@ -1,0 +1,17 @@
+{
+  "name": "e-commerce-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "productManager.js",
+  "type": "module",
+  "scripts": {
+    "start": "rimraf ./products.json && node ./ProductManager.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rimraf": "^5.0.5"
+  }
+}

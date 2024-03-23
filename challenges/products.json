@@ -1,0 +1,101 @@
+[
+	{
+		"id": 1,
+		"title": "producto prueba",
+		"description": "Este es un producto prueba",
+		"price": 200,
+		"thumbnail": "Sin imagen",
+		"code": "abc123",
+		"stock": 25
+	},
+	{
+		"id": 2,
+		"title": "Nuevo producto",
+		"description": "Otro producto",
+		"price": 200,
+		"thumbnail": "Sin imagen",
+		"code": "new-prod-1",
+		"stock": 25
+	},
+	{
+		"id": 3,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 415,
+		"thumbnail": "Sin imagen",
+		"code": "2357c5b9-0df1-4131-9671-55ef23b0fe67",
+		"stock": 29
+	},
+	{
+		"id": 4,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 379,
+		"thumbnail": "Sin imagen",
+		"code": "a768a20e-5678-4787-9ba3-bd554c3b0679",
+		"stock": 32
+	},
+	{
+		"id": 5,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 57,
+		"thumbnail": "Sin imagen",
+		"code": "54b3c9be-fb81-4f4f-9411-610db3453c85",
+		"stock": 9
+	},
+	{
+		"id": 6,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 520,
+		"thumbnail": "Sin imagen",
+		"code": "08d036f4-c178-49aa-bb0d-5e4a5fdcc6fc",
+		"stock": 11
+	},
+	{
+		"id": 7,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 389,
+		"thumbnail": "Sin imagen",
+		"code": "1f085b1e-24c4-4fd8-83b0-c2e234b9754b",
+		"stock": 11
+	},
+	{
+		"id": 8,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 304,
+		"thumbnail": "Sin imagen",
+		"code": "6735f3cd-720f-46ed-b880-466c6599c5d4",
+		"stock": 18
+	},
+	{
+		"id": 9,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 743,
+		"thumbnail": "Sin imagen",
+		"code": "57fcbcbc-9844-4cc4-b9e9-5f540ffac6e1",
+		"stock": 28
+	},
+	{
+		"id": 10,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 812,
+		"thumbnail": "Sin imagen",
+		"code": "419ad1ac-b1e7-4e60-b79e-6438c817ef07",
+		"stock": 28
+	},
+	{
+		"id": 11,
+		"title": "Diferente producto",
+		"description": "Este no falla porque su código es un UUUID",
+		"price": 549,
+		"thumbnail": "Sin imagen",
+		"code": "984a67b9-4d84-44c9-9f8c-3233253afb2f",
+		"stock": 29
+	}
+]

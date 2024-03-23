@@ -1,7 +1,15 @@
-class ProductManager {
-  products = [];
+'use strict';
 
-  // shape of the product object
+import crypto from 'node:crypto';
+import { ObjectFileMapper } from './baseClasses/index.js';
+import {
+  AttributeError,
+  DuplicateResourceError,
+} from './customErrors/index.js';
+class ProductManager extends ObjectFileMapper {
+  /**
+   * Shape of product object
+   */
   #baseProduct = {
     id: null,
     title: null,
@@ -12,11 +20,17 @@ class ProductManager {
     stock: null,
   };
 
-  addProduct(_product) {
+  constructor() {
+    super('./products.json', 'Product');
+  }
+
+  async addProduct(_product) {
+    const products = await this.all();
+
     const newProduct = {
       ...this.#baseProduct,
       ..._product,
-      id: this.products.length + 1,
+      id: products.length + 1,
     };
 
     if (
@@ -24,57 +38,81 @@ class ProductManager {
         (prop) => prop === null || typeof prop === 'undefined',
       )
     ) {
-      throw new Error('Atributos faltantes');
+      throw new AttributeError('Missing attributes');
     }
 
-    const codeAlreadyExists = this.products.some(
+    const codeAlreadyExists = products.some(
       (product) => product.code === newProduct.code,
     );
     if (codeAlreadyExists) {
-      throw new Error(`Producto con código ${newProduct.code} ya existe.`);
+      throw new DuplicateResourceError(
+        `Producto con código ${newProduct.code} ya existe.`,
+      );
     }
 
-    this.products.push(newProduct);
+    // this.products.push(newProduct);
+    products.push(newProduct);
+    return await this.save(products);
   }
 
-  getProducts() {
-    return this.products;
+  async getProducts() {
+    return await this.all();
   }
 
-  getProductById(id) {
-    const foundProduct = this.products.find((product) => product.id === id);
-    if (!foundProduct) throw new Error(`Producto con id ${id} no encontrado.`);
-    return foundProduct;
+  async getProductById(id) {
+    return await this.find(id);
   }
 }
 
-function main() {
+async function main() {
   const product = new ProductManager();
-  console.log('Productos:', product.getProducts());
+  console.log('Productos:', await product.getProducts());
 
   console.log('Añadiendo un producto');
-  product.addProduct({
-    title: 'producto prueba',
-    description: 'Este es un producto prueba',
-    price: 200,
-    thumbnail: 'Sin imagen',
-    code: 'abc123',
-    stock: 25,
-  });
+  try {
+    await product.addProduct({
+      title: 'producto prueba',
+      description: 'Este es un producto prueba',
+      price: 200,
+      thumbnail: 'Sin imagen',
+      code: 'abc123',
+      stock: 25,
+    });
+  } catch (error) {
+    console.error('Error añadiendo producto', error);
+  }
+
   console.log('Añadiendo nuevo producto');
-  product.addProduct({
-    title: 'Nuevo producto',
-    description: 'Otro producto',
-    price: 200,
-    thumbnail: 'Sin imagen',
-    code: 'new-prod-1',
-    stock: 25,
-  });
-  console.log('Debe haber dos productos con ids 1 y 2:', product.getProducts());
+  try {
+    await product.addProduct({
+      title: 'Nuevo producto',
+      description: 'Otro producto',
+      price: 200,
+      thumbnail: 'Sin imagen',
+      code: 'new-prod-1',
+      stock: 25,
+    });
+  } catch (error) {
+    console.error('Error añadiendo producto', error);
+  }
+
+  console.log('Añadiendo producto sin falla');
+  try {
+    await product.addProduct({
+      title: 'Diferente producto',
+      description: 'Este no falla porque su código es un UUUID',
+      price: crypto.randomInt(1000),
+      thumbnail: 'Sin imagen',
+      code: crypto.randomUUID(),
+      stock: crypto.randomInt(40),
+    });
+  } catch (error) {
+    console.error('Error añadiendo producto', error);
+  }
 
   console.log('Añadiendo el mismo producto de nuevo...');
   try {
-    product.addProduct({
+    await product.addProduct({
       title: 'producto prueba',
       description: 'Este es un producto prueba',
       price: 200,
@@ -88,11 +126,10 @@ function main() {
 
   console.log('Añadiendo producto sin llenar todos los atributos...');
   try {
-    product.addProduct({
+    await product.addProduct({
       title: 'producto prueba',
       description: 'Este es un producto prueba',
-      price: 200,
-      thumbnail: 'Sin imagen',
+      price: crypto.randomInt(500),
     });
   } catch (e) {
     console.error(e);
@@ -100,19 +137,19 @@ function main() {
 
   console.log('Buscando el producto con id 1...');
   try {
-    console.log('Un producto', product.getProductById(1));
+    console.log('Un producto', await product.getProductById(1));
   } catch (e) {
     console.error(e);
   }
 
   console.log('Buscando producto con id 19...');
   try {
-    console.log('Un producto', product.getProductById(19));
+    console.log('Un producto', await product.getProductById(19));
   } catch (e) {
     console.error(e);
   }
+
+  console.log('Obteniendo todos los productos', await product.getProducts());
 }
 
 main();
-
-module.exports.ProductManager = ProductManager;
