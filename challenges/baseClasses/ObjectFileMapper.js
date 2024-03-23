@@ -145,6 +145,12 @@ export class ObjectFileMapper {
     return resourceToDelete;
   }
 
+  /**
+   * 
+   * @param {number} id 
+   * @param {ObjectType<any>} newData 
+   * @returns 
+   */
   async updateOne(id, newData) {
     const resources = await this.fetchAll();
     const { foundResource, resourceIdx } = this.#findById(id);
