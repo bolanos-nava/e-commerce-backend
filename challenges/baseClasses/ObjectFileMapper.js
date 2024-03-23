@@ -4,14 +4,22 @@ import fs from 'node:fs/promises';
 import { ParameterError, ResourceNotFound } from '../customErrors/index.js';
 import { capitalize } from '../utils/index.js';
 
+/**
+ * Class to manipulate data in files as JS objects. Allows CRUD operations
+ */
 export class ObjectFileMapper {
-  /**
-   * Specifies path of the file
-   */
+  /** Specifies path of the file */
   path = '';
+  /** Specifies name of the resources */
   resourceName;
+  /** Array to save resources */
   resources = [];
 
+  /**
+   * Builds a new ObjectFileMapper instance to manage resources and persist them in disk
+   * @param {string} path Path of file where resources will be persisted
+   * @param {string} resourceName Name of the resource. Used for error messages
+   */
   constructor(path, resourceName) {
     if (!path) {
       throw new ParameterError(
@@ -40,7 +48,8 @@ export class ObjectFileMapper {
   }
 
   /**
-   * Converts object to JSON and writes it to the file, wiping existing content.
+   * Converts object to JSON and writes it to the file,
+   * wiping existing content.
    * @param {ObjectType} data
    */
   async #writeToFile(data) {
@@ -51,40 +60,20 @@ export class ObjectFileMapper {
     }
   }
 
-  async #findById(id, resources) {
-    const foundResource = resources.find((element) => element.id === id);
-
-    if (!foundResource) {
-      let errorMessage;
-    }
-  }
-
   /**
-   * Returns all resources in the file
-   * @returns {Promise<ObjectType[]>}
-   */
-  async all() {
-    const objectFile = await this.#getFileAsObject();
-    if (Array.isArray(objectFile)) return objectFile;
-    return [];
-  }
-
-  /**
-   * Returns the resource with matching id
+   * Helper function to find a resource by its id. If
+   * it doesn't exist, then throws error
    * @param {number} id
-   * @returns {Proimse<ObjectType>}
+   * @returns
    */
-  async find(id) {
-    // Throw error if id is undefined
-    if (!id) throw new ParameterError('Invalid id');
+  #findById(id) {
+    const foundResource = this.resources.find((element) => element.id === id);
 
-    const allResources = await this.all();
+    const resourceIdx = this.resources.findIndex(
+      (resource) => resource.id === id,
+    );
 
-    // Defines error to throw in case of failure
-
-    const foundResource = allResources.find((element) => element.id === id);
-
-    if (!foundResource) {
+    if (resourceIdx === -1) {
       let errorMessage;
       if (this.resourceName) {
         errorMessage = `${capitalize(
@@ -94,7 +83,35 @@ export class ObjectFileMapper {
       throw new ResourceNotFound(errorMessage);
     }
 
-    return foundResource;
+    return { foundResource: this.resources[resourceIdx], resourceIdx };
+  }
+
+  /**
+   * Returns all resources in the file
+   * @returns {Promise<ObjectType[]>}
+   */
+  async fetchAll() {
+    const fileAsObject = await this.#getFileAsObject();
+    if (Array.isArray(fileAsObject)) {
+      this.resources = fileAsObject;
+      return fileAsObject;
+    }
+    this.resources = [];
+    return [];
+  }
+
+  /**
+   * Returns the resource with matching id
+   * @param {number} id
+   * @returns {Proimse<ObjectType>}
+   */
+  async fetchOne(id) {
+    // Throw error if id is undefined
+    if (!id) throw new ParameterError('Invalid id');
+
+    const allResources = await this.fetchAll();
+
+    return this.#findById(id).foundResource;
   }
 
   /**
@@ -111,7 +128,31 @@ export class ObjectFileMapper {
     }
   }
 
-  async delete(id) {
-    const allResources = await this.all();
+  /**
+   * Deletes one resource from the file and overwrites the file
+   * without the deleted resource
+   * @param {number} id
+   * @returns
+   */
+  async deleteOne(id) {
+    const resources = await this.fetchAll();
+    const resourceToDelete = this.#findById(id).foundResource;
+
+    const newResources = resources.filter((resource) => resource.id !== id);
+
+    await this.save(newResources);
+
+    return resourceToDelete;
+  }
+
+  async updateOne(id, newData) {
+    const resources = await this.fetchAll();
+    const { foundResource, resourceIdx } = this.#findById(id);
+
+    resources[resourceIdx] = { ...foundResource, ...newData };
+
+    await this.save(resources);
+
+    return resources[resourceIdx];
   }
 }

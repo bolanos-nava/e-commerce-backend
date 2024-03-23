@@ -6,10 +6,9 @@ import {
   AttributeError,
   DuplicateResourceError,
 } from './customErrors/index.js';
+
 class ProductManager extends ObjectFileMapper {
-  /**
-   * Shape of product object
-   */
+  /** Shape of product object */
   #baseProduct = {
     id: null,
     title: null,
@@ -25,7 +24,7 @@ class ProductManager extends ObjectFileMapper {
   }
 
   async addProduct(_product) {
-    const products = await this.all();
+    const products = await this.fetchAll();
 
     const newProduct = {
       ...this.#baseProduct,
@@ -50,27 +49,34 @@ class ProductManager extends ObjectFileMapper {
       );
     }
 
-    // this.products.push(newProduct);
     products.push(newProduct);
     return await this.save(products);
   }
 
   async getProducts() {
-    return await this.all();
+    return await this.fetchAll();
   }
 
   async getProductById(id) {
-    return await this.find(id);
+    return await this.fetchOne(id);
+  }
+
+  async deleteProduct(id) {
+    return await this.deleteOne(id);
+  }
+
+  async updateProduct(id, newData) {
+    return await this.updateOne(id, newData);
   }
 }
 
 async function main() {
-  const product = new ProductManager();
-  console.log('Productos:', await product.getProducts());
+  const productManager = new ProductManager();
+  console.log('Productos:', await productManager.getProducts());
 
   console.log('Añadiendo un producto');
   try {
-    await product.addProduct({
+    await productManager.addProduct({
       title: 'producto prueba',
       description: 'Este es un producto prueba',
       price: 200,
@@ -84,7 +90,7 @@ async function main() {
 
   console.log('Añadiendo nuevo producto');
   try {
-    await product.addProduct({
+    await productManager.addProduct({
       title: 'Nuevo producto',
       description: 'Otro producto',
       price: 200,
@@ -98,21 +104,23 @@ async function main() {
 
   console.log('Añadiendo producto sin falla');
   try {
-    await product.addProduct({
-      title: 'Diferente producto',
-      description: 'Este no falla porque su código es un UUUID',
-      price: crypto.randomInt(1000),
-      thumbnail: 'Sin imagen',
-      code: crypto.randomUUID(),
-      stock: crypto.randomInt(40),
-    });
+    for (let i = 1; i <= 7; i++) {
+      await productManager.addProduct({
+        title: `Diferente producto ${i}`,
+        description: 'Este no falla porque su código es un UUUID',
+        price: crypto.randomInt(1000),
+        thumbnail: 'Sin imagen',
+        code: crypto.randomUUID(),
+        stock: crypto.randomInt(40),
+      });
+    }
   } catch (error) {
     console.error('Error añadiendo producto', error);
   }
 
   console.log('Añadiendo el mismo producto de nuevo...');
   try {
-    await product.addProduct({
+    await productManager.addProduct({
       title: 'producto prueba',
       description: 'Este es un producto prueba',
       price: 200,
@@ -126,7 +134,7 @@ async function main() {
 
   console.log('Añadiendo producto sin llenar todos los atributos...');
   try {
-    await product.addProduct({
+    await productManager.addProduct({
       title: 'producto prueba',
       description: 'Este es un producto prueba',
       price: crypto.randomInt(500),
@@ -137,19 +145,48 @@ async function main() {
 
   console.log('Buscando el producto con id 1...');
   try {
-    console.log('Un producto', await product.getProductById(1));
+    console.log('Un producto', await productManager.getProductById(1));
   } catch (e) {
     console.error(e);
   }
 
   console.log('Buscando producto con id 19...');
   try {
-    console.log('Un producto', await product.getProductById(19));
+    console.log('Un producto', await productManager.getProductById(19));
   } catch (e) {
     console.error(e);
   }
 
-  console.log('Obteniendo todos los productos', await product.getProducts());
+  console.log(
+    'Obteniendo todos los productos antes de borrar y actualizar',
+    await productManager.getProducts(),
+  );
+
+  try {
+    console.log('Producto borrado', await productManager.deleteProduct(6));
+  } catch (error) {
+    console.error('No se pudo borrar producto por la siguiente razón: ', error);
+  }
+
+  try {
+    console.log(
+      'Producto actualizado',
+      await productManager.updateProduct(4, {
+        title: 'Producto actualizado',
+        price: 600000,
+      }),
+    );
+  } catch (error) {
+    console.error(
+      'No se pudo actualizar producto por la siguiente razón: ',
+      error,
+    );
+  }
+
+  console.log(
+    'Obteniendo productos después de borrar y actualizar',
+    await productManager.getProducts(),
+  );
 }
 
 main();
