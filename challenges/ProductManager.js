@@ -8,7 +8,10 @@ import {
 } from './customErrors/index.js';
 
 class ProductManager extends ObjectFileMapper {
-  /** Shape of product object */
+  /**
+   * Shape of product object
+   * @type {Product}
+   */
   #baseProduct = {
     id: null,
     title: null,
@@ -23,13 +26,19 @@ class ProductManager extends ObjectFileMapper {
     super('./products.json', 'Product');
   }
 
+  /**
+   * Adds a new product
+   * @param {Product} _product
+   * @returns If the product was saved
+   */
   async addProduct(_product) {
-    const products = await this.fetchAll();
+    const products = await this.getProducts();
 
+    /** @type {Product} */
     const newProduct = {
       ...this.#baseProduct,
       ..._product,
-      id: products.length + 1,
+      id: products[products.length - 1].id + 1,
     };
 
     if (
@@ -53,18 +62,38 @@ class ProductManager extends ObjectFileMapper {
     return await this.save(products);
   }
 
+  /**
+   * Returns the list of products
+   * @returns {Promise<Product[]>} List of products
+   */
   async getProducts() {
     return await this.fetchAll();
   }
 
+  /**
+   * Returns the data of a product
+   * @param {number} id Id of the product to fetch
+   * @returns {Promise<Product>}
+   */
   async getProductById(id) {
     return await this.fetchOne(id);
   }
 
+  /**
+   * Deletes a product
+   * @param {number} id Id of the product to delete
+   * @returns {Promise<Product>} The deleted product
+   */
   async deleteProduct(id) {
     return await this.deleteOne(id);
   }
 
+  /**
+   * Updates a product
+   * @param {number} id
+   * @param {Promise<Partial<Product>>} newData
+   * @returns {Promise<Product>} The updated product
+   */
   async updateProduct(id, newData) {
     return await this.updateOne(id, newData);
   }

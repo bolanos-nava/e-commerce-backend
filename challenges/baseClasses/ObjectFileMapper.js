@@ -64,11 +64,9 @@ export class ObjectFileMapper {
    * Helper function to find a resource by its id. If
    * it doesn't exist, then throws error
    * @param {number} id
-   * @returns
+   * @returns {ObjectType | never}
    */
   #findById(id) {
-    const foundResource = this.resources.find((element) => element.id === id);
-
     const resourceIdx = this.resources.findIndex(
       (resource) => resource.id === id,
     );
@@ -146,10 +144,10 @@ export class ObjectFileMapper {
   }
 
   /**
-   * 
-   * @param {number} id 
-   * @param {ObjectType<any>} newData 
-   * @returns 
+   *
+   * @param {number} id
+   * @param {ObjectType<any>} newData
+   * @returns
    */
   async updateOne(id, newData) {
     const resources = await this.fetchAll();
