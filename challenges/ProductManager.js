@@ -34,11 +34,11 @@ class ProductManager extends ObjectFileMapper {
   async addProduct(_product) {
     const products = await this.getProducts();
 
-    /** @type {Product} */
+    const newId = products.length ? products[products.length - 1].id + 1 : 0;
     const newProduct = {
       ...this.#baseProduct,
       ..._product,
-      id: products[products.length - 1].id + 1,
+      id: newId,
     };
 
     if (
