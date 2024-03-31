@@ -1,13 +1,16 @@
 'use strict';
 
 import fs from 'node:fs/promises';
-import { ParameterError, ResourceNotFound } from '../customErrors/index.js';
+import {
+  ParameterError,
+  ResourceNotFoundError,
+} from '../customErrors/index.js';
 import { capitalize } from '../utils/index.js';
 
 /**
  * Class to manipulate data in files as JS objects. Allows CRUD operations
  */
-export class ObjectFileMapper {
+export default class ObjectFileMapper {
   /** Specifies path of the file */
   path = '';
   /** Specifies name of the resources */
@@ -66,7 +69,9 @@ export class ObjectFileMapper {
    * @param {number} id
    * @returns {ObjectType | never}
    */
-  #findById(id) {
+  #findById(_id) {
+    const id = Number(_id);
+    if (isNaN(id)) throw new ParameterError('Id parameter should be a number');
     const resourceIdx = this.resources.findIndex(
       (resource) => resource.id === id,
     );
@@ -78,7 +83,7 @@ export class ObjectFileMapper {
           this.resourceName,
         )} with id ${id} not found`;
       }
-      throw new ResourceNotFound(errorMessage);
+      throw new ResourceNotFoundError(errorMessage);
     }
 
     return { foundResource: this.resources[resourceIdx], resourceIdx };
