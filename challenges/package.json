@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "rimraf ./products.json && node ./ProductManager.js",
+    "start:server": "node app.js",
+    "start:server-watch": "node --watch-path=. app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,5 +15,8 @@
   "license": "ISC",
   "devDependencies": {
     "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
   }
 }
