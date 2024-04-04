@@ -8,6 +8,10 @@ import {
 import { capitalize } from '../utils/index.js';
 
 /**
+ * @typedef {import('./types.d.ts').ObjectType} ObjectType
+ */
+
+/**
  * Class to manipulate data in files as JS objects. Allows CRUD operations
  */
 export default class ObjectFileMapper {

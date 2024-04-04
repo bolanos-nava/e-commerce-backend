@@ -6,7 +6,11 @@ import {
   DuplicateResourceError,
 } from '../customErrors/index.js';
 
-export class ProductManager extends ObjectFileMapper {
+/**
+ * @typedef {import('./types.d.ts').Product} Product
+ */
+
+export class ProductsManager extends ObjectFileMapper {
   /**
    * Shape of product object
    * @type {Product}
@@ -21,8 +25,8 @@ export class ProductManager extends ObjectFileMapper {
     stock: null,
   };
 
-  constructor() {
-    super('./products.json', 'Product');
+  constructor(path) {
+    super(path, 'Product');
   }
 
   /**

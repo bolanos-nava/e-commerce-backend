@@ -1,8 +1,8 @@
-type ObjectType<T = any> = {
+export type ObjectType<T = any> = {
   [key: string]: T;
 };
 
-type Product = {
+export type Product = {
   id: number;
   title: string;
   description: string;
@@ -11,3 +11,5 @@ type Product = {
   code: string;
   stock: number;
 };
+
+export default { ObjectType, Product };
