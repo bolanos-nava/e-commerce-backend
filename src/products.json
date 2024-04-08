@@ -1,200 +1,42 @@
 [
 	{
-		"id": 0,
-		"title": "producto prueba",
-		"description": "Este es un producto prueba",
-		"price": 200,
-		"thumbnail": "Sin imagen",
-		"code": "abc123",
-		"stock": 25
-	},
-	{
-		"id": 1,
+		"id": "c399101e-f4eb-4f8d-a59d-e34f4e9b8fb2",
 		"title": "Nuevo producto",
-		"description": "Otro producto",
+		"description": "Este es un nuevo producto enviado a endpoint de Express",
+		"category": "category1",
 		"price": 200,
-		"thumbnail": "Sin imagen",
-		"code": "new-prod-1",
-		"stock": 25
+		"stock": 10,
+		"code": "nuevo18df588d5-4640-4569-9938-c69a565ad4b1",
+		"status": true
 	},
 	{
-		"id": 2,
-		"title": "Diferente producto 1",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 19,
-		"thumbnail": "Sin imagen",
-		"code": "be5647c1-813a-4353-8460-4f333eae66d0",
-		"stock": 13
+		"id": "32b514f0-231b-438f-8845-28ce1469410a",
+		"title": "Nuevo producto",
+		"description": "Este es un nuevo producto enviado a endpoint de Express",
+		"category": "category1",
+		"price": 200,
+		"stock": 10,
+		"code": "nuevo1a794ce2a-b835-419e-9649-b2ae855c86eb",
+		"status": true
 	},
 	{
-		"id": 3,
-		"title": "Diferente producto 2",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 337,
-		"thumbnail": "Sin imagen",
-		"code": "7853c99d-1c1c-45f7-9756-0355004de0fa",
-		"stock": 4
+		"id": "747f4a8f-e8f8-4833-9ccf-e8a668679722",
+		"title": "Nuevo producto",
+		"description": "Este es un nuevo producto enviado a endpoint de Express",
+		"category": "category1",
+		"price": 200,
+		"stock": 10,
+		"code": "nuevo106ab1722-d556-428b-a4a3-1ff48407bc24",
+		"status": true
 	},
 	{
-		"id": 4,
+		"id": "66f0ff56-183e-49b6-b0db-b2bfebf380f7",
 		"title": "Producto actualizado",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 600000,
-		"thumbnail": "Sin imagen",
-		"code": "d23e52ed-0874-4def-ad4a-95af7601cf96",
-		"stock": 9
-	},
-	{
-		"id": 5,
-		"title": "Diferente producto 4",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 740,
-		"thumbnail": "Sin imagen",
-		"code": "6c1f8266-085c-42af-85b6-448604962e7c",
-		"stock": 4
-	},
-	{
-		"id": 7,
-		"title": "Diferente producto 6",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 389,
-		"thumbnail": "Sin imagen",
-		"code": "c06554c9-548f-4d1c-8d16-04a5833ec9f7",
-		"stock": 31
-	},
-	{
-		"id": 8,
-		"title": "Diferente producto 7",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 546,
-		"thumbnail": "Sin imagen",
-		"code": "e2139a5e-cc0e-4705-b37c-90e42101ec6d",
-		"stock": 17
-	},
-	{
-		"id": 9,
-		"title": "Diferente producto 1",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 676,
-		"thumbnail": "Sin imagen",
-		"code": "317e374d-b7bf-4c1f-b877-5624f695f6d8",
-		"stock": 8
-	},
-	{
-		"id": 10,
-		"title": "Diferente producto 2",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 383,
-		"thumbnail": "Sin imagen",
-		"code": "0a7c4b69-5840-480e-b8f4-7686b782fc0b",
-		"stock": 17
-	},
-	{
-		"id": 11,
-		"title": "Diferente producto 3",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 571,
-		"thumbnail": "Sin imagen",
-		"code": "72c99d15-d4ce-4c91-9e57-a53f1ea24999",
-		"stock": 16
-	},
-	{
-		"id": 12,
-		"title": "Diferente producto 4",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 269,
-		"thumbnail": "Sin imagen",
-		"code": "99a3adf9-0ef8-4782-a943-307a9341d07a",
-		"stock": 29
-	},
-	{
-		"id": 13,
-		"title": "Diferente producto 5",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 203,
-		"thumbnail": "Sin imagen",
-		"code": "a6222e35-385e-4ed4-b095-a57a4085891e",
-		"stock": 35
-	},
-	{
-		"id": 14,
-		"title": "Diferente producto 6",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 764,
-		"thumbnail": "Sin imagen",
-		"code": "cd340321-4ef9-4acd-858d-d68afefe86e5",
-		"stock": 35
-	},
-	{
-		"id": 15,
-		"title": "Diferente producto 7",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 323,
-		"thumbnail": "Sin imagen",
-		"code": "8daeed93-a01a-4191-b091-a7e3ca22a461",
-		"stock": 36
-	},
-	{
-		"id": 16,
-		"title": "Diferente producto 1",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 57,
-		"thumbnail": "Sin imagen",
-		"code": "453dae54-425f-4080-8fa7-6cdb4800317c",
-		"stock": 3
-	},
-	{
-		"id": 17,
-		"title": "Diferente producto 2",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 75,
-		"thumbnail": "Sin imagen",
-		"code": "56315d22-7a3b-46cf-baf1-627ff54d39f4",
-		"stock": 16
-	},
-	{
-		"id": 18,
-		"title": "Diferente producto 3",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 415,
-		"thumbnail": "Sin imagen",
-		"code": "c0965fdf-269f-4e40-aed0-df31d7dcb494",
-		"stock": 6
-	},
-	{
-		"id": 19,
-		"title": "Diferente producto 4",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 176,
-		"thumbnail": "Sin imagen",
-		"code": "d7092765-5077-4f7e-958c-7ff45dc5fc9c",
-		"stock": 6
-	},
-	{
-		"id": 20,
-		"title": "Diferente producto 5",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 237,
-		"thumbnail": "Sin imagen",
-		"code": "a83a6452-d56d-4dbd-9eed-c97bb4ae7145",
-		"stock": 15
-	},
-	{
-		"id": 21,
-		"title": "Diferente producto 6",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 626,
-		"thumbnail": "Sin imagen",
-		"code": "cb3a5d3d-3117-429e-865c-020336482093",
-		"stock": 24
-	},
-	{
-		"id": 22,
-		"title": "Diferente producto 7",
-		"description": "Este no falla porque su código es un UUUID",
-		"price": 35,
-		"thumbnail": "Sin imagen",
-		"code": "d83bd6ec-9c5a-4d4d-9900-352c62281e18",
-		"stock": 0
+		"description": "Producto actualizado mediante endpoint",
+		"category": "category1",
+		"price": 200,
+		"stock": 10,
+		"code": "nuevo1969f2341-ca56-423c-a067-e36a7747f285",
+		"status": true
 	}
 ]

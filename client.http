@@ -1,0 +1,60 @@
+### GET LIST OF PRODUCTS
+GET http://localhost:8080/api/v1/products?limit=2 HTTP/1.1
+
+### GET A PRODUCT
+GET http://localhost:8080/api/v1/products/20 HTTP/1.1
+
+### ADD A NEW PRODUCT
+POST http://localhost:8080/api/v1/products HTTP/1.1
+Content-Type: application/json
+
+{
+    "product": {
+        "title": "Nuevo producto",
+        "category": "category1",
+        "description": "Este es un nuevo producto enviado a endpoint de Express",
+        "price": 200,
+        "code": "nuevo1",
+        "stock": 10
+    }
+}
+
+### UPDATE A PRODUCT
+PUT http://localhost:8080/api/v1/products/66f0ff56-183e-49b6-b0db-b2bfebf380f7 HTTP/1.1
+Content-Type: application/json
+
+{
+    "product": {
+        "title": "Producto actualizado",
+        "description": "Producto actualizado mediante endpoint"
+    }
+    
+}
+
+### DELETE A PRODUCT
+DELETE http://localhost:8080/api/v1/products/94cd2b25-a4d8-4b54-9e14-a1217636ae0f HTTP/1.1
+
+
+
+### GET PRODUCTS OF A CART
+GET http://localhost:8080/api/v1/carts/c17b251c-d5a0-4fce-b87a-4dcefa4fce23 HTTP/1.1
+
+### ADDS NEW CART
+POST http://localhost:8080/api/v1/carts HTTP/1.1
+Content-Type: application/json
+
+{
+    "cartProducts": [
+        {
+            "product": "66f0ff56-183e-49b6-b0db-b2bfebf380f7",
+            "quantity": 10
+        },
+        {
+            "product": "747f4a8f-e8f8-4833-9ccf-e8a668679722",
+            "quantity": 20
+        }
+    ]
+}
+
+### ADDS A PRODUCT WITH ITS QUANTITY TO A CART
+POST http://localhost:8080/api/v1/carts/c17b251c-d5a0-4fce-b87a-4dcefa4fce23/products/66f0ff56-183e-49b6-b0db-b2bfebf380f7 HTTP/1.1

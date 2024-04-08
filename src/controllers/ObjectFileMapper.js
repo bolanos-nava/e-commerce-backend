@@ -43,7 +43,7 @@ export default class ObjectFileMapper {
   /**
    * Reads JSON file and parses it. In the case of not receiving a valid JSON,
    * returns an empty array
-   * @returns {Promise<ObjectType[] | any>}
+   * @returns {Promise<ObjectType[] | never[]>}
    */
   async #getFileAsObject() {
     try {
@@ -57,7 +57,7 @@ export default class ObjectFileMapper {
   /**
    * Converts object to JSON and writes it to the file,
    * wiping existing content.
-   * @param {ObjectType} data
+   * @param {ObjectType} data Data to write to the file specified by the path parameter of the class
    */
   async #writeToFile(data) {
     try {
@@ -71,11 +71,11 @@ export default class ObjectFileMapper {
    * Helper function to find a resource by its id. If
    * it doesn't exist, then throws error
    * @param {number} id
-   * @returns {ObjectType | never}
+   * @returns {{foundResource: ObjectType, resourceIdx: number} | never}
    */
-  #findById(_id) {
-    const id = Number(_id);
-    if (isNaN(id)) throw new ParameterError('Id parameter should be a number');
+  findById(id) {
+    // const id = Number(_id);
+    // if (isNaN(id)) throw new ParameterError('Id parameter should be a number');
     const resourceIdx = this.resources.findIndex(
       (resource) => resource.id === id,
     );
@@ -90,12 +90,15 @@ export default class ObjectFileMapper {
       throw new ResourceNotFoundError(errorMessage);
     }
 
-    return { foundResource: this.resources[resourceIdx], resourceIdx };
+    return {
+      foundResource: this.resources[resourceIdx],
+      resourceIdx,
+    };
   }
 
   /**
    * Returns all resources in the file
-   * @returns {Promise<ObjectType[]>}
+   * @returns {Promise<ObjectType[]>} Promise that resolves to an array of resources
    */
   async fetchAll() {
     const fileAsObject = await this.#getFileAsObject();
@@ -109,21 +112,20 @@ export default class ObjectFileMapper {
 
   /**
    * Returns the resource with matching id
-   * @param {number} id
-   * @returns {Proimse<ObjectType>}
+   * @param {number} id Id of the resource to fetch
+   * @returns {Promise<ObjectType>} Promise that resolves to the fetched resource
    */
   async fetchOne(id) {
     // Throw error if id is undefined
     if (!id) throw new ParameterError('Invalid id');
 
-    const allResources = await this.fetchAll();
-
-    return this.#findById(id).foundResource;
+    await this.fetchAll();
+    return this.findById(id).foundResource;
   }
 
   /**
    * Saves data to file
-   * @param {ObjectType} data
+   * @param {ObjectType} data The data to save to the file
    * @returns {Promise<boolean>} True if file was saved, otherwise, return false
    */
   async save(data) {
@@ -143,7 +145,7 @@ export default class ObjectFileMapper {
    */
   async deleteOne(id) {
     const resources = await this.fetchAll();
-    const resourceToDelete = this.#findById(id).foundResource;
+    const resourceToDelete = this.findById(id).foundResource;
 
     const newResources = resources.filter((resource) => resource.id !== id);
 
@@ -155,12 +157,12 @@ export default class ObjectFileMapper {
   /**
    *
    * @param {number} id
-   * @param {ObjectType<any>} newData
+   * @param {ObjectType} newData
    * @returns
    */
   async updateOne(id, newData) {
     const resources = await this.fetchAll();
-    const { foundResource, resourceIdx } = this.#findById(id);
+    const { foundResource, resourceIdx } = this.findById(id);
 
     resources[resourceIdx] = { ...foundResource, ...newData };
 

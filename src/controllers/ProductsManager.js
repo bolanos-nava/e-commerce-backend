@@ -1,5 +1,5 @@
 'use strict';
-
+import { randomUUID } from 'node:crypto';
 import ObjectFileMapper from './ObjectFileMapper.js';
 import {
   AttributeError,
@@ -19,10 +19,12 @@ export class ProductsManager extends ObjectFileMapper {
     id: null,
     title: null,
     description: null,
+    category: null,
     price: null,
-    thumbnail: null,
-    code: null,
     stock: null,
+    code: null,
+    status: true,
+    // thumbnails: null,
   };
 
   constructor(path) {
@@ -30,18 +32,36 @@ export class ProductsManager extends ObjectFileMapper {
   }
 
   /**
+   * Returns the list of products
+   * @returns {Promise<Product[]>} List of products
+   */
+  async getProducts() {
+    return await this.fetchAll();
+  }
+
+  /**
+   * Returns the data of a product
+   * @param {number} id Id of the product to fetch
+   * @returns {Promise<Product>}
+   */
+  async getProductById(id) {
+    return await this.fetchOne(id);
+  }
+
+  /**
    * Adds a new product
    * @param {Product} _product
    * @returns If the product was saved
    */
-  async addProduct(_product) {
+  async createProduct(_product) {
     const products = await this.getProducts();
 
-    const newId = products.length ? products[products.length - 1].id + 1 : 0;
     const newProduct = {
       ...this.#baseProduct,
       ..._product,
-      id: newId,
+      code: _product.code + randomUUID(),
+      code: _product.code,
+      id: randomUUID(),
     };
 
     if (
@@ -63,23 +83,6 @@ export class ProductsManager extends ObjectFileMapper {
 
     products.push(newProduct);
     return await this.save(products);
-  }
-
-  /**
-   * Returns the list of products
-   * @returns {Promise<Product[]>} List of products
-   */
-  async getProducts() {
-    return await this.fetchAll();
-  }
-
-  /**
-   * Returns the data of a product
-   * @param {number} id Id of the product to fetch
-   * @returns {Promise<Product>}
-   */
-  async getProductById(id) {
-    return await this.fetchOne(id);
   }
 
   /**
