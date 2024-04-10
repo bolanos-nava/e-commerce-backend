@@ -9,6 +9,7 @@ import { capitalize } from '../utils/index.js';
 
 /**
  * @typedef {import('./types.d.ts').ObjectType} ObjectType
+ * @typedef {import('./types.d.ts').UUIDType} UUIDType
  */
 
 /**
@@ -43,7 +44,7 @@ export default class ObjectFileMapper {
   /**
    * Reads JSON file and parses it. In the case of not receiving a valid JSON,
    * returns an empty array
-   * @returns {Promise<ObjectType[] | never[]>}
+   * @returns {Promise<ObjectType[] | []>}
    */
   async #getFileAsObject() {
     try {
@@ -57,6 +58,7 @@ export default class ObjectFileMapper {
   /**
    * Converts object to JSON and writes it to the file,
    * wiping existing content.
+   * @throws Throws error if write fails
    * @param {ObjectType} data Data to write to the file specified by the path parameter of the class
    */
   async #writeToFile(data) {
@@ -68,14 +70,12 @@ export default class ObjectFileMapper {
   }
 
   /**
-   * Helper function to find a resource by its id. If
-   * it doesn't exist, then throws error
-   * @param {number} id
-   * @returns {{foundResource: ObjectType, resourceIdx: number} | never}
+   * Helper function to find a resource by its UUID
+   * @param {UUIDType} id
+   * @throws {ResourceNotFoundError} Throws error if the resource is not found
+   * @returns {{foundResource: ObjectType, resourceIdx: number}} Data of the resource
    */
   findById(id) {
-    // const id = Number(_id);
-    // if (isNaN(id)) throw new ParameterError('Id parameter should be a number');
     const resourceIdx = this.resources.findIndex(
       (resource) => resource.id === id,
     );
@@ -97,8 +97,8 @@ export default class ObjectFileMapper {
   }
 
   /**
-   * Returns all resources in the file
-   * @returns {Promise<ObjectType[]>} Promise that resolves to an array of resources
+   * Returns list of resources in the file
+   * @returns {Promise<ObjectType[]>} Promise that resolves to the list of resources
    */
   async fetchAll() {
     const fileAsObject = await this.#getFileAsObject();
@@ -126,22 +126,16 @@ export default class ObjectFileMapper {
   /**
    * Saves data to file
    * @param {ObjectType} data The data to save to the file
-   * @returns {Promise<boolean>} True if file was saved, otherwise, return false
    */
   async save(data) {
-    try {
-      await this.#writeToFile(data);
-      return true;
-    } catch {
-      return false;
-    }
+    await this.#writeToFile(data);
   }
 
   /**
    * Deletes one resource from the file and overwrites the file
    * without the deleted resource
-   * @param {number} id
-   * @returns
+   * @param {UUIDType} id
+   * @returns {Promise<ObjectType>} Promise that resolves to the deleted resource
    */
   async deleteOne(id) {
     const resources = await this.fetchAll();
@@ -155,10 +149,10 @@ export default class ObjectFileMapper {
   }
 
   /**
-   *
-   * @param {number} id
+   * Updates a resource
+   * @param {UUIDType} id
    * @param {ObjectType} newData
-   * @returns
+   * @returns {Promise<ObjectType>} Promise that resolves to the updated resource
    */
   async updateOne(id, newData) {
     const resources = await this.fetchAll();
@@ -167,7 +161,6 @@ export default class ObjectFileMapper {
     resources[resourceIdx] = { ...foundResource, ...newData };
 
     await this.save(resources);
-
     return resources[resourceIdx];
   }
 }

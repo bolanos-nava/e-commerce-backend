@@ -30,13 +30,44 @@
 		"status": true
 	},
 	{
-		"id": "66f0ff56-183e-49b6-b0db-b2bfebf380f7",
-		"title": "Producto actualizado",
-		"description": "Producto actualizado mediante endpoint",
+		"id": "30575f93-609e-4cd8-846a-0e410a5286b7",
+		"title": "Nuevo producto",
+		"description": "Este es un nuevo producto enviado a endpoint de Express",
 		"category": "category1",
 		"price": 200,
 		"stock": 10,
-		"code": "nuevo1969f2341-ca56-423c-a067-e36a7747f285",
+		"code": "nuevo1",
 		"status": true
+	},
+	{
+		"id": "e1a3d105-afbc-4cdd-8fa1-b0c637eb0e21",
+		"title": "Nuevo producto",
+		"description": "Este es un nuevo producto enviado a endpoint de Express",
+		"category": "category1",
+		"price": 200,
+		"stock": 10,
+		"code": "nuevo190a39b2b-b4be-4a91-bdc9-74f72fa3e6ec",
+		"status": true
+	},
+	{
+		"id": "de208dc7-9b5f-4ad8-8979-38c659ed45f4",
+		"title": "Nuevo producto",
+		"description": "Este es un nuevo producto enviado a endpoint de Express",
+		"category": "category1",
+		"price": 200,
+		"stock": 10,
+		"code": "nuevo18412fcd0-37a8-4415-8670-5c3101ae23ae",
+		"status": true
+	},
+	{
+		"id": "8ffc2e08-e52d-459c-99a0-a71f337788f6",
+		"title": "Nuevo producto",
+		"description": "Este es un nuevo producto enviado a endpoint de Express",
+		"category": "category1",
+		"price": 200,
+		"stock": 10,
+		"code": "nuevo162a7235f-244b-427a-9ca8-3146ed15cb12",
+		"status": true,
+		"thumbnails": []
 	}
 ]

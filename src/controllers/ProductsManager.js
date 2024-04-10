@@ -8,6 +8,7 @@ import {
 
 /**
  * @typedef {import('./types.d.ts').Product} Product
+ * @typedef {import('./types.d.ts').UUIDType} UUIDType
  */
 
 export class ProductsManager extends ObjectFileMapper {
@@ -24,7 +25,7 @@ export class ProductsManager extends ObjectFileMapper {
     stock: null,
     code: null,
     status: true,
-    // thumbnails: null,
+    thumbnails: [],
   };
 
   constructor(path) {
@@ -33,7 +34,7 @@ export class ProductsManager extends ObjectFileMapper {
 
   /**
    * Returns the list of products
-   * @returns {Promise<Product[]>} List of products
+   * @returns {Promise<Product[]>} Promise that resolves to the list of products
    */
   async getProducts() {
     return await this.fetchAll();
@@ -41,17 +42,17 @@ export class ProductsManager extends ObjectFileMapper {
 
   /**
    * Returns the data of a product
-   * @param {number} id Id of the product to fetch
-   * @returns {Promise<Product>}
+   * @param {UUIDType} id UUID of the product to fetch
+   * @returns {Promise<Product>} Promise that resolves to the fetched product
    */
   async getProductById(id) {
     return await this.fetchOne(id);
   }
 
   /**
-   * Adds a new product
-   * @param {Product} _product
-   * @returns If the product was saved
+   * Creates a new product
+   * @param {Product} _product Data of the product to create
+   * @returns {Promise<Product>} Promise that resolves to the new product
    */
   async createProduct(_product) {
     const products = await this.getProducts();
@@ -59,8 +60,6 @@ export class ProductsManager extends ObjectFileMapper {
     const newProduct = {
       ...this.#baseProduct,
       ..._product,
-      code: _product.code + randomUUID(),
-      code: _product.code,
       id: randomUUID(),
     };
 
@@ -82,13 +81,14 @@ export class ProductsManager extends ObjectFileMapper {
     }
 
     products.push(newProduct);
-    return await this.save(products);
+    await this.save(products);
+    return newProduct;
   }
 
   /**
    * Deletes a product
-   * @param {number} id Id of the product to delete
-   * @returns {Promise<Product>} The deleted product
+   * @param {UUIDType} id UUID of the product to delete
+   * @returns {Promise<Product>} Promise that resolves to the deleted product
    */
   async deleteProduct(id) {
     return await this.deleteOne(id);
@@ -96,9 +96,9 @@ export class ProductsManager extends ObjectFileMapper {
 
   /**
    * Updates a product
-   * @param {number} id
-   * @param {Promise<Partial<Product>>} newData
-   * @returns {Promise<Product>} The updated product
+   * @param {UUIDType} id UUID of the product
+   * @param {Promise<Partial<Product>>} newData New data to update the product with
+   * @returns {Promise<Product>} Promise that resolves to the updated product
    */
   async updateProduct(id, newData) {
     return await this.updateOne(id, newData);
