@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import ObjectFileMapper from './ObjectFileMapper.js';
+// const { default: ObjectFileMapper } = await import('./ObjectFileMapper.js');
+// console.log(ObjectFileMapper);
 
 /**
  * @typedef {import('./types.d.ts').Cart} Cart
@@ -17,7 +19,7 @@ export class CartsManager extends ObjectFileMapper {
    * @returns {Promise<Cart[]>} Promise that resolves to the list of shopping carts
    */
   async getCarts() {
-    return await this.fetchAll();
+    return this.fetchAll();
   }
 
   /**
@@ -32,15 +34,14 @@ export class CartsManager extends ObjectFileMapper {
 
   /**
    * Creates new shopping cart
-   * @param {CartProduct[]} cartProducts List of products to add to the newly created cart
    * @returns {Promise<Cart>} Promise that resolves to the new shopping cart
    */
-  async createCart(cartProducts) {
+  async createCart() {
     const carts = await this.getCarts();
 
     const newCart = {
       id: randomUUID(),
-      products: cartProducts,
+      products: [],
     };
 
     carts.push(newCart);
@@ -74,6 +75,7 @@ export class CartsManager extends ObjectFileMapper {
       foundCart.products.push(newProduct);
     } else {
       // TODO: change this to allow increasing or decreasing in some arbitrary quantity
+      // eslint-disable-next-line no-plusplus
       foundCart.products[productToUpdateIdx].quantity++;
       addedProduct.quantity = foundCart.products[productToUpdateIdx].quantity;
     }

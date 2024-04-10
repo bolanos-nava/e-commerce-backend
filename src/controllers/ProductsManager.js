@@ -1,4 +1,3 @@
-'use strict';
 import { randomUUID } from 'node:crypto';
 import ObjectFileMapper from './ObjectFileMapper.js';
 import {
@@ -37,7 +36,7 @@ export class ProductsManager extends ObjectFileMapper {
    * @returns {Promise<Product[]>} Promise that resolves to the list of products
    */
   async getProducts() {
-    return await this.fetchAll();
+    return this.fetchAll();
   }
 
   /**
@@ -46,7 +45,7 @@ export class ProductsManager extends ObjectFileMapper {
    * @returns {Promise<Product>} Promise that resolves to the fetched product
    */
   async getProductById(id) {
-    return await this.fetchOne(id);
+    return this.fetchOne(id);
   }
 
   /**
@@ -91,7 +90,7 @@ export class ProductsManager extends ObjectFileMapper {
    * @returns {Promise<Product>} Promise that resolves to the deleted product
    */
   async deleteProduct(id) {
-    return await this.deleteOne(id);
+    return this.deleteOne(id);
   }
 
   /**
@@ -101,6 +100,6 @@ export class ProductsManager extends ObjectFileMapper {
    * @returns {Promise<Product>} Promise that resolves to the updated product
    */
   async updateProduct(id, newData) {
-    return await this.updateOne(id, newData);
+    return this.updateOne(id, newData);
   }
 }

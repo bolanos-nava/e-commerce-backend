@@ -1,5 +1,5 @@
 ### GET LIST OF PRODUCTS
-GET http://localhost:8080/api/v1/products?limit=2 HTTP/1.1
+GET http://localhost:8080/api/v1/products HTTP/1.1
 
 ### GET A PRODUCT
 GET http://localhost:8080/api/v1/products/32b514f0-231b-438f-8845-28ce1469410a HTTP/1.1

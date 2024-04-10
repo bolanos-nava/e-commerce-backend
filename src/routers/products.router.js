@@ -21,7 +21,7 @@ productsRouter
     try {
       const { limit } = req.query;
       let products = await req.productsManager.getProducts();
-      if (limit && !isNaN(limit)) {
+      if (limit && !Number.isNaN(limit)) {
         const limt = Number(limit);
         products = products.slice(0, limt);
       }
@@ -36,13 +36,14 @@ productsRouter
   .post(async (req, res, next) => {
     try {
       const { product } = req.body;
-      product.code = product.code + randomUUID();
+      // product.code += randomUUID();
       const newProduct = await req.productsManager.createProduct(product);
       res.status(201).send({
         status: 'created',
         payload: newProduct,
       });
     } catch (error) {
+      console.log({ error });
       next(error);
     }
   });

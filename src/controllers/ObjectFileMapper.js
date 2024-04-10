@@ -1,5 +1,3 @@
-'use strict';
-
 import fs from 'node:fs/promises';
 import {
   ParameterError,
@@ -62,11 +60,7 @@ export default class ObjectFileMapper {
    * @param {ObjectType} data Data to write to the file specified by the path parameter of the class
    */
   async #writeToFile(data) {
-    try {
-      await fs.writeFile(this.path, JSON.stringify(data, null, '\t'), 'utf-8');
-    } catch (error) {
-      throw error;
-    }
+    await fs.writeFile(this.path, JSON.stringify(data, null, '\t'), 'utf-8');
   }
 
   /**

@@ -1,6 +1,5 @@
 import express from 'express';
 import { productsRouter, cartsRouter } from './routers/index.js';
-import { ProductsManager } from './controllers/index.js';
 
 // Initializing Express app
 const server = express();
@@ -18,6 +17,7 @@ server.listen(PORT, () => {
 });
 
 // Middleware for error handling
+// eslint-disable-next-line no-unused-vars
 server.use((error, req, res, next) => {
   res.status(error.statusCode || 500).send({
     status: 'error',
