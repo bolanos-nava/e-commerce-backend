@@ -1,0 +1,16 @@
+<main>
+  <h1>Bienvenido {{name}}</h1>
+  <div>
+    {{#if permission}}
+      <h2>Conche tu madre!!!!!</h2>
+    {{else}}
+      <h2>Ay mi don pendejo...</h2>
+    {{/if}}
+
+    <ul>
+      {{#each products}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </div>
+</main>
