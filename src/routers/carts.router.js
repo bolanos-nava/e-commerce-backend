@@ -11,8 +11,12 @@ cartsRouter.use((req, res, next) => {
 cartsRouter.route('/:cartId').get(async (req, res, next) => {
   try {
     const { cartId } = req.params;
+
     const cart = await req.cartsManager.getCartById(cartId);
-    res.send(cart);
+    res.send({
+      status: 'success',
+      payload: cart,
+    });
   } catch (error) {
     next(error);
   }
@@ -24,8 +28,14 @@ cartsRouter
     try {
       const { cartId, productId } = req.params;
       //   const { quantity } = req.body;
-      await req.cartsManager.addToCart(cartId, { id: productId, quantity: 1 });
-      res.send('ADDED');
+      const newCart = await req.cartsManager.addToCart(cartId, {
+        product: productId,
+        quantity: 1,
+      });
+      res.send({
+        status: 'updated',
+        payload: newCart,
+      });
     } catch (error) {
       next(error);
     }
@@ -33,9 +43,11 @@ cartsRouter
 
 cartsRouter.route('/').post(async (req, res, next) => {
   try {
-    const { cartProducts } = req.body;
-    await req.cartsManager.createCart(cartProducts);
-    res.send('OK');
+    const newCart = await req.cartsManager.createCart();
+    res.status(201).send({
+      status: 'created',
+      payload: newCart,
+    });
   } catch (error) {
     next(error);
   }

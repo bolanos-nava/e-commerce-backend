@@ -2,16 +2,26 @@
   "name": "e-commerce-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/productManager.js",
+  "main": "./src/server.js",
   "type": "module",
   "scripts": {
     "start:server": "node ./src/server.js",
-    "start:server-watch": "node --watch-path=./src ./src/server.js"
+    "start:server-watch": "node --watch-path=./src ./src/server.js",
+    "lint": "eslint . --ext js,ts --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
     "rimraf": "^5.0.5"
   },
   "dependencies": {
