@@ -1,12 +1,16 @@
 import express from 'express';
-import { productsRouter, cartsRouter } from './routers/index.js';
 import handlebars from 'express-handlebars';
+import { Server } from 'socket.io';
+import { productsRouter, cartsRouter } from './routers/index.js';
 
 // Initializing Express app
 const server = express();
 
 // Middleware that allows Express to interpret JSON requests
 server.use(express.json());
+
+// Middleware to serve static files
+server.use(express.static(`${import.meta.dirname}/public`));
 
 // Configuring handlebars templating engine
 server.engine('handlebars', handlebars.engine());
@@ -26,13 +30,38 @@ server.get('/', (req, res) => {
   });
 });
 
+server.get('/chat', (req, res) => {
+  res.render('chat');
+});
+
 // Adding products router
 server.use('/api/v1/products', productsRouter);
 server.use('/api/v1/carts', cartsRouter);
 
-const PORT = 3000;
-server.listen(PORT, () => {
+const PORT = 8080;
+const httpServer = server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+});
+const socketServer = new Server(httpServer);
+
+// Hooks for websocket
+socketServer.on('connection', (socket) => {
+  console.log('NUEVO CLIENTEEEE CONCHETUMADRE');
+
+  // Receives message from client
+  socket.on('message', (data) => console.log(data));
+
+  // Sends message to the client when it connects
+  socket.emit('message_to_client', 'I send this message unto you');
+
+  // Sends message to all the clients except the one that connected
+  socket.broadcast.emit(
+    'message_to_other_clients',
+    'I send this message unto the other clients',
+  );
+
+  // Sends message to ALL clients
+  socketServer.emit('message_to_all_clients', 'I send this general broadcast');
 });
 
 // Middleware for error handling
