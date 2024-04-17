@@ -1,4 +1,4 @@
-<main>
+{{!-- <main>
   <h1>Bienvenido {{name}}</h1>
   <div>
     {{#if permission}}
@@ -13,4 +13,21 @@
       {{/each}}
     </ul>
   </div>
+</main> --}}
+
+<main>
+  <h1>Bienvenidos al chat</h1>
+  <div><input type="text" name="chatbox" id="chatbox" /></div>
+  <div>
+    <ul id="messageLogs">
+
+    </ul>
+  </div>
 </main>
+
+{{! JS scripts to enable the websocket }}
+<script
+  src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.all.min.js"
+></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

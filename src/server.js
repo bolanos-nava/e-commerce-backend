@@ -38,18 +38,26 @@ server.get('/chat', (req, res) => {
 server.use('/api/v1/products', productsRouter);
 server.use('/api/v1/carts', cartsRouter);
 
-const PORT = 8080;
+const PORT = 5000;
 const httpServer = server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 const socketServer = new Server(httpServer);
 
+// dbmock
+const messages = [];
 // Hooks for websocket
 socketServer.on('connection', (socket) => {
   console.log('NUEVO CLIENTEEEE CONCHETUMADRE');
 
   // Receives message from client
-  socket.on('message', (data) => console.log(data));
+  socket.on('chatMessage', (data) => {
+    console.log(data);
+    messages.push(data);
+
+    // send through 'socketServer' because we want all clients to see them
+    socketServer.emit('messageLogs', messages);
+  });
 
   // Sends message to the client when it connects
   socket.emit('message_to_client', 'I send this message unto you');
