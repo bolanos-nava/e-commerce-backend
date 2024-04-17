@@ -97,5 +97,16 @@
 		"code": "nuevo1",
 		"status": true,
 		"thumbnails": []
+	},
+	{
+		"id": "ab506fb9-a9a3-4f24-a83a-10321feb8ba6",
+		"title": "Producto nuevo",
+		"description": "Enviado con client.http",
+		"category": "category1",
+		"price": 200,
+		"stock": 10,
+		"code": "nuevo11158f402-aa4b-4ee1-bfd8-41503ba7a492",
+		"status": true,
+		"thumbnails": []
 	}
 ]

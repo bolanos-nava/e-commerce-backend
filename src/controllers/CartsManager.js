@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import ObjectFileMapper from './ObjectFileMapper.js';
 // const { default: ObjectFileMapper } = await import('./ObjectFileMapper.js');
-// console.log(ObjectFileMapper);
 
 /**
  * @typedef {import('./types.d.ts').Cart} Cart

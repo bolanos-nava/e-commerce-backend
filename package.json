@@ -5,8 +5,8 @@
   "main": "./src/server.js",
   "type": "module",
   "scripts": {
-    "start:server": "node ./src/server.js",
-    "start:server-watch": "node --watch-path=./src ./src/server.js",
+    "start:server": "PORT=8080 node ./src/server.js",
+    "start:server-watch": "PORT=8080 node --watch-path=./src ./src/server.js",
     "lint": "eslint . --ext js,ts --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [],

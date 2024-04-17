@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { ProductsManager } from '../controllers/index.js';
@@ -7,7 +8,7 @@ export const productsRouter = Router();
 // Middleware to instantiate ProductsManager
 productsRouter.use((req, res, next) => {
   req.productsManager = new ProductsManager(
-    `${import.meta.dirname}/../products.json`,
+    `${path.resolve()}/src/products.json`,
   );
   next();
 });
@@ -36,14 +37,18 @@ productsRouter
   .post(async (req, res, next) => {
     try {
       const { product } = req.body;
-      // product.code += randomUUID();
+      product.code += randomUUID();
       const newProduct = await req.productsManager.createProduct(product);
+
+      // Emitting the new product to the products socket
+      const { socketServer } = req;
+      socketServer.emit('new_product', newProduct);
+
       res.status(201).send({
         status: 'created',
         payload: newProduct,
       });
     } catch (error) {
-      console.log({ error });
       next(error);
     }
   });

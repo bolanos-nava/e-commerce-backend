@@ -10,9 +10,9 @@ Content-Type: application/json
 
 {
     "product": {
-        "title": "Nuevo producto",
+        "title": "Producto nuevo",
         "category": "category1",
-        "description": "Este es un nuevo producto enviado a endpoint de Express",
+        "description": "Enviado con client.http",
         "price": 200,
         "code": "nuevo1",
         "stock": 10

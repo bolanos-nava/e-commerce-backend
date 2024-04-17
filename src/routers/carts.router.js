@@ -1,10 +1,11 @@
+import path from 'node:path';
 import { Router } from 'express';
 import { CartsManager } from '../controllers/index.js';
 
 export const cartsRouter = Router();
 
 cartsRouter.use((req, res, next) => {
-  req.cartsManager = new CartsManager(`${import.meta.dirname}/../carts.json`);
+  req.cartsManager = new CartsManager(`${path.resolve()}/src/carts.json`);
   next();
 });
 
