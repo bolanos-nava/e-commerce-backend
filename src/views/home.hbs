@@ -1,12 +1,12 @@
 <main>
   <h1>Productos</h1>
 
-  <ul>
+  <ul class="products__list">
     {{#each products}}
-      <li>
-        <p>{{{this.title}}}</p>
-        <p>{{{this.description}}}</p>
-        <p>${{{this.price}}}</p>
+      <li class="product">
+        <p class="product__data product__title">{{{this.title}}}</p>
+        <p class="product__data product__description">{{{this.description}}}</p>
+        <p class="product__data product__price">${{{this.price}}}</p>
       </li>
     {{/each}}
   </ul>

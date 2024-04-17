@@ -34,7 +34,7 @@ const socketServer = new Server(httpServer);
 
 // Adding routers
 server.use('/', viewsRouter);
-server.use('/api/v1', apiRouter, socketMiddleware(socketServer));
+server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
 
 // Hooks for websocket
 socketServer.on('connection', (socket) => {

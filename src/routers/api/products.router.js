@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
-import { ProductsManager } from '../controllers/index.js';
+import { ProductsManager } from '../../controllers/index.js';
 
 export const productsRouter = Router();
 
@@ -37,7 +37,7 @@ productsRouter
   .post(async (req, res, next) => {
     try {
       const { product } = req.body;
-      product.code += randomUUID();
+      // product.code += randomUUID();
       const newProduct = await req.productsManager.createProduct(product);
 
       // Emitting the new product to the products socket

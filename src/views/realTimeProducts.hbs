@@ -1,16 +1,16 @@
 <main>
-  <h1>Productos</h1>
+  <h1>Productos - tiempo real</h1>
 
-  <ul id='productsList'>
+  <ul id="productsList">
     {{#each products}}
-      <li >
-        <p>{{{this.title}}}</p>
-        <p>{{{this.description}}}</p>
-        <p>${{{this.price}}}</p>
+      <li class="product">
+        <p class="product__data product__title">{{{this.title}}}</p>
+        <p class="product__data product__description">{{{this.description}}}</p>
+        <p class="product__data product__price">${{{this.price}}}</p>
       </li>
     {{/each}}
   </ul>
 </main>
 
-<script src='/socket.io/socket.io.js'></script>
-<script src='/js/realTimeProducts.js'></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realTimeProducts.js"></script>

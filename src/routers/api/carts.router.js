@@ -1,12 +1,24 @@
 import path from 'node:path';
 import { Router } from 'express';
-import { CartsManager } from '../controllers/index.js';
+import { CartsManager } from '../../controllers/index.js';
 
 export const cartsRouter = Router();
 
 cartsRouter.use((req, res, next) => {
   req.cartsManager = new CartsManager(`${path.resolve()}/src/carts.json`);
   next();
+});
+
+cartsRouter.route('/').post(async (req, res, next) => {
+  try {
+    const newCart = await req.cartsManager.createCart();
+    res.status(201).send({
+      status: 'created',
+      payload: newCart,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 cartsRouter.route('/:cartId').get(async (req, res, next) => {
@@ -41,15 +53,3 @@ cartsRouter
       next(error);
     }
   });
-
-cartsRouter.route('/').post(async (req, res, next) => {
-  try {
-    const newCart = await req.cartsManager.createCart();
-    res.status(201).send({
-      status: 'created',
-      payload: newCart,
-    });
-  } catch (error) {
-    next(error);
-  }
-});

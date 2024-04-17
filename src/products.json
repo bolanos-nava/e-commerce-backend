@@ -1,82 +1,5 @@
 [
 	{
-		"id": "8ffc2e08-e52d-459c-99a0-a71f337788f6",
-		"title": "Nuevo producto",
-		"description": "Este es un nuevo producto enviado a endpoint de Express",
-		"category": "category1",
-		"price": 200,
-		"stock": 10,
-		"code": "nuevo162a7235f-244b-427a-9ca8-3146ed15cb12",
-		"status": true,
-		"thumbnails": []
-	},
-	{
-		"id": "b4ee2d3a-581b-4ed4-8bc7-3dfb4324a67d",
-		"title": "Nuevo producto",
-		"description": "Este es un nuevo producto enviado a endpoint de Express",
-		"category": "category1",
-		"price": 200,
-		"stock": 10,
-		"code": "nuevo1e6270c33-ed3d-4746-99d0-efd38c932974",
-		"status": true,
-		"thumbnails": []
-	},
-	{
-		"id": "1d49b12d-c98b-440e-b015-f502fec06ad6",
-		"title": "Nuevo producto",
-		"description": "Este es un nuevo producto enviado a endpoint de Express",
-		"category": "category1",
-		"price": 200,
-		"stock": 10,
-		"code": "nuevo162e8b8c4-b70f-40a6-96bc-9f5654945c2d",
-		"status": true,
-		"thumbnails": []
-	},
-	{
-		"id": "634eacd6-e311-4c24-b288-5883984944d3",
-		"title": "Nuevo producto",
-		"description": "Este es un nuevo producto enviado a endpoint de Express",
-		"category": "category1",
-		"price": 200,
-		"stock": 10,
-		"code": "nuevo173d7e020-f1b9-4535-84e5-68b992c36a1a",
-		"status": true,
-		"thumbnails": []
-	},
-	{
-		"id": "8c00678c-ee60-4d89-94e7-0ce65b5eb8f3",
-		"title": "Nuevo producto",
-		"description": "Este es un nuevo producto enviado a endpoint de Express",
-		"category": "category1",
-		"price": 200,
-		"stock": 10,
-		"code": "nuevo1a886af88-b9d8-4f8d-a4de-025bdb76d61f",
-		"status": true,
-		"thumbnails": []
-	},
-	{
-		"id": "8df56316-b6e8-4f28-ac73-d79d105714c0",
-		"title": "Nuevo producto",
-		"description": "Este es un nuevo producto enviado a endpoint de Express",
-		"category": "category1",
-		"price": 200,
-		"stock": 10,
-		"code": "nuevo124cee0be-e0a4-4fda-b5df-7474f32edf80",
-		"status": true,
-		"thumbnails": []
-	},
-	{
-		"id": "88b1cdbd-88fa-4578-a552-617e44eec006",
-		"title": "Nuevo producto",
-		"description": "Este es un nuevo producto enviado a endpoint de Express",
-		"category": "category1",
-		"price": 200,
-		"stock": 10,
-		"code": "nuevo155bebad2-2cbb-471f-9438-03fc1ec458d2",
-		"status": true,
-		"thumbnails": []
-	},
-	{
 		"id": "a4432196-f998-47e8-85b9-941fe868a28c",
 		"title": "Nuevo producto",
 		"description": "Este es un nuevo producto enviado a endpoint de Express",
@@ -106,6 +29,138 @@
 		"price": 200,
 		"stock": 10,
 		"code": "nuevo11158f402-aa4b-4ee1-bfd8-41503ba7a492",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "53a2ef77-3cb3-479e-8da0-faff80fa5a71",
+		"title": "Agregado",
+		"description": "Agregado en tiempo real",
+		"category": "category1",
+		"price": 100,
+		"stock": 10,
+		"code": "nuevo12ade326c-e95d-4bc8-9726-b608c272a007",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "a08675e4-57ab-45c1-a460-6d5061a74a60",
+		"title": "Agregado",
+		"description": "Agregado en tiempo real",
+		"category": "category1",
+		"price": 100,
+		"stock": 10,
+		"code": "nuevo129220fdb-f919-4ac8-980c-ff54f166b64e",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "98cc067f-d1f8-45cc-8d83-9162b74514b8",
+		"title": "Uno nuevecillo",
+		"description": "Agregado al DOM",
+		"category": "category1",
+		"price": 50000,
+		"stock": 10,
+		"code": "nuevo1161a865b-e460-4ff7-b765-b28b91d84217",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "aafebcfd-0ac3-405d-b0d0-c8e050a9da6a",
+		"title": "Otro más",
+		"description": "Agregado por websocket",
+		"category": "category1",
+		"price": 10000,
+		"stock": 10,
+		"code": "nuevo1cd3342e8-8e33-448b-b357-263cb9125f39",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "5f8382e6-1ef6-4b9f-b176-44fdd4fdf7c8",
+		"title": "Otro más",
+		"description": "Agregado por websocket",
+		"category": "category1",
+		"price": 10000,
+		"stock": 10,
+		"code": "nuevo12a118b89-3ea4-44f8-970f-c4e5ec73734e",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "2debd275-b4e1-4292-a9a9-2872a050f858",
+		"title": "Otrora",
+		"description": "Agregado por websocket",
+		"category": "category1",
+		"price": 10000,
+		"stock": 10,
+		"code": "nuevo1a80828f1-432d-46d9-bf0a-71dc9ffe17a6",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "b757271e-10df-473c-acde-56af8a82487f",
+		"title": "Otrora",
+		"description": "En tiempo real",
+		"category": "category1",
+		"price": 12,
+		"stock": 10,
+		"code": "nuevo1f980f84f-5c5a-4eee-9dc1-f072378ba0c8",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "2f1a2ea3-b35a-4186-bbe0-55ae58f731ec",
+		"title": "Otro",
+		"description": "En tiempo real",
+		"category": "category1",
+		"price": 12,
+		"stock": 10,
+		"code": "nuevo1f06d04da-2320-4ea2-abbd-abbe4a9edf2d",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "9b0abebd-4f75-4cf7-86f0-0758cabc8039",
+		"title": "Nuevo producto por websocket",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 5000000,
+		"stock": 50,
+		"code": "nuevo1a5fe16d4-ebca-4f42-a00c-283c4de2dda3",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "58bca567-8280-4af5-a1a1-bac6c4926610",
+		"title": "Nuevo producto por websocket",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 5000000,
+		"stock": 50,
+		"code": "nuevo1b68d2d69-d4c7-4d67-834d-62e3107e6ae4",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "76ede4bb-b1f1-4de0-8c4c-7b9e6aeac669",
+		"title": "Nuevo producto por websocket",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 5000000,
+		"stock": 50,
+		"code": "nuevo14b290831-3cb3-4511-a6fe-ee9628627956",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "b5ec40fe-072d-47b2-b668-324592681911",
+		"title": "Nuevo producto por websocket",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 5000000,
+		"stock": 50,
+		"code": "nuevo1b04fb157-4706-4f9a-91fa-7923f7db2d52",
 		"status": true,
 		"thumbnails": []
 	}

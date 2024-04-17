@@ -1,0 +1,13 @@
+.product {
+  margin: 10px 0;
+  border-bottom: 2px dashed darkblue;
+}
+
+.product__data {
+  margin: 8px 0;
+}
+
+.product__title {
+  font-weight: bold;
+  font-size: large;
+}

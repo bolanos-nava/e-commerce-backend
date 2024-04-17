@@ -10,12 +10,12 @@ Content-Type: application/json
 
 {
     "product": {
-        "title": "Producto nuevo",
+        "title": "Nuevo producto por websocket",
         "category": "category1",
-        "description": "Enviado con client.http",
-        "price": 200,
+        "description": "Real timeeee",
+        "price": 5000000,
         "code": "nuevo1",
-        "stock": 10
+        "stock": 50
     }
 }
 
