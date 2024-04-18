@@ -44,7 +44,7 @@ productForm.addEventListener('submit', async (event) => {
 
   try {
     const response = await fetch(
-      `http://localhost:${process.env.PORT}/api/v1/products`,
+      `http://localhost:${env.PORT}/api/v1/products`,
       {
         method: 'POST',
         headers: {

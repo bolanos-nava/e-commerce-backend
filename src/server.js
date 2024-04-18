@@ -20,6 +20,12 @@ server.engine(
   'hbs',
   handlebars.engine({
     extname: '.hbs',
+    helpers: {
+      json(content) {
+        console.log({ content });
+        return JSON.stringify(content);
+      },
+    },
   }),
 );
 server.set('views', `${path.resolve()}/src/views`);

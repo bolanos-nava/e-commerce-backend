@@ -23,6 +23,9 @@ viewsRouter.route('/realtimeproducts').get(async (req, res) => {
   res.render('realTimeProducts', {
     products: await req.productsManager.getProducts(),
     stylesheet: '/css/products.css',
+    env: {
+      PORT: process.env.PORT || 8080,
+    },
   });
 });
 
