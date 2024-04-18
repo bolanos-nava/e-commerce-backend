@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import ObjectFileMapper from './ObjectFileMapper.js';
+import BaseModel from './BaseModel.js';
 // const { default: ObjectFileMapper } = await import('./ObjectFileMapper.js');
 
 /**
@@ -8,7 +8,7 @@ import ObjectFileMapper from './ObjectFileMapper.js';
  * @typedef {import('./types.d.ts').UUIDType} UUIDType
  */
 
-export class CartsManager extends ObjectFileMapper {
+export class CartsManager extends BaseModel {
   constructor(path) {
     super(path, 'Cart');
   }

@@ -43,13 +43,16 @@ productForm.addEventListener('submit', async (event) => {
   });
 
   try {
-    const response = await fetch('http://localhost:8080/api/v1/products', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `http://localhost:${process.env.PORT}/api/v1/products`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product: newProduct }),
       },
-      body: JSON.stringify({ product: newProduct }),
-    });
+    );
     const jsonResponse = await response.json();
     if (!response.ok) throw Error(jsonResponse.message);
     console.log(jsonResponse);

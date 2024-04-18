@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { Router } from 'express';
-import { ProductsManager } from '../controllers/index.js';
+import { ProductsManager } from '../models/index.js';
 
 export const viewsRouter = Router();
 

@@ -6,14 +6,14 @@ import {
 import { capitalize } from '../utils/index.js';
 
 /**
- * @typedef {import('./types.d.ts').ObjectType} ObjectType
- * @typedef {import('./types.d.ts').UUIDType} UUIDType
+ * @typedef {import('./types').ObjectType} ObjectType
+ * @typedef {import('./types').UUIDType} UUIDType
  */
 
 /**
  * Class to manipulate data in files as JS objects. Allows CRUD operations
  */
-export default class ObjectFileMapper {
+export default class BaseModel {
   /** Specifies path of the file */
   path = '';
   /** Specifies name of the resources */

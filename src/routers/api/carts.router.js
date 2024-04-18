@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { Router } from 'express';
-import { CartsManager } from '../../controllers/index.js';
+import { CartsManager } from '../../models/index.js';
 
 export const cartsRouter = Router();
 

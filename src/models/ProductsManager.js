@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import ObjectFileMapper from './ObjectFileMapper.js';
+import BaseModel from './BaseModel.js';
 import {
   AttributeError,
   DuplicateResourceError,
@@ -10,7 +10,7 @@ import {
  * @typedef {import('./types.d.ts').UUIDType} UUIDType
  */
 
-export class ProductsManager extends ObjectFileMapper {
+export class ProductsManager extends BaseModel {
   /**
    * Shape of product object
    * @type {Product}
