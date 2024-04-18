@@ -13,10 +13,13 @@ function addProductToFrontend(data) {
   const productDescription = product.getElementsByClassName(
     'product__description',
   )[0];
-  productDescription.innerText = data.description;
+  productDescription.innerText = `Descripción: ${data.description}`;
 
   const productPrice = product.getElementsByClassName('product__price')[0];
-  productPrice.innerText = `$${data.price.toFixed(2)}`;
+  productPrice.innerText = `Precio: $${data.price.toFixed(2)}`;
+
+  const productStock = product.getElementsByClassName('product__stock')[0];
+  productStock.innerText = `Stock: ${data.stock}`;
 
   productsList.appendChild(product);
 
@@ -25,6 +28,35 @@ function addProductToFrontend(data) {
     behavior: 'smooth',
   });
 }
+
+const productForm = document.getElementById('product-form');
+productForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  // extracts data from form
+  const productFormData = new FormData(productForm);
+
+  // constructs new object from the form data
+  const newProduct = {};
+  productFormData.entries().forEach(([key, value]) => {
+    newProduct[key] = value;
+  });
+
+  try {
+    const response = await fetch('http://localhost:8080/api/v1/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ product: newProduct }),
+    });
+    const jsonResponse = await response.json();
+    if (!response.ok) throw Error(jsonResponse.message);
+    console.log(jsonResponse);
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 socket.on('new_product', (data) => {
   addProductToFrontend(data);

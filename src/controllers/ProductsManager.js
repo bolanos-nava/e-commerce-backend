@@ -32,6 +32,19 @@ export class ProductsManager extends ObjectFileMapper {
   }
 
   /**
+   * Method to validate fields of a product
+   * @param {Product} _product
+   * @returns {Product} Validated product
+   */
+  static validateProduct(_product) {
+    return {
+      ..._product,
+      price: Number(_product.price),
+      stock: Number(_product.stock),
+    };
+  }
+
+  /**
    * Returns the list of products
    * @returns {Promise<Product[]>} Promise that resolves to the list of products
    */
@@ -58,7 +71,7 @@ export class ProductsManager extends ObjectFileMapper {
 
     const newProduct = {
       ...this.#baseProduct,
-      ..._product,
+      ...ProductsManager.validateProduct(_product),
       id: randomUUID(),
     };
 

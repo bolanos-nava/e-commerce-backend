@@ -5,8 +5,10 @@
     {{#each products}}
       <li class="product">
         <p class="product__data product__title">{{{this.title}}}</p>
-        <p class="product__data product__description">{{{this.description}}}</p>
-        <p class="product__data product__price">${{{this.price}}}</p>
+        <p class="product__data product__description">Descripción:
+          {{{this.description}}}</p>
+        <p class="product__data product__price">Precio: ${{{this.price}}}</p>
+        <p class="product__data product__stock">Stock: {{{this.stock}}}</p>
       </li>
     {{/each}}
   </ul>

@@ -1,15 +1,85 @@
 <main>
   <h1>Productos - tiempo real</h1>
 
-  <ul id="productsList">
-    {{#each products}}
-      <li class="product">
-        <p class="product__data product__title">{{{this.title}}}</p>
-        <p class="product__data product__description">{{{this.description}}}</p>
-        <p class="product__data product__price">${{{this.price}}}</p>
-      </li>
-    {{/each}}
-  </ul>
+  <div class="products-container">
+    <form class="form" id="product-form">
+      <h3>Nuevo producto</h3>
+
+      <div class="form__input-group">
+        <label for="product-form-title">Nombre</label>
+        <input
+          type="text"
+          name="title"
+          id="product-form-title"
+          placeholder="Nombre del producto"
+        />
+      </div>
+
+      <div class="form__input-group">
+        <label for="product-form-category">Categoría</label>
+        <input
+          type="text"
+          name="category"
+          id="product-form-category"
+          placeholder="Categoría del producto"
+        />
+      </div>
+
+      <div class="form__input-group">
+        <label for="product-form-description">Descripción</label>
+        <textarea
+          name="description"
+          id="product-form-description"
+          cols="30"
+          rows="10"
+        ></textarea>
+      </div>
+
+      <div class="form__input-group">
+        <label for="product-form-price">Precio</label>
+        <input
+          type="number"
+          name="price"
+          id="product-form-price"
+          placeholder="Precio del producto"
+        />
+      </div>
+
+      <div class="form__input-group">
+        <label for="product-form-stock">Stock</label>
+        <input
+          type="number"
+          name="stock"
+          id="product-form-stock"
+          placeholder="Cantidad en existencia"
+        />
+      </div>
+
+      <div class="form__input-group">
+        <label for="product-form-code">Código identificador</label>
+        <input
+          type="text"
+          name="code"
+          id="product-form-code"
+          placeholder="Código único identificador"
+        />
+      </div>
+
+      <input id="product-form-btn-submit" type="submit" value="Crear" />
+    </form>
+
+    <ul class="items-list" id="productsList">
+      {{#each products}}
+        <li class="product">
+          <p class="product__data product__title">{{{this.title}}}</p>
+          <p class="product__data product__description">Descripción:
+            {{{this.description}}}</p>
+          <p class="product__data product__price">Precio: ${{{this.price}}}</p>
+          <p class="product__data product__stock">Stock: {{{this.stock}}}</p>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
 </main>
 
 <script src="/socket.io/socket.io.js"></script>
