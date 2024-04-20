@@ -67,8 +67,12 @@ socketServer.on('connection', (socket) => {
 // Middleware for error handling
 // eslint-disable-next-line no-unused-vars
 server.use((error, req, res, next) => {
-  res.status(error.statusCode || 500).send({
+  let { message } = error;
+  if (error.type === 'json') {
+    message = JSON.parse(error.message);
+  }
+  res.status(error.statusCode || 500).json({
     status: 'error',
-    message: error.message || 'Something broke!',
+    message: message || 'Something broke!',
   });
 });

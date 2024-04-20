@@ -4,7 +4,7 @@ export type ObjectType<T = any> = {
 
 export type UUIDType = `${string}-${string}-${string}-${string}`;
 
-export type Product = {
+export type ProductType = {
   id: UUIDType;
   title: string;
   category: string;
@@ -17,11 +17,11 @@ export type Product = {
 };
 
 export type CartProduct = {
-  product: Product['id'];
+  product: ProductType['id'];
   quantity: number;
 };
 
-export type Cart = {
+export type CartType = {
   id: UUIDType;
   products: CartProduct[];
 };

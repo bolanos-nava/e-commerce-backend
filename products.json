@@ -119,5 +119,16 @@
 		"code": "frontend8",
 		"status": true,
 		"thumbnails": []
+	},
+	{
+		"id": "7fd09bc2-59f1-4f8d-85a7-fb5e31a4e7db",
+		"title": "Frontend-sent",
+		"description": "",
+		"category": "frontend",
+		"price": 5000,
+		"stock": 10,
+		"code": "frontend9",
+		"status": true,
+		"thumbnails": []
 	}
 ]

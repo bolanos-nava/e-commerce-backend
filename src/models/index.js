@@ -1,8 +1,10 @@
-import { ProductsManager } from './ProductsManager.js';
+import { Product } from './Product.js';
 
-export * from './ProductsManager.js';
-export * from './CartsManager.js';
+export * from './Product.js';
+export * from './Cart.js';
 
-export default {
-  ProductsManager,
+const models = {
+  Product,
 };
+
+export default models;

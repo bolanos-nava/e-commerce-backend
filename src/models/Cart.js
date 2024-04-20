@@ -3,19 +3,19 @@ import BaseModel from './BaseModel.js';
 // const { default: ObjectFileMapper } = await import('./ObjectFileMapper.js');
 
 /**
- * @typedef {import('./types.d.ts').Cart} Cart
- * @typedef {import('./types.d.ts').CartProduct} CartProduct
- * @typedef {import('./types.d.ts').UUIDType} UUIDType
+ * @typedef {import('./types').CartType} CartType
+ * @typedef {import('./types').CartProduct} CartProduct
+ * @typedef {import('./types').UUIDType} UUIDType
  */
 
-export class CartsManager extends BaseModel {
+export class Cart extends BaseModel {
   constructor(path) {
     super(path, 'Cart');
   }
 
   /**
    * Returns the list of shopping carts
-   * @returns {Promise<Cart[]>} Promise that resolves to the list of shopping carts
+   * @returns {Promise<CartType[]>} Promise that resolves to the list of shopping carts
    */
   async getCarts() {
     return this.fetchAll();
@@ -33,7 +33,7 @@ export class CartsManager extends BaseModel {
 
   /**
    * Creates new shopping cart
-   * @returns {Promise<Cart>} Promise that resolves to the new shopping cart
+   * @returns {Promise<CartType>} Promise that resolves to the new shopping cart
    */
   async createCart() {
     const carts = await this.getCarts();

@@ -1,5 +1,9 @@
+import CartsController from './CartsController.js';
 import ProductsController from './ProductsController.js';
 
-export default {
+const controllers = {
   productsController: new ProductsController(),
+  cartsController: new CartsController(),
 };
+
+export default controllers;

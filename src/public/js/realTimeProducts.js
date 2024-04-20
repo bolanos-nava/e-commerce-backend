@@ -29,6 +29,7 @@ function addProductToFrontend(data) {
   });
 }
 
+const { env } = window;
 const productForm = document.getElementById('product-form');
 productForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -43,16 +44,13 @@ productForm.addEventListener('submit', async (event) => {
   });
 
   try {
-    const response = await fetch(
-      `http://localhost:${env.PORT}/api/v1/products`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ product: newProduct }),
+    const response = await fetch(`${env.API_URL}:${env.PORT}/api/v1/products`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({ product: newProduct }),
+    });
     const jsonResponse = await response.json();
     if (!response.ok) throw Error(jsonResponse.message);
     console.log(jsonResponse);
