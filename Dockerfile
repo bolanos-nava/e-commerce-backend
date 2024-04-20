@@ -7,14 +7,13 @@ FROM node:lts-alpine3.19
 # not when running the container.
 # ENV variables stay in the image after build phase, so we can access them when running the container.
 # To set them up dynamically, we can combine the use of ARGS + ENV
-ARG PORT=8080
-ENV ENV_PORT=$PORT
+# ARG ENVIRONMENT=development
+# ENV ENV=${ENVIRONMENT}
 
 WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
-RUN npm i
+RUN npm i --omit-dev
 
 COPY . .
-EXPOSE ${ENV_PORT}
-CMD PORT=$ENV_PORT npm run start:server
+CMD ["npm", "run", "server"]

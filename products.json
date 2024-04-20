@@ -75,5 +75,49 @@
 		"code": "frontend4",
 		"status": true,
 		"thumbnails": []
+	},
+	{
+		"id": "3e6e1525-e03c-4659-a84c-ca5883ab254f",
+		"title": "Frontend-sent",
+		"description": "",
+		"category": "frontend",
+		"price": 5000,
+		"stock": 10,
+		"code": "frontend5",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "8cd81bce-b9d6-4f25-8a48-ba70a192fbee",
+		"title": "Frontend-sent",
+		"description": "Se me olvidó",
+		"category": "frontend",
+		"price": 5000,
+		"stock": 10,
+		"code": "frontend6",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "55d312e2-9174-492a-a16e-3ee7e0aa8216",
+		"title": "Frontend-sent",
+		"description": "Hola\n",
+		"category": "frontend",
+		"price": 5000,
+		"stock": 10,
+		"code": "frontend7",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "3f3837e9-56c5-4979-845e-9cd69826a980",
+		"title": "Frontend-sent",
+		"description": "Hola\n",
+		"category": "frontend",
+		"price": 5000,
+		"stock": 10,
+		"code": "frontend8",
+		"status": true,
+		"thumbnails": []
 	}
 ]

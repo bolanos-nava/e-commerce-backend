@@ -6,6 +6,9 @@ import handlebars from 'express-handlebars';
 import { viewsRouter, apiRouter } from './routers/index.js';
 import { socketMiddleware } from './utils/index.js';
 
+// Load environment variables
+import { env } from './configs/index.js';
+
 // Initializing Express app
 const server = express();
 
@@ -22,7 +25,6 @@ server.engine(
     extname: '.hbs',
     helpers: {
       json(content) {
-        console.log({ content });
         return JSON.stringify(content);
       },
     },
@@ -31,10 +33,9 @@ server.engine(
 server.set('views', `${path.resolve()}/src/views`);
 server.set('view engine', 'hbs');
 
-const PORT = process.env.PORT || 8080;
-const httpServer = server.listen(PORT, () => {
+const httpServer = server.listen(env.PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${env.PORT}`);
 });
 const socketServer = new Server(httpServer);
 
