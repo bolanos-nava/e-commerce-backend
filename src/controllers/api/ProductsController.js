@@ -1,9 +1,8 @@
-import path from 'node:path';
 import { Product } from '../../models/index.js';
 import BaseController from '../BaseController.js';
 
 export default class ProductsController extends BaseController {
-  product = new Product(`${path.resolve()}/products.json`);
+  product = new Product();
 
   /**
    * Adds actions and sets up routes in the router

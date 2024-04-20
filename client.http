@@ -2,7 +2,7 @@
 GET http://localhost:8080/api/v1/products HTTP/1.1
 
 ### GET A PRODUCT
-GET http://localhost:8080/api/v1/products/32b514f0-231b-438f-8845-28ce1469410a HTTP/1.1
+GET http://localhost:8080/api/v1/products/53a2ef77-3cb3-479e-8da0-faff80fa5a71 HTTP/1.1
 
 ### ADD A NEW PRODUCT
 POST http://localhost:8080/api/v1/products HTTP/1.1
@@ -19,23 +19,8 @@ Content-Type: application/json
     }
 }
 
-### 
-http://54.82.215.2:8080/api/v1/products HTTP/1.1
-Content-Type: application/json
-
-{
-    "product": {
-        "title": "Productazo",
-        "category": "",
-        "description": "Otro más",
-        "price": 10,
-        "code": "nuevo4",
-        "stock": 50
-    }
-}
-
 ### UPDATE A PRODUCT
-PUT http://localhost:8080/api/v1/products/66f0ff56-183e-49b6-b0db-b2bfebf380f7 HTTP/1.1
+PUT http://localhost:8080/api/v1/products/53a2ef77-3cb3-479e-8da0-faff80fa5a71 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -47,29 +32,15 @@ Content-Type: application/json
 }
 
 ### DELETE A PRODUCT
-DELETE http://localhost:8080/api/v1/products/66f0ff56-183e-49b6-b0db-b2bfebf380f7 HTTP/1.1
+DELETE http://localhost:8080/api/v1/products/53a2ef77-3cb3-479e-8da0-faff80fa5a71 HTTP/1.1
 
 
 
 ### GET PRODUCTS OF A CART
-GET http://localhost:8080/api/v1/carts/c17b251c-d5a0-4fce-b87a-4dcefa4fce23 HTTP/1.1
+GET http://localhost:8080/api/v1/carts/5fe324b4-c097-4da9-9218-62412eea28bc HTTP/1.1
 
 ### ADDS NEW CART
 POST http://localhost:8080/api/v1/carts HTTP/1.1
-Content-Type: application/json
-
-{
-    "cartProducts": [
-        {
-            "product": "66f0ff56-183e-49b6-b0db-b2bfebf380f7",
-            "quantity": 10
-        },
-        {
-            "product": "747f4a8f-e8f8-4833-9ccf-e8a668679722",
-            "quantity": 20
-        }
-    ]
-}
 
 ### ADDS A PRODUCT WITH ITS QUANTITY TO A CART
-POST http://localhost:8080/api/v1/carts/c17b251c-d5a0-4fce-b87a-4dcefa4fce23/products/66f0ff56-183e-49b6-b0db-b2bfebf380f7 HTTP/1.1
+POST http://localhost:8080/api/v1/carts/c17b251c-d5a0-4fce-b87a-4dcefa4fce23/products/a08675e4-57ab-45c1-a460-6d5061a74a60 HTTP/1.1

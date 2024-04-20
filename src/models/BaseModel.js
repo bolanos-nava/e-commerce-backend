@@ -111,7 +111,7 @@ export default class BaseModel {
    */
   async fetchOne(id) {
     // Throw error if id is undefined
-    if (!id) throw new ParameterError('Invalid id');
+    if (!id) throw new ParameterError('Id not present in request');
 
     await this.fetchAll();
     return this.findById(id).foundResource;

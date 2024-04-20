@@ -1,10 +1,7 @@
+import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import BaseModel from './BaseModel.js';
-import {
-  AttributeError,
-  DuplicateResourceError,
-  ParameterError,
-} from '../customErrors/index.js';
+import { AttributeError } from '../customErrors/index.js';
 
 /**
  * @typedef {import('./types').ProductType} ProductType
@@ -28,8 +25,8 @@ export class Product extends BaseModel {
     thumbnails: [],
   };
 
-  constructor(path) {
-    super(path, 'Product');
+  constructor() {
+    super(`${path.resolve()}/products.json`, 'Product');
   }
 
   /**
@@ -128,7 +125,7 @@ export class Product extends BaseModel {
   /**
    * Updates a product
    * @param {UUIDType} id UUID of the product
-   * @param {Promise<Partial<ProductType>>} newData New data to update the product with
+   * @param {Partial<ProductType>} newData New data to update the product with
    * @returns {Promise<ProductType>} Promise that resolves to the updated product
    */
   async updateProduct(id, newData) {

@@ -11,17 +11,6 @@
 		"thumbnails": []
 	},
 	{
-		"id": "53a2ef77-3cb3-479e-8da0-faff80fa5a71",
-		"title": "Agregado",
-		"description": "Agregado en tiempo real",
-		"category": "category1",
-		"price": 100,
-		"stock": 10,
-		"code": "nuevo12ade326c-e95d-4bc8-9726-b608c272a007",
-		"status": true,
-		"thumbnails": []
-	},
-	{
 		"id": "a08675e4-57ab-45c1-a460-6d5061a74a60",
 		"title": "Agregado",
 		"description": "Agregado en tiempo real",
@@ -128,6 +117,17 @@
 		"price": 5000,
 		"stock": 10,
 		"code": "frontend9",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "b618d65b-87d7-40b2-a7d3-f828d3dcd364",
+		"title": "Nuevo producto por websocket",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 5000000,
+		"stock": 50,
+		"code": "nuevo1",
 		"status": true,
 		"thumbnails": []
 	}

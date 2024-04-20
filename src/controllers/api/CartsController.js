@@ -1,9 +1,8 @@
-import path from 'node:path';
-import { Cart } from '../../models/index.js';
+import { Cart, Product } from '../../models/index.js';
 import BaseController from '../BaseController.js';
 
 export default class CartsController extends BaseController {
-  cart = new Cart(`${path.resolve()}/src/carts.json`);
+  cart = new Cart();
 
   /**
    * Adds actions and sets up routes in the router
@@ -21,7 +20,7 @@ export default class CartsController extends BaseController {
         },
         {
           spec: {
-            path: '/:productId',
+            path: '/:cartId',
             method: 'GET',
           },
           action: this.show.bind(this),
@@ -61,10 +60,10 @@ export default class CartsController extends BaseController {
   async show(req, res, next) {
     try {
       const { cartId } = req.params;
-      const cart = await this.cart.getCartById(cartId);
+      const { products } = await this.cart.getCartById(cartId);
       res.json({
         status: 'success',
-        payload: cart,
+        payload: products,
       });
     } catch (error) {
       next(error);
@@ -78,13 +77,47 @@ export default class CartsController extends BaseController {
     try {
       const { cartId, productId } = req.params;
       //   const { quantity } = req.body;
-      const newCart = await this.cart.addToCart(cartId, {
+
+      const product = new Product();
+
+      // Checks if product exists. Throws error if doesn't
+      await product.getProductById(productId);
+
+      const cartProducts = await this.cart.getCartProducts(cartId);
+
+      const productToUpdateIdx = cartProducts.findIndex(
+        ({ product: prodId }) => prodId === productId,
+      );
+
+      const newProduct = {
         product: productId,
         quantity: 1,
-      });
+      };
+      let newCartProducts;
+      if (productToUpdateIdx === -1) {
+        cartProducts.push(newProduct);
+        newCartProducts = cartProducts;
+      } else {
+        const { quantity: oldQuantity } = cartProducts[productToUpdateIdx];
+        const { quantity: newQuantity } = newProduct;
+        // eslint-disable-next-line no-plusplus
+        newProduct.quantity = oldQuantity + newQuantity;
+        newCartProducts = [
+          ...cartProducts.slice(0, productToUpdateIdx),
+          newProduct,
+          ...cartProducts.slice(productToUpdateIdx + 1),
+        ];
+      }
+
+      const newCart = {
+        id: cartId,
+        products: newCartProducts,
+      };
+      const updatedCart = await this.cart.updateCart(cartId, newCart);
+
       res.json({
         status: 'updated',
-        payload: newCart,
+        payload: updatedCart,
       });
     } catch (error) {
       next(error);
