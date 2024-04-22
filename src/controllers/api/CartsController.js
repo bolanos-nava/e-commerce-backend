@@ -100,7 +100,6 @@ export default class CartsController extends BaseController {
       } else {
         const { quantity: oldQuantity } = cartProducts[productToUpdateIdx];
         const { quantity: newQuantity } = newProduct;
-        // eslint-disable-next-line no-plusplus
         newProduct.quantity = oldQuantity + newQuantity;
         newCartProducts = [
           ...cartProducts.slice(0, productToUpdateIdx),
