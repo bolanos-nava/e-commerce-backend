@@ -1,7 +1,4 @@
-import path from 'node:path';
 import { Router } from 'express';
-import { Product } from '../models/index.js';
-import env from '../configs/env-loader.js';
 import viewsController from '../controllers/views/index.js';
 
 export const viewsRouter = Router();

@@ -1,3 +1,3 @@
-import env from './env-loader.js';
+import env from './envLoader.js';
 
 export { env };

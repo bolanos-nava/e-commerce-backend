@@ -7,11 +7,16 @@ export default class BaseController {
     this.actions.forEach((_action) => {
       const {
         spec: { path, method: httpMethod },
-        action,
+        actions,
       } = _action;
 
-      // Sets up the action for the method defined in spec
-      router[httpMethod.toLowerCase()](path, action);
+      if (Array.isArray(actions)) {
+        // Sets up several actions for the same route (e.g. if you have middlewares)
+        router[httpMethod.toLowerCase()](path, ...actions);
+      } else {
+        // Sets up the action for the method defined in spec
+        router[httpMethod.toLowerCase()](path, actions);
+      }
     });
   }
 }

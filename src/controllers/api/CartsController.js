@@ -16,21 +16,21 @@ export default class CartsController extends BaseController {
             path: '/',
             method: 'POST',
           },
-          action: this.create.bind(this),
+          actions: this.create.bind(this),
         },
         {
           spec: {
             path: '/:cartId',
             method: 'GET',
           },
-          action: this.show.bind(this),
+          actions: this.show.bind(this),
         },
         {
           spec: {
             path: '/:cartId/products/:productId',
             method: 'POST',
           },
-          action: this.update.bind(this),
+          actions: this.update.bind(this),
         },
       ],
     );

@@ -16,35 +16,35 @@ export default class ProductsController extends BaseController {
             path: '/',
             method: 'GET',
           },
-          action: this.index.bind(this),
+          actions: this.index.bind(this),
         },
         {
           spec: {
             path: '/',
             method: 'POST',
           },
-          action: this.create.bind(this),
+          actions: this.create.bind(this),
         },
         {
           spec: {
             path: '/:productId',
             method: 'GET',
           },
-          action: this.show.bind(this),
+          actions: this.show.bind(this),
         },
         {
           spec: {
             path: '/:productId',
             method: 'PUT',
           },
-          action: this.update.bind(this),
+          actions: this.update.bind(this),
         },
         {
           spec: {
             path: '/:productId',
             method: 'DELETE',
           },
-          action: this.delete.bind(this),
+          actions: this.delete.bind(this),
         },
       ],
     );
