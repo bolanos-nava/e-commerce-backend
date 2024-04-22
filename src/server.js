@@ -5,7 +5,11 @@ import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
 
 import { viewsRouter, apiRouter } from './routers/index.js';
-import { errorMiddleware, socketMiddleware } from './middlewares/index.js';
+import {
+  errorMiddleware,
+  socketMiddleware,
+  guardRoute,
+} from './middlewares/index.js';
 
 // INITIALIZES SERVER
 const server = express();
@@ -27,6 +31,7 @@ const socketServer = new Server(httpServer);
 server.use('/', viewsRouter);
 server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
 
-// ERROR HANDLING MIDDLEWARE
+// ERROR HANDLING MIDDLEWARES
+server.use(guardRoute);
 // must be after all the other .use() calls
 server.use(errorMiddleware);

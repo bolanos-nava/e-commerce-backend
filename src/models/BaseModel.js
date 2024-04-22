@@ -6,8 +6,8 @@ import {
 import { capitalize } from '../utils/index.js';
 
 /**
- * @typedef {import('./types').ObjectType} ObjectType
- * @typedef {import('./types').UUIDType} UUIDType
+ * @typedef {import('../types').ObjectType} ObjectType
+ * @typedef {import('../types').UUIDType} UUIDType
  */
 
 /**
@@ -40,8 +40,7 @@ export default class BaseModel {
   }
 
   /**
-   * Reads JSON file and parses it. In the case of not receiving a valid JSON,
-   * returns an empty array
+   * Reads JSON file and parses it. In the case of not receiving a valid JSON, returns an empty array
    * @returns {Promise<ObjectType[] | []>}
    */
   async #getFileAsObject() {
@@ -54,8 +53,7 @@ export default class BaseModel {
   }
 
   /**
-   * Converts object to JSON and writes it to the file,
-   * wiping existing content.
+   * Converts object to JSON and writes it to the file, wiping existing content.
    * @throws Throws error if write fails
    * @param {ObjectType} data Data to write to the file specified by the path parameter of the class
    */
@@ -106,7 +104,7 @@ export default class BaseModel {
 
   /**
    * Returns the resource with matching id
-   * @param {number} id Id of the resource to fetch
+   * @param {UUIDType} id Id of the resource to fetch
    * @returns {Promise<ObjectType>} Promise that resolves to the fetched resource
    */
   async fetchOne(id) {

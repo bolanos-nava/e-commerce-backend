@@ -4,8 +4,8 @@ import BaseModel from './BaseModel.js';
 import { AttributeError } from '../customErrors/index.js';
 
 /**
- * @typedef {import('./types').ProductType} ProductType
- * @typedef {import('./types').UUIDType} UUIDType
+ * @typedef {import('../types').ProductType} ProductType
+ * @typedef {import('../types').UUIDType} UUIDType
  */
 
 export class Product extends BaseModel {

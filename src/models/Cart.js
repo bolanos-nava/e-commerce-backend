@@ -4,9 +4,9 @@ import BaseModel from './BaseModel.js';
 // const { default: ObjectFileMapper } = await import('./ObjectFileMapper.js');
 
 /**
- * @typedef {import('./types').CartType} CartType
- * @typedef {import('./types').CartProduct} CartProduct
- * @typedef {import('./types').UUIDType} UUIDType
+ * @typedef {import('../types').CartType} CartType
+ * @typedef {import('../types').CartProduct} CartProduct
+ * @typedef {import('../types').UUIDType} UUIDType
  */
 
 export class Cart extends BaseModel {
@@ -14,16 +14,14 @@ export class Cart extends BaseModel {
     super(`${path.resolve()}/carts.json`, 'Cart');
   }
 
-  /**
-   * Returns the list of shopping carts
+  /** Returns the list of shopping carts
    * @returns {Promise<CartType[]>} Promise that resolves to the list of shopping carts
    */
   async getCarts() {
     return this.fetchAll();
   }
 
-  /**
-   * Returns the data of a shopping cart
+  /** Returns the data of a shopping cart
    * @param {UUIDType} id UUID of product
    * @returns {Promise<CartType>} Promise that resolves to the shopping cart
    */
@@ -31,8 +29,7 @@ export class Cart extends BaseModel {
     return this.fetchOne(id);
   }
 
-  /**
-   * Creates new shopping cart
+  /** Creates new shopping cart
    * @returns {Promise<CartType>} Promise that resolves to the new shopping cart
    */
   async createCart() {
@@ -48,8 +45,7 @@ export class Cart extends BaseModel {
     return newCart;
   }
 
-  /**
-   * Updates a cart
+  /** Updates a cart
    * @param {UUIDType} cartId UUID of the cart
    * @param {CartType} newData New data of the cart
    * @returns {Promise<CartType>} Promise that resolves to the updated cart

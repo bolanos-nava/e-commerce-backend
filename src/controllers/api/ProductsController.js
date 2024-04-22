@@ -1,12 +1,15 @@
 import { Product } from '../../models/index.js';
 import BaseController from '../BaseController.js';
 
+/**
+ * @typedef {import('../../types').Express} Express
+ */
+
 export default class ProductsController extends BaseController {
   product = new Product();
 
   /**
-   * Adds actions and sets up routes in the router
-   * @param {Router} router
+   * @type {BaseController['addRoutes']}
    */
   addRoutes(router) {
     this.actions.push(
@@ -16,47 +19,47 @@ export default class ProductsController extends BaseController {
             path: '/',
             method: 'GET',
           },
-          actions: this.index.bind(this),
+          actions: this.index,
         },
         {
           spec: {
             path: '/',
             method: 'POST',
           },
-          actions: this.create.bind(this),
+          actions: this.create,
         },
         {
           spec: {
             path: '/:productId',
             method: 'GET',
           },
-          actions: this.show.bind(this),
+          actions: this.show,
         },
         {
           spec: {
             path: '/:productId',
             method: 'PUT',
           },
-          actions: this.update.bind(this),
+          actions: this.update,
         },
         {
           spec: {
             path: '/:productId',
             method: 'DELETE',
           },
-          actions: this.delete.bind(this),
+          actions: this.delete,
         },
       ],
     );
 
-    // Adds the actions to the router
     this.setupActions(router);
   }
 
   /**
    * Returns list of products
+   * @type {Express['RequestHandler']}
    */
-  async index(req, res, next) {
+  index = async (req, res, next) => {
     try {
       const { limit } = req.query;
       let products = await this.product.getProducts();
@@ -72,12 +75,30 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
+  // async index(req, res, next) {
+  //   try {
+  //     const { limit } = req.query;
+  //     let products = await this.product.getProducts();
+  //     //   let products = await req.productsManager.getProducts();
+  //     if (limit && !Number.isNaN(limit)) {
+  //       const limt = Number(limit);
+  //       products = products.slice(0, limt);
+  //     }
+  //     res.json({
+  //       status: 'success',
+  //       payload: products,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 
   /**
    * Creates a new product
+   * @type {Express['RequestHandler']}
    */
-  async create(req, res, next) {
+  create = async (req, res, next) => {
     try {
       const { product } = req.body;
       // product.code += randomUUID();
@@ -94,12 +115,13 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Returns data of a single product
+   * @type {Express['RequestHandler']}
    */
-  async show(req, res, next) {
+  show = async (req, res, next) => {
     try {
       const { productId } = req.params;
       const product = await this.product.getProductById(productId);
@@ -110,12 +132,13 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Updates a single product
+   * @type {Express['RequestHandler']}
    */
-  async update(req, res, next) {
+  update = async (req, res, next) => {
     try {
       const { productId } = req.params;
       const { product: newData } = req.body;
@@ -130,12 +153,13 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Deletes a single product
+   * @type {Express['RequestHandler']}
    */
-  async delete(req, res, next) {
+  delete = async (req, res, next) => {
     try {
       const { productId } = req.params;
       const deletedProduct = await this.product.deleteProduct(productId);
@@ -146,5 +170,5 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

@@ -1,13 +1,16 @@
 import { Cart, Product } from '../../models/index.js';
 import BaseController from '../BaseController.js';
 
+/**
+ * @typedef {import('../../types').Express} Express
+ * @typedef {import('../../types').CartType} CartType
+ * @typedef {import('../../types').CartProduct} CartProduct
+ * @typedef {import('../../types').UUIDType} UUIDType
+ */
 export default class CartsController extends BaseController {
   cart = new Cart();
 
-  /**
-   * Adds actions and sets up routes in the router
-   * @param {Router} router
-   */
+  /** @type {BaseController['addRoutes']} */
   addRoutes(router) {
     this.actions.push(
       ...[
@@ -16,21 +19,21 @@ export default class CartsController extends BaseController {
             path: '/',
             method: 'POST',
           },
-          actions: this.create.bind(this),
+          actions: this.create,
         },
         {
           spec: {
             path: '/:cartId',
             method: 'GET',
           },
-          actions: this.show.bind(this),
+          actions: this.show,
         },
         {
           spec: {
             path: '/:cartId/products/:productId',
             method: 'POST',
           },
-          actions: this.update.bind(this),
+          actions: this.update,
         },
       ],
     );
@@ -39,10 +42,10 @@ export default class CartsController extends BaseController {
     this.setupActions(router);
   }
 
-  /**
-   * Creates a new cart
+  /** Creates a new cart
+   * @type {Express['RequestHandler']}
    */
-  async create(req, res, next) {
+  create = async (req, res, next) => {
     try {
       const newCart = await this.cart.createCart();
       res.status(201).json({
@@ -52,12 +55,12 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  /**
-   * Returns data of a single cart
+  /** Returns data of a single cart
+   * @type {Express['RequestHandler']}
    */
-  async show(req, res, next) {
+  show = async (req, res, next) => {
     try {
       const { cartId } = req.params;
       const { products } = await this.cart.getCartById(cartId);
@@ -68,13 +71,14 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  /**
-   * Updates products in a cart
+  /** Updates products in a cart
+   * @type {Express['RequestHandler']}
    */
-  async update(req, res, next) {
+  update = async (req, res, next) => {
     try {
+      /** @type {{cartId: UUIDType, productId: UUIDType}} */
       const { cartId, productId } = req.params;
       //   const { quantity } = req.body;
 
@@ -83,16 +87,19 @@ export default class CartsController extends BaseController {
       // Checks if product exists. Throws error if doesn't
       await product.getProductById(productId);
 
-      const cartProducts = await this.cart.getCartProducts(cartId);
+      const { products: cartProducts } = await this.cart.getCartById(cartId);
 
       const productToUpdateIdx = cartProducts.findIndex(
         ({ product: prodId }) => prodId === productId,
       );
 
+      /** @type {CartProduct} */
       const newProduct = {
         product: productId,
         quantity: 1,
       };
+
+      /** @type {CartProduct[]} */
       let newCartProducts;
       if (productToUpdateIdx === -1) {
         cartProducts.push(newProduct);
@@ -108,6 +115,7 @@ export default class CartsController extends BaseController {
         ];
       }
 
+      /** @type {CartType} */
       const newCart = {
         id: cartId,
         products: newCartProducts,
@@ -121,5 +129,5 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

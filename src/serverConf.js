@@ -2,6 +2,13 @@ import path from 'node:path';
 import express from 'express';
 import hbs from 'express-handlebars';
 
+/**
+ * @typedef {import('./types').Express} Express
+ */
+
+/**
+ * Class to execute initial server configurations, like general middlewares and template engines
+ */
 export default class ServerConfiguration {
   static BASE_DIR = path.resolve();
   static PATHS = {
@@ -11,10 +18,17 @@ export default class ServerConfiguration {
 
   server;
 
+  /**
+   * Instances a new ServerConfiguration object
+   * @param {Express} server Express server instance
+   */
   constructor(server) {
     this.server = server;
   }
 
+  /**
+   * Sets up initial middlewares
+   */
   setupMiddlewares() {
     // Interprets JSON requests
     this.server.use(express.json());
@@ -24,6 +38,9 @@ export default class ServerConfiguration {
     this.server.use(express.static(ServerConfiguration.PATHS.PUBLIC));
   }
 
+  /**
+   * Sets up the template engines to use
+   */
   setupTemplateEngines() {
     const hbsHelpers = {
       json(content) {

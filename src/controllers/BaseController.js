@@ -1,9 +1,20 @@
+/* eslint-disable class-methods-use-this */
+/**
+ * @typedef {import('../types').Express} Express
+ */
+
+/**
+ *
+ * @abstract
+ */
 export default class BaseController {
   actions = [];
-  router;
 
+  /**
+   * Adds routes and their actions to the router
+   * @param {Express['Router']} router
+   */
   setupActions(router) {
-    this.router = router;
     this.actions.forEach((_action) => {
       const {
         spec: { path, method: httpMethod },
@@ -19,4 +30,10 @@ export default class BaseController {
       }
     });
   }
+
+  /**
+   * Defines every route with its path and actions, and adds them to the router
+   * @param {Express['Router']} router Router to add routes
+   */
+  addRoutes(router) {}
 }
