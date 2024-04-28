@@ -3,7 +3,7 @@ import { env } from '../../configs/index.js';
 import { Product } from '../../models/index.js';
 
 /**
- * @typedef {import('../../types').Express} Express
+ * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').ObjectType} ObjectType
  * @typedef {{path: string, template: string, context: ObjectType}} View
  * @typedef {() => ObjectType | Promise<ObjectType>} ViewBodyGenerator
@@ -14,7 +14,7 @@ export default class ViewsController {
 
   /**
    * Adds views to the router
-   * @param {Express['Router']} router Router for the views
+   * @param {ExpressType['Router']} router Router for the views
    */
   addViews = async (router) => {
     /** @type {View[]} */
@@ -37,7 +37,7 @@ export default class ViewsController {
   };
 
   /** Renders view
-   * @param {Express['Router']} router Views router
+   * @param {ExpressType['Router']} router Views router
    * @param {View} context Context to render the view with
    */
   // eslint-disable-next-line class-methods-use-this

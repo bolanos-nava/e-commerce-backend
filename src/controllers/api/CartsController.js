@@ -2,7 +2,7 @@ import { Cart, Product } from '../../models/index.js';
 import BaseController from '../BaseController.js';
 
 /**
- * @typedef {import('../../types').Express} Express
+ * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').CartType} CartType
  * @typedef {import('../../types').CartProduct} CartProduct
  * @typedef {import('../../types').UUIDType} UUIDType
@@ -43,7 +43,7 @@ export default class CartsController extends BaseController {
   }
 
   /** Creates a new cart
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandler']}
    */
   create = async (req, res, next) => {
     try {
@@ -58,7 +58,7 @@ export default class CartsController extends BaseController {
   };
 
   /** Returns data of a single cart
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandler']}
    */
   show = async (req, res, next) => {
     try {
@@ -74,7 +74,7 @@ export default class CartsController extends BaseController {
   };
 
   /** Updates products in a cart
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandler']}
    */
   update = async (req, res, next) => {
     try {

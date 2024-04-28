@@ -1,5 +1,5 @@
 import {
-  Express,
+  Express as ExpressJS,
   Request,
   Response,
   NextFunction,
@@ -19,8 +19,8 @@ export type WSServer = Server;
 
 type RequestWS = Request & { socketServer: WSServer };
 
-export type Express = {
-  Express: Express;
+export type ExpressType = {
+  Express: ExpressJS;
   Request: Request;
   RequestWS: RequestWS;
   Response: Response;

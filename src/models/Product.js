@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import BaseModel from './BaseModel.js';
-import { AttributeError } from '../customErrors/index.js';
+import { validateDuplicatedCode } from '../schemas/zod/index.js';
 
 /**
  * @typedef {import('../types').ProductType} ProductType
@@ -30,54 +30,6 @@ export class Product extends BaseModel {
   }
 
   /**
-   * Method to validate fields of a product
-   * @param {ProductType} _product
-   * @returns {ProductType} Validated product
-   */
-  static validateProduct(_product, products) {
-    const product = {
-      ..._product,
-      price: Number(_product.price),
-      stock: Number(_product.stock),
-    };
-    const errorMessages = [];
-
-    const codeAlreadyExists = products.some((p) => p.code === product.code);
-    if (codeAlreadyExists) {
-      errorMessages.push(`Product with code ${product.code} already exists`);
-    }
-
-    ['price', 'stock'].forEach((property) => {
-      const validations = [
-        {
-          check: Number.isNaN(product[property]),
-          message: `${property} should be a number`,
-        },
-        {
-          check: product[property] === 0,
-          message: `${property} shouldn't be 0`,
-        },
-      ];
-
-      validations.forEach(({ check, message }) => {
-        if (check) errorMessages.push(message);
-      });
-    });
-
-    ['title', 'description', 'category', 'code'].forEach((property) => {
-      if (!product[property]) {
-        errorMessages.push(`${property} shouldn't be empty`);
-      }
-    });
-
-    if (errorMessages.length) {
-      throw new AttributeError(JSON.stringify(errorMessages));
-    }
-
-    return product;
-  }
-
-  /**
    * Returns the list of products
    * @returns {Promise<ProductType[]>} Promise that resolves to the list of products
    */
@@ -96,16 +48,15 @@ export class Product extends BaseModel {
 
   /**
    * Creates a new product
-   * @param {ProductType} _product Data of the product to create
+   * @param {ProductType} product Data of the product to create
    * @returns {Promise<ProductType>} Promise that resolves to the new product
    */
-  async createProduct(_product) {
+  async createProduct(product) {
     const products = await this.getProducts();
 
     const newProduct = {
-      ...this.#baseProduct,
-      ...Product.validateProduct(_product, products),
       id: randomUUID(),
+      ...validateDuplicatedCode(product, products),
     };
 
     products.push(newProduct);
@@ -125,10 +76,19 @@ export class Product extends BaseModel {
   /**
    * Updates a product
    * @param {UUIDType} id UUID of the product
-   * @param {Partial<ProductType>} newData New data to update the product with
+   * @param {Partial<ProductType>} _newData New data to update the product with
    * @returns {Promise<ProductType>} Promise that resolves to the updated product
    */
-  async updateProduct(id, newData) {
+  async updateProduct(id, _newData) {
+    const products = await this.getProducts();
+
+    const newData = {
+      ..._newData,
+      ...(_newData.code
+        ? validateDuplicatedCode({ id, ..._newData }, products)
+        : {}),
+    };
+
     return this.updateOne(id, newData);
   }
 }

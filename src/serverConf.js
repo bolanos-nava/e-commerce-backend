@@ -3,7 +3,7 @@ import express from 'express';
 import hbs from 'express-handlebars';
 
 /**
- * @typedef {import('./types').Express} Express
+ * @typedef {import('./types').ExpressType} ExpressType
  */
 
 /**
@@ -20,7 +20,7 @@ export default class ServerConfiguration {
 
   /**
    * Instances a new ServerConfiguration object
-   * @param {Express} server Express server instance
+   * @param {ExpressType} server Express server instance
    */
   constructor(server) {
     this.server = server;

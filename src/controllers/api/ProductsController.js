@@ -1,8 +1,11 @@
+import { AttributeError } from '../../customErrors/AttributeError.js';
 import { Product } from '../../models/index.js';
+import { ProductRequestSchema } from '../../schemas/zod/productValidator.zod.js';
 import BaseController from '../BaseController.js';
 
 /**
- * @typedef {import('../../types').Express} Express
+ * @typedef {import('../../types').ExpressType} ExpressType
+ * @typedef {import('../../types').ProductType} ProductType
  */
 
 export default class ProductsController extends BaseController {
@@ -57,7 +60,7 @@ export default class ProductsController extends BaseController {
 
   /**
    * Returns list of products
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandler']}
    */
   index = async (req, res, next) => {
     try {
@@ -76,37 +79,25 @@ export default class ProductsController extends BaseController {
       next(error);
     }
   };
-  // async index(req, res, next) {
-  //   try {
-  //     const { limit } = req.query;
-  //     let products = await this.product.getProducts();
-  //     //   let products = await req.productsManager.getProducts();
-  //     if (limit && !Number.isNaN(limit)) {
-  //       const limt = Number(limit);
-  //       products = products.slice(0, limt);
-  //     }
-  //     res.json({
-  //       status: 'success',
-  //       payload: products,
-  //     });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
 
   /**
    * Creates a new product
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandlerWS']}
    */
   create = async (req, res, next) => {
     try {
-      const { product } = req.body;
+      const { product: reqProduct } = req.body;
       // product.code += randomUUID();
+
+      const product = ProductRequestSchema.parse({
+        ...reqProduct,
+        status: true,
+      });
+
       const newProduct = await this.product.createProduct(product);
 
       // Emitting the new product to the products socket
-      const { socketServer } = req;
-      socketServer.emit('new_product', newProduct);
+      req.socketServer.emit('new_product', newProduct);
 
       res.status(201).json({
         status: 'created',
@@ -119,12 +110,13 @@ export default class ProductsController extends BaseController {
 
   /**
    * Returns data of a single product
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandler']}
    */
   show = async (req, res, next) => {
     try {
       const { productId } = req.params;
       const product = await this.product.getProductById(productId);
+
       res.json({
         status: 'success',
         payload: product,
@@ -136,16 +128,19 @@ export default class ProductsController extends BaseController {
 
   /**
    * Updates a single product
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandler']}
    */
   update = async (req, res, next) => {
     try {
       const { productId } = req.params;
-      const { product: newData } = req.body;
+      const { product: _newData } = req.body;
+
+      const newData = ProductRequestSchema.partial().parse(_newData);
       const updatedProduct = await this.product.updateProduct(
         productId,
         newData,
       );
+
       res.json({
         status: 'updated',
         payload: updatedProduct,
@@ -157,7 +152,7 @@ export default class ProductsController extends BaseController {
 
   /**
    * Deletes a single product
-   * @type {Express['RequestHandler']}
+   * @type {ExpressType['RequestHandler']}
    */
   delete = async (req, res, next) => {
     try {

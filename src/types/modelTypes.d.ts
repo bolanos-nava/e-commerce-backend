@@ -1,3 +1,5 @@
+import { UUIDType } from './generalTypes';
+
 export type ProductType = {
   id: UUIDType;
   title: string;
