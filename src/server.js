@@ -1,5 +1,6 @@
 import express from 'express';
 import { Server } from 'socket.io';
+import mongoose from 'mongoose';
 
 import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
@@ -26,6 +27,18 @@ const httpServer = server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 const socketServer = new Server(httpServer);
+
+// SET UP MONGOOSE
+const { DB_HOST, DB_PORT, DB_NAME } = env;
+mongoose.connect(`${DB_HOST}:${DB_PORT}/${DB_NAME}`);
+mongoose.connection.on('open', () =>
+  console.log(
+    `Connected successfully to ${DB_NAME} db on URL ${DB_HOST}:${DB_PORT}`,
+  ),
+);
+mongoose.connection.on('error', () =>
+  console.log('Failed to connect to database'),
+);
 
 // ROUTERS
 server.use('/', viewsRouter);

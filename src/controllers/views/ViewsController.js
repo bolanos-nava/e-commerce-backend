@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { env } from '../../configs/index.js';
-import { Product } from '../../models/index.js';
+import { Product } from '../../daos/filesystem/Product.fs.dao.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType

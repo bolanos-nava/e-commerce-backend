@@ -1,7 +1,8 @@
-import { AttributeError } from '../../customErrors/AttributeError.js';
-import { Product } from '../../models/index.js';
-import { ProductRequestSchema } from '../../schemas/zod/productValidator.zod.js';
+/* eslint-disable class-methods-use-this */
+import models from '../../models/index.js';
 import BaseController from '../BaseController.js';
+
+import { ParameterError } from '../../customErrors/ParameterError.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -9,8 +10,6 @@ import BaseController from '../BaseController.js';
  */
 
 export default class ProductsController extends BaseController {
-  product = new Product();
-
   /**
    * @type {BaseController['addRoutes']}
    */
@@ -36,27 +35,34 @@ export default class ProductsController extends BaseController {
             path: '/:productId',
             method: 'GET',
           },
-          actions: this.show,
+          actions: [this.invalidIdError, this.show],
         },
         {
           spec: {
             path: '/:productId',
             method: 'PUT',
           },
-          actions: this.update,
+          actions: [this.invalidIdError, this.update],
         },
         {
           spec: {
             path: '/:productId',
             method: 'DELETE',
           },
-          actions: this.delete,
+          actions: [this.invalidIdError, this.delete],
         },
       ],
     );
 
     this.setupActions(router);
   }
+
+  invalidIdError = (req, res, next) => {
+    const { productId } = req.params;
+
+    if (!productId) throw new ParameterError('Id not present in request');
+    next();
+  };
 
   /**
    * Returns list of products
@@ -65,12 +71,8 @@ export default class ProductsController extends BaseController {
   index = async (req, res, next) => {
     try {
       const { limit } = req.query;
-      let products = await this.product.getProducts();
-      //   let products = await req.productsManager.getProducts();
-      if (limit && !Number.isNaN(limit)) {
-        const limt = Number(limit);
-        products = products.slice(0, limt);
-      }
+      const products = await models.Product.find({}, {}, { limit });
+
       res.json({
         status: 'success',
         payload: products,
@@ -86,22 +88,19 @@ export default class ProductsController extends BaseController {
    */
   create = async (req, res, next) => {
     try {
-      const { product: reqProduct } = req.body;
+      const { product } = req.body;
       // product.code += randomUUID();
 
-      const product = ProductRequestSchema.parse({
-        ...reqProduct,
-        status: true,
-      });
+      const newProduct = new models.Product(product);
+      await newProduct.productValidator();
+      const savedResponse = await newProduct.save();
 
-      const newProduct = await this.product.createProduct(product);
-
-      // Emitting the new product to the products socket
-      req.socketServer.emit('new_product', newProduct);
+      // Emitting the new product to the products socket to update the clients in real-time
+      req.socketServer.emit('new_product', savedResponse);
 
       res.status(201).json({
         status: 'created',
-        payload: newProduct,
+        payload: savedResponse,
       });
     } catch (error) {
       next(error);
@@ -115,7 +114,8 @@ export default class ProductsController extends BaseController {
   show = async (req, res, next) => {
     try {
       const { productId } = req.params;
-      const product = await this.product.getProductById(productId);
+
+      const product = await models.Product.findByIdAndThrow(productId);
 
       res.json({
         status: 'success',
@@ -135,15 +135,14 @@ export default class ProductsController extends BaseController {
       const { productId } = req.params;
       const { product: _newData } = req.body;
 
-      const newData = ProductRequestSchema.partial().parse(_newData);
-      const updatedProduct = await this.product.updateProduct(
-        productId,
-        newData,
-      );
+      const product = await models.Product.findByIdAndThrow(productId);
+      const newProduct = Object.assign(product, _newData);
+      await newProduct.productValidator(true);
+      const savedResponse = await newProduct.save();
 
       res.json({
         status: 'updated',
-        payload: updatedProduct,
+        payload: savedResponse,
       });
     } catch (error) {
       next(error);
@@ -157,10 +156,12 @@ export default class ProductsController extends BaseController {
   delete = async (req, res, next) => {
     try {
       const { productId } = req.params;
-      const deletedProduct = await this.product.deleteProduct(productId);
+      const product = await models.Product.findByIdAndThrow(productId);
+      const response = await product.deleteOne();
+
       res.json({
         status: 'deleted',
-        payload: deletedProduct,
+        payload: { ...response, deletedProduct: product },
       });
     } catch (error) {
       next(error);

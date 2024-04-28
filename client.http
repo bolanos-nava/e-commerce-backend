@@ -1,8 +1,8 @@
 ### GET LIST OF PRODUCTS
-GET http://localhost:8080/api/v1/products HTTP/1.1
+GET http://localhost:8080/api/v1/products?limit=5 HTTP/1.1
 
 ### GET A PRODUCT
-GET http://localhost:8080/api/v1/products/53a2ef77-3cb3-479e-8da0-faff80fa5a71 HTTP/1.1
+GET http://localhost:8080/api/v1/products/662e201694ad4d5d8767ed1e HTTP/1.1
 
 ### ADD A NEW PRODUCT
 POST http://localhost:8080/api/v1/products HTTP/1.1
@@ -10,29 +10,33 @@ Content-Type: application/json
 
 {
     "product": {
-        "title": "Nuevo producto por websocket",
-        "category": "category1",
-        "description": "Real timeeee",
-        "price": 5000000,
-        "code": "nuevo1",
-        "stock": 50
+        "title": "Newwwwww",
+        "categoryId": "category1",
+        "description": "Nuevo producto",
+        "price": 10.5,
+        "stock": 20,
+        "code": "client200",
+        "thumbnails": [
+            "http://example.com/120x120",
+            "http://example.com"
+        ]
     }
 }
 
 ### UPDATE A PRODUCT
-PUT http://localhost:8080/api/v1/products/53a2ef77-3cb3-479e-8da0-faff80fa5a71 HTTP/1.1
+PUT http://localhost:8080/api/v1/products/662e201694ad4d5d8767ed1e HTTP/1.1
 Content-Type: application/json
 
 {
     "product": {
-        "title": "Producto actualizado",
-        "description": "Producto actualizado mediante endpoint"
+        "title": "Hello",
+        "code": "client90"
     }
     
 }
 
 ### DELETE A PRODUCT
-DELETE http://localhost:8080/api/v1/products/53a2ef77-3cb3-479e-8da0-faff80fa5a71 HTTP/1.1
+DELETE http://localhost:8080/api/v1/products/662e208e53d3bc0b695faf07 HTTP/1.1
 
 
 

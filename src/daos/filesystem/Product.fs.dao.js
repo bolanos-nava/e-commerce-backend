@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import BaseModel from './BaseModel.js';
-import { validateDuplicatedCode } from '../schemas/zod/index.js';
+import BaseModel from '../../models/BaseModel.js';
+import { getCodeValidator } from '../../schemas/zod/index.js';
 
 /**
  * @typedef {import('../types').ProductType} ProductType
@@ -9,22 +9,6 @@ import { validateDuplicatedCode } from '../schemas/zod/index.js';
  */
 
 export class Product extends BaseModel {
-  /**
-   * Shape of product object
-   * @type {ProductType}
-   */
-  #baseProduct = {
-    id: null,
-    title: null,
-    description: null,
-    category: null,
-    price: null,
-    stock: null,
-    code: null,
-    status: true,
-    thumbnails: [],
-  };
-
   constructor() {
     super(`${path.resolve()}/products.json`, 'Product');
   }
@@ -53,10 +37,10 @@ export class Product extends BaseModel {
    */
   async createProduct(product) {
     const products = await this.getProducts();
-
+    const codeValidator = getCodeValidator(product, products);
     const newProduct = {
       id: randomUUID(),
-      ...validateDuplicatedCode(product, products),
+      ...codeValidator.passthrough().parse(product),
     };
 
     products.push(newProduct);
@@ -81,13 +65,11 @@ export class Product extends BaseModel {
    */
   async updateProduct(id, _newData) {
     const products = await this.getProducts();
+    const codeValidator = getCodeValidator({ id, ..._newData }, products);
 
-    const newData = {
-      ..._newData,
-      ...(_newData.code
-        ? validateDuplicatedCode({ id, ..._newData }, products)
-        : {}),
-    };
+    const newData = Object.hasOwn(_newData, 'code')
+      ? codeValidator.passthrough().parse(_newData)
+      : _newData;
 
     return this.updateOne(id, newData);
   }

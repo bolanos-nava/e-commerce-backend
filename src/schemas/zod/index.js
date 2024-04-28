@@ -1,1 +1,1 @@
-export * from './productValidator.zod.js';
+export * from './product.validator.js';

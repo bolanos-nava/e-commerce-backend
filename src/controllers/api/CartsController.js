@@ -1,4 +1,5 @@
-import { Cart, Product } from '../../models/index.js';
+import { Cart } from '../../models/index.js';
+import { Product } from '../../daos/filesystem/Product.fs.dao.js';
 import BaseController from '../BaseController.js';
 
 /**

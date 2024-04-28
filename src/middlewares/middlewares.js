@@ -16,9 +16,10 @@ export function errorMiddleware(error, req, res, next) {
   } else if (error instanceof ZodError) {
     message = error.issues.map(({ message: zodMessage }) => zodMessage);
   }
+  console.error(error.stack);
   res.status(error.statusCode || 500).json({
     status: 'error',
-    message: message || 'Something broke!',
+    message: message || 'Internal server error',
   });
 }
 

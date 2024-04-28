@@ -130,5 +130,71 @@
 		"code": "nuevo1",
 		"status": true,
 		"thumbnails": []
+	},
+	{
+		"id": "00f68b62-a237-46e1-ac0a-a55f53925d63",
+		"title": "New prod",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 10.5,
+		"stock": 10,
+		"code": "client1",
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"code": "client09",
+		"title": "Hello",
+		"description": "Producto actualizado mediante endpoint Producto actualizado mediante endpoint Producto actualizado mediante endpoint",
+		"category": "category1",
+		"price": 10.5,
+		"stock": 10,
+		"status": true,
+		"id": "3bec578b-3605-4609-98c7-8ae35b9a428a"
+	},
+	{
+		"code": "client4",
+		"title": "",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 10.5,
+		"stock": 10,
+		"status": true,
+		"id": "16a8d8ea-773d-40bc-8a87-297b93190565"
+	},
+	{
+		"id": "3b88bf22-baaf-48dc-a037-ea4f1084be04",
+		"code": "client11",
+		"title": "Nuevo productote",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 10.5,
+		"stock": 10,
+		"status": true
+	},
+	{
+		"id": "dd890af6-b3c4-4a51-bf48-bce71dcd27cc",
+		"code": "client12",
+		"title": "Nuevo productote",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 10.5,
+		"stock": 10,
+		"status": true,
+		"thumbnails": []
+	},
+	{
+		"id": "4ad738e0-d5d9-4bf2-b7f1-e99a5f3f8eee",
+		"code": "client13",
+		"title": "Nuevo productote",
+		"description": "Real timeeee",
+		"category": "category1",
+		"price": 10.5,
+		"stock": 10,
+		"status": true,
+		"thumbnails": [
+			"http://example.com/120x120",
+			"http://example.com"
+		]
 	}
 ]
