@@ -1,39 +1,32 @@
-/* eslint-disable class-methods-use-this */
 /**
  * @typedef {import('../types').ExpressType} ExpressType
+ * @typedef {import('../types').ControllerRoute} ControllerRoute
  */
 
-/**
- *
- * @abstract
- */
 export default class BaseController {
-  actions = [];
+  /**
+   * Routes of the controller
+   * @type {ControllerRoute[]}
+   */
+  routes = [];
 
   /**
    * Adds routes and their actions to the router
    * @param {ExpressType['Router']} router
    */
-  setupActions(router) {
-    this.actions.forEach((_action) => {
-      const {
-        spec: { path, method: httpMethod },
-        actions,
-      } = _action;
+  setupRoutes(router) {
+    console.log({ routes: this.routes });
+    this.routes.forEach((route) => {
+      const { path, actions } = route;
+      const httpMethod = route.httpMethod.toLowerCase();
 
       if (Array.isArray(actions)) {
         // Sets up several actions for the same route (e.g. if you have middlewares)
-        router[httpMethod.toLowerCase()](path, ...actions);
+        router[httpMethod](path, ...actions);
       } else {
         // Sets up the action for the method defined in spec
-        router[httpMethod.toLowerCase()](path, actions);
+        router[httpMethod](path, actions);
       }
     });
   }
-
-  /**
-   * Defines every route with its path and actions, and adds them to the router
-   * @param {ExpressType['Router']} router Router to add routes
-   */
-  addRoutes(router) {}
 }

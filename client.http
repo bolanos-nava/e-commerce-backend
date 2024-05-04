@@ -2,7 +2,7 @@
 GET http://localhost:8080/api/v1/products?limit=5 HTTP/1.1
 
 ### GET A PRODUCT
-GET http://localhost:8080/api/v1/products/662e201694ad4d5d8767ed1e HTTP/1.1
+GET http://localhost:8080/api/v1/products/6635ca925d173e5ecd10952f HTTP/1.1
 
 ### ADD A NEW PRODUCT
 POST http://localhost:8080/api/v1/products HTTP/1.1
@@ -10,12 +10,12 @@ Content-Type: application/json
 
 {
     "product": {
-        "title": "Newwwwww",
+        "title": "Other",
         "categoryId": "category1",
-        "description": "Nuevo producto",
+        "description": "Added",
         "price": 10.5,
         "stock": 20,
-        "code": "client200",
+        "code": "client10",
         "thumbnails": [
             "http://example.com/120x120",
             "http://example.com"
@@ -36,15 +36,15 @@ Content-Type: application/json
 }
 
 ### DELETE A PRODUCT
-DELETE http://localhost:8080/api/v1/products/662e208e53d3bc0b695faf07 HTTP/1.1
+DELETE http://localhost:8080/api/v1/products/6635ca925d173e5ecd10952f HTTP/1.1
 
 
 
 ### GET PRODUCTS OF A CART
-GET http://localhost:8080/api/v1/carts/5fe324b4-c097-4da9-9218-62412eea28bc HTTP/1.1
+GET http://localhost:8080/api/v1/carts/6635b7ce42bb16ec619b48e1 HTTP/1.1
 
 ### ADDS NEW CART
 POST http://localhost:8080/api/v1/carts HTTP/1.1
 
 ### ADDS A PRODUCT WITH ITS QUANTITY TO A CART
-POST http://localhost:8080/api/v1/carts/c17b251c-d5a0-4fce-b87a-4dcefa4fce23/products/a08675e4-57ab-45c1-a460-6d5061a74a60 HTTP/1.1
+POST http://localhost:8080/api/v1/carts/6635b7ce42bb16ec619b48e1/products/6635ca925d173e5ecd10952f HTTP/1.1

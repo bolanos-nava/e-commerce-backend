@@ -3,4 +3,4 @@ import controllers from '../../controllers/api/index.js';
 
 export const productsRouter = Router();
 
-controllers.productsController.addRoutes(productsRouter);
+controllers.productsController.setupRoutes(productsRouter);

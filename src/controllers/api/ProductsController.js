@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import models from '../../models/index.js';
+import { Product } from '../../models/index.js';
 import BaseController from '../BaseController.js';
 
 import { ParameterError } from '../../customErrors/ParameterError.js';
@@ -7,71 +7,54 @@ import { ParameterError } from '../../customErrors/ParameterError.js';
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').ProductType} ProductType
+ * @typedef {import('../../types').ControllerRoute} ControllerRoute
  */
 
 export default class ProductsController extends BaseController {
-  /**
-   * @type {BaseController['addRoutes']}
-   */
-  addRoutes(router) {
-    this.actions.push(
-      ...[
-        {
-          spec: {
-            path: '/',
-            method: 'GET',
-          },
-          actions: this.index,
-        },
-        {
-          spec: {
-            path: '/',
-            method: 'POST',
-          },
-          actions: this.create,
-        },
-        {
-          spec: {
-            path: '/:productId',
-            method: 'GET',
-          },
-          actions: [this.invalidIdError, this.show],
-        },
-        {
-          spec: {
-            path: '/:productId',
-            method: 'PUT',
-          },
-          actions: [this.invalidIdError, this.update],
-        },
-        {
-          spec: {
-            path: '/:productId',
-            method: 'DELETE',
-          },
-          actions: [this.invalidIdError, this.delete],
-        },
-      ],
-    );
+  /** @type {ControllerRoute[]} */
+  routes = [
+    {
+      path: '/',
+      httpMethod: 'GET',
+      actions: this.index.bind(this),
+    },
+    {
+      path: '/',
+      httpMethod: 'POST',
+      actions: this.create.bind(this),
+    },
+    {
+      path: '/:productId',
+      httpMethod: 'GET',
+      actions: [this.invalidIdError.bind(this), this.show.bind(this)],
+    },
+    {
+      path: '/:productId',
+      httpMethod: 'PUT',
+      actions: [this.invalidIdError.bind(this), this.update.bind(this)],
+    },
+    {
+      path: '/:productId',
+      httpMethod: 'DELETE',
+      actions: [this.invalidIdError.bind(this), this.delete.bind(this)],
+    },
+  ];
 
-    this.setupActions(router);
-  }
-
-  invalidIdError = (req, res, next) => {
+  invalidIdError(req, res, next) {
     const { productId } = req.params;
 
     if (!productId) throw new ParameterError('Id not present in request');
     next();
-  };
+  }
 
   /**
    * Returns list of products
    * @type {ExpressType['RequestHandler']}
    */
-  index = async (req, res, next) => {
+  async index(req, res, next) {
     try {
       const { limit } = req.query;
-      const products = await models.Product.find({}, {}, { limit });
+      const products = await Product.find({}, {}, { limit });
 
       res.json({
         status: 'success',
@@ -80,18 +63,18 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Creates a new product
    * @type {ExpressType['RequestHandlerWS']}
    */
-  create = async (req, res, next) => {
+  async create(req, res, next) {
     try {
       const { product } = req.body;
       // product.code += randomUUID();
 
-      const newProduct = new models.Product(product);
+      const newProduct = new Product(product);
       await newProduct.productValidator();
       const savedResponse = await newProduct.save();
 
@@ -105,17 +88,17 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Returns data of a single product
    * @type {ExpressType['RequestHandler']}
    */
-  show = async (req, res, next) => {
+  async show(req, res, next) {
     try {
       const { productId } = req.params;
 
-      const product = await models.Product.findByIdAndThrow(productId);
+      const product = await Product.findByIdAndThrow(productId);
 
       res.json({
         status: 'success',
@@ -124,18 +107,18 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Updates a single product
    * @type {ExpressType['RequestHandler']}
    */
-  update = async (req, res, next) => {
+  async update(req, res, next) {
     try {
       const { productId } = req.params;
       const { product: _newData } = req.body;
 
-      const product = await models.Product.findByIdAndThrow(productId);
+      const product = await Product.findByIdAndThrow(productId);
       const newProduct = Object.assign(product, _newData);
       await newProduct.productValidator(true);
       const savedResponse = await newProduct.save();
@@ -147,16 +130,16 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Deletes a single product
    * @type {ExpressType['RequestHandler']}
    */
-  delete = async (req, res, next) => {
+  async delete(req, res, next) {
     try {
       const { productId } = req.params;
-      const product = await models.Product.findByIdAndThrow(productId);
+      const product = await Product.findByIdAndThrow(productId);
       const response = await product.deleteOne();
 
       res.json({
@@ -166,5 +149,5 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 }

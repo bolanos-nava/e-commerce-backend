@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import BaseModel from '../../models/BaseModel.js';
+import FileObjectMapper from './FileObjectMapper.js';
 import { getCodeValidator } from '../../schemas/zod/index.js';
 
 /**
@@ -8,7 +8,7 @@ import { getCodeValidator } from '../../schemas/zod/index.js';
  * @typedef {import('../types').UUIDType} UUIDType
  */
 
-export class Product extends BaseModel {
+export class ProductDao extends FileObjectMapper {
   constructor() {
     super(`${path.resolve()}/products.json`, 'Product');
   }

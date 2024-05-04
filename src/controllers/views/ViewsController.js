@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { env } from '../../configs/index.js';
-import { Product } from '../../daos/filesystem/Product.fs.dao.js';
+import { ProductDao } from '../../daos/filesystem/index.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -10,7 +10,7 @@ import { Product } from '../../daos/filesystem/Product.fs.dao.js';
  */
 
 export default class ViewsController {
-  product = new Product(`${path.resolve()}/products.json`);
+  product = new ProductDao(`${path.resolve()}/products.json`);
 
   /**
    * Adds views to the router
@@ -32,20 +32,11 @@ export default class ViewsController {
     ];
 
     views.forEach((view) => {
-      this.renderView(router, view);
+      router.get(view.path, (req, res) => {
+        res.render(view.template, view.context);
+      });
     });
   };
-
-  /** Renders view
-   * @param {ExpressType['Router']} router Views router
-   * @param {View} context Context to render the view with
-   */
-  // eslint-disable-next-line class-methods-use-this
-  renderView(router, { path: viewPath, template, context }) {
-    router.get(viewPath, (req, res) => {
-      res.render(template, context);
-    });
-  }
 
   /** Returns context of home view
    * @type {ViewBodyGenerator}

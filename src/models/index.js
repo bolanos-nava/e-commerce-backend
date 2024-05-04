@@ -1,10 +1,10 @@
-import { ProductModel } from './Product.model.js';
+import { Product } from './Product.js';
 
+export * from './Product.js';
 export * from './Cart.js';
-export * from './Product.model.js';
 
 const models = {
-  Product: ProductModel,
+  Product,
 };
 
 export default models;

@@ -1,56 +1,74 @@
-import path from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { Schema, model, Types } from 'mongoose';
+// import { productSchema } from '../schemas/mongoose/index.js';
+import { getProductValidator } from '../schemas/zod/product.validator.js';
 import BaseModel from './BaseModel.js';
-// const { default: ObjectFileMapper } = await import('./ObjectFileMapper.js');
 
-/**
- * @typedef {import('../types').CartType} CartType
- * @typedef {import('../types').CartProduct} CartProduct
- * @typedef {import('../types').UUIDType} UUIDType
- */
+// const { name, schema } = productSchema;
 
-export class Cart extends BaseModel {
-  constructor() {
-    super(`${path.resolve()}/carts.json`, 'Cart');
-  }
+const cartSchema = {
+  name: 'Cart',
+  schema: new Schema({
+    products: {
+      type: [
+        {
+          product: {
+            type: Types.ObjectId,
+            ref: 'Product',
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+            default: 1,
+          },
+        },
+      ],
+    },
+  }),
+};
 
-  /** Returns the list of shopping carts
-   * @returns {Promise<CartType[]>} Promise that resolves to the list of shopping carts
-   */
-  async getCarts() {
-    return this.fetchAll();
-  }
+class CartModel extends BaseModel {
+  static async findProductById(cartId, productId) {
+    // const products = await model('Cart')
+    //   .findById(cartId)
+    //   .populate({
+    //     path: 'products',
+    //     match: {
+    //       product: productId,
+    //     },
+    //   });
 
-  /** Returns the data of a shopping cart
-   * @param {UUIDType} id UUID of product
-   * @returns {Promise<CartType>} Promise that resolves to the shopping cart
-   */
-  async getCartById(id) {
-    return this.fetchOne(id);
-  }
+    // console.log('products products');
+    // console.log(products);
+    // console.log('products products');
 
-  /** Creates new shopping cart
-   * @returns {Promise<CartType>} Promise that resolves to the new shopping cart
-   */
-  async createCart() {
-    const carts = await this.getCarts();
+    const prods = await model('Cart').findOne({
+      _id: cartId,
+      products: {
+        $elemMatch: {
+          quantity: 3,
+        },
+      },
+    });
+    console.log('prods');
+    console.log(prods);
+    console.log('prods');
 
-    const newCart = {
-      id: randomUUID(),
-      products: [],
-    };
+    const matchingProducts = await model('Cart').findOne(
+      {
+        _id: cartId,
+        'products.product': productId,
+      },
+      { 'products.$': 1 },
+    );
+    console.log(matchingProducts);
+    console.log(matchingProducts?.products);
 
-    carts.push(newCart);
-    await this.save(carts);
-    return newCart;
-  }
-
-  /** Updates a cart
-   * @param {UUIDType} cartId UUID of the cart
-   * @param {CartType} newData New data of the cart
-   * @returns {Promise<CartType>} Promise that resolves to the updated cart
-   */
-  async updateCart(cartId, newData) {
-    return this.updateOne(cartId, newData);
+    return matchingProducts?.products[0];
   }
 }
+
+export const Cart = model(
+  cartSchema.name,
+  cartSchema.schema.loadClass(CartModel),
+);
