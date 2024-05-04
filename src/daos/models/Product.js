@@ -1,9 +1,10 @@
 import { Schema, model } from 'mongoose';
-// import { productSchema } from '../schemas/mongoose/index.js';
-import { getProductValidator } from '../schemas/zod/product.validator.js';
 import BaseModel from './BaseModel.js';
+import { DuplicateResourceError } from '../../customErrors/DuplicateResourceError.js';
 
-// const { name, schema } = productSchema;
+/**
+ * @typedef {import('../../types').IProductModel} IProductModel
+ */
 
 const productSchema = {
   name: 'Product',
@@ -45,21 +46,26 @@ const productSchema = {
   }),
 };
 
+productSchema.schema.pre('save', async function validateDuplicatedCode() {
+  const productWithSameCode = await model('Product').findOne({
+    _id: { $ne: this.id },
+    code: this.code,
+  });
+
+  if (productWithSameCode) {
+    throw new DuplicateResourceError(
+      `Product with code ${this.code} already exists`,
+    );
+  }
+});
+
 class ProductModel extends BaseModel {
   static findByCode(code) {
     return this.findOne({ code });
   }
-  async productValidator(isPartial = false) {
-    let found = await model('Product').findByCode(this.code);
-    // We only count the found product if it is not the same as this product
-    found = found && found.id !== this.id;
-
-    let validator = getProductValidator(this, found);
-    if (isPartial) validator = validator.partial();
-    return validator.parse(this);
-  }
 }
 
+/** @type {IProductModel} */
 export const Product = model(
   productSchema.name,
   productSchema.schema.loadClass(ProductModel),

@@ -1,7 +1,10 @@
-import { SchemaType } from 'mongoose';
-import { ResourceNotFoundError } from '../customErrors/index.js';
+import { ResourceNotFoundError } from '../../customErrors/index.js';
 
-/** @type {SchemaType} */
+/**
+ * @typedef {import('../../types').BaseModel} BaseModel
+ */
+
+/** @type {BaseModel<any>} */
 export default class BaseModel {
   static async findByIdAndThrow(id) {
     const resource = await this.findById(id);

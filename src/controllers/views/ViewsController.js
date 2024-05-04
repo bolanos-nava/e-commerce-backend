@@ -1,6 +1,6 @@
-import path from 'node:path';
+/* eslint-disable class-methods-use-this */
 import { env } from '../../configs/index.js';
-import { ProductDao } from '../../daos/filesystem/index.js';
+import { Product } from '../../daos/index.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -10,8 +10,6 @@ import { ProductDao } from '../../daos/filesystem/index.js';
  */
 
 export default class ViewsController {
-  product = new ProductDao(`${path.resolve()}/products.json`);
-
   /**
    * Adds views to the router
    * @param {ExpressType['Router']} router Router for the views
@@ -43,7 +41,7 @@ export default class ViewsController {
    */
   getHomeBody = async () => {
     return {
-      products: await this.product.getProducts(),
+      products: await Product.find().lean(),
       title: 'Tienda | Inicio',
       stylesheet: '/css/products.css',
     };
@@ -54,7 +52,7 @@ export default class ViewsController {
    */
   getRealTimeProductsBody = async () => {
     return {
-      products: await this.product.getProducts(),
+      products: await Product.find().lean(),
       title: 'Tienda | Productos',
       stylesheet: '/css/products.css',
       env: {

@@ -72,37 +72,22 @@ export const productValidator = z.object({
   title: z.string().min(1),
   description: z.string().min(1).max(500),
   categoryId: z.string().min(1),
-  price: z.number().gt(0),
-  stock: z.number().gt(0),
+  price: z.coerce.number().gt(0),
+  stock: z.coerce.number().gt(0),
   code: z.string().min(1),
   status: z.boolean().default(true),
   thumbnails: z.array(z.string().url()).default([]),
 });
 
-export function getProductValidator(product, codeExists) {
-  return z.object({
-    title: z.string().min(1),
-    description: z.string().min(1).max(500),
-    categoryId: z.string().min(1),
-    price: z.number().gt(0),
-    stock: z.number().gt(0),
-    code: z
-      .string()
-      .min(1)
-      .refine(() => !codeExists, {
-        message: `Product with code ${product.code} already exists`,
-      }),
-    status: z.boolean().default(true),
-    thumbnails: z.array(z.string().url()).default([]),
-  });
-}
-
 /** Returns a validator for duplicated product code
  * @param {ProductType} product
- * @param {Boolean} codeAlreadyExists
+ * @param {ProductType[]} products
  * @returns Zod validator for duplicated code
  */
-export function getCodeValidator(product, codeAlreadyExists) {
+export function getCodeValidator(product, products) {
+  const codeAlreadyExists = products
+    .filter((p) => p.id !== product.id)
+    .some((p) => p.code === product.code);
   const codeValidator = z.object({
     code: z.string().refine(() => !codeAlreadyExists, {
       message: `Product with code ${product.code} already exists`,
@@ -110,20 +95,3 @@ export function getCodeValidator(product, codeAlreadyExists) {
   });
   return codeValidator;
 }
-
-/** Returns a validator for duplicated product code
- * @param {ProductType} product
- * @param {ProductType[]} products
- * @returns Zod validator for duplicated code
- */
-// export function getCodeValidator(product, products) {
-//   const codeAlreadyExists = products
-//     .filter((p) => p.id !== product.id)
-//     .some((p) => p.code === product.code);
-//   const codeValidator = z.object({
-//     code: z.string().refine(() => !codeAlreadyExists, {
-//       message: `Product with code ${product.code} already exists`,
-//     }),
-//   });
-//   return codeValidator;
-// }

@@ -1,7 +1,10 @@
 import { Router } from 'express';
-import { productsRouter, cartsRouter } from './api/index.js';
+import controllers from '../controllers/api/index.js';
 
 export const apiRouter = Router();
 
-apiRouter.use('/products', productsRouter);
-apiRouter.use('/carts', cartsRouter);
+Object.values(controllers).forEach(({ path, controller }) => {
+  const router = Router();
+  controller.setupRoutes(router);
+  apiRouter.use(path, router);
+});

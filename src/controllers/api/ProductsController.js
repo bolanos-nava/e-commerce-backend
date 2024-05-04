@@ -1,8 +1,9 @@
 /* eslint-disable class-methods-use-this */
-import { Product } from '../../models/index.js';
-import BaseController from '../BaseController.js';
+import { Product } from '../../daos/index.js';
+import BaseController from './BaseController.js';
 
 import { ParameterError } from '../../customErrors/ParameterError.js';
+import { productValidator } from '../../schemas/zod/product.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -71,12 +72,10 @@ export default class ProductsController extends BaseController {
    */
   async create(req, res, next) {
     try {
-      const { product } = req.body;
-      // product.code += randomUUID();
-
-      const newProduct = new Product(product);
-      await newProduct.productValidator();
-      const savedResponse = await newProduct.save();
+      const { product: request } = req.body;
+      const validRequest = productValidator.parse(request);
+      const product = new Product(validRequest);
+      const savedResponse = await product.save();
 
       // Emitting the new product to the products socket to update the clients in real-time
       req.socketServer.emit('new_product', savedResponse);
@@ -116,16 +115,16 @@ export default class ProductsController extends BaseController {
   async update(req, res, next) {
     try {
       const { productId } = req.params;
-      const { product: _newData } = req.body;
+      const { product: request } = req.body;
+      const newData = productValidator.partial().parse(request);
 
       const product = await Product.findByIdAndThrow(productId);
-      const newProduct = Object.assign(product, _newData);
-      await newProduct.productValidator(true);
-      const savedResponse = await newProduct.save();
+      const newProduct = Object.assign(product, newData);
+      const updatedResponse = await newProduct.save();
 
       res.json({
         status: 'updated',
-        payload: savedResponse,
+        payload: updatedResponse,
       });
     } catch (error) {
       next(error);

@@ -1,12 +1,13 @@
+import { ZodError } from 'zod';
+import { ResourceNotFoundError } from '../customErrors/index.js';
+
 /**
  * @typedef {import('../types').ExpressType} ExpressType
  * @typedef {import('../types').WSServer} WSServer
  */
 
-import { ZodError } from 'zod';
-import { ResourceNotFoundError } from '../customErrors/index.js';
-
-/** Middleware to catch all errors
+/**
+ * Middleware to catch all errors
  * @type {ExpressType['ErrorRequestHandler']}
  */
 export function errorMiddleware(error, req, res, next) {
@@ -16,6 +17,7 @@ export function errorMiddleware(error, req, res, next) {
   } else if (error instanceof ZodError) {
     message = error.issues.map(({ message: zodMessage }) => zodMessage);
   }
+  // eslint-disable-next-line no-console
   console.error(error.stack);
   res.status(error.statusCode || 500).json({
     status: 'error',
@@ -35,7 +37,8 @@ export function socketMiddleware(socketServer) {
   };
 }
 
-/** Handler for undefined routes
+/**
+ * Handler for undefined routes
  * @type {ExpressType['RequestHandler']}
  */
 export function guardRoute(req, res, next) {

@@ -1,6 +1,6 @@
 /**
- * @typedef {import('../types').ExpressType} ExpressType
- * @typedef {import('../types').ControllerRoute} ControllerRoute
+ * @typedef {import('../../types').ExpressType} ExpressType
+ * @typedef {import('../../types').ControllerRoute} ControllerRoute
  */
 
 export default class BaseController {
@@ -15,7 +15,6 @@ export default class BaseController {
    * @param {ExpressType['Router']} router
    */
   setupRoutes(router) {
-    console.log({ routes: this.routes });
     this.routes.forEach((route) => {
       const { path, actions } = route;
       const httpMethod = route.httpMethod.toLowerCase();
