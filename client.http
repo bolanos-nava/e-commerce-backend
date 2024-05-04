@@ -12,6 +12,7 @@ Content-Type: application/json
     "product": {
         "title": "Other",
         "categoryId": "category1",
+        "description": "Una descripción",
         "price": 10.5,
         "stock": 20,
         "code": "client90",

@@ -30,6 +30,8 @@
     "express-handlebars": "^7.1.2",
     "mongoose": "^8.3.2",
     "socket.io": "^4.7.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "zod": "3.23.4"
   }
 }

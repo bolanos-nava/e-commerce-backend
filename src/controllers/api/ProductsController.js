@@ -48,9 +48,16 @@ export default class ProductsController extends BaseController {
     next();
   }
 
+  // /**
+  //  * Returns list of products
+  //  * @type {ExpressType['RequestHandler']}
+  //  */
+
   /**
-   * Returns list of products
-   * @type {ExpressType['RequestHandler']}
+   * @swagger
+   * /products:
+   *   get:
+   *     description: Returns list of products
    */
   async index(req, res, next) {
     try {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import express from 'express';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
@@ -12,15 +13,16 @@ import {
   guardRoute,
 } from './middlewares/index.js';
 
-// INITIALIZES SERVER
+/* --------- EXPRESS INITIALIZATION ---------- */
 const server = express();
 
-// CONFIGURATIONS
+/* --------- CONFIGURATIONS ---------- */
 const configuration = new ServerConfiguration(server);
 configuration.setupMiddlewares();
 configuration.setupTemplateEngines();
+configuration.setupDocumentation();
 
-// SERVERS: HTTP AND WEBSOCKET
+/* --------- SERVERS: HTTP AND WEBSOCKET ---------- */
 const { PORT } = env;
 const httpServer = server.listen(PORT, () => {
   // eslint-disable-next-line no-console
@@ -28,7 +30,7 @@ const httpServer = server.listen(PORT, () => {
 });
 const socketServer = new Server(httpServer);
 
-// SET UP MONGOOSE
+/* --------- MONGODB CONNECTION ---------- */
 const { DB_HOST, DB_PORT, DB_NAME } = env;
 mongoose.connect(`${DB_HOST}:${DB_PORT}/${DB_NAME}`);
 mongoose.connection.on('open', () =>
@@ -40,11 +42,10 @@ mongoose.connection.on('error', () =>
   console.log('Failed to connect to database'),
 );
 
-// ROUTERS
+/* --------- ROUTERS ---------- */
 server.use('/', viewsRouter);
 server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
 
-// ERROR HANDLING MIDDLEWARES
+/* --------- ERROR HANDLING MIDDLEWARES ---------- */
 server.use(guardRoute);
-// must be after all the other .use() calls
-server.use(errorMiddleware);
+server.use(errorMiddleware); // must be after all the other .use() calls

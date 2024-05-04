@@ -1,9 +1,11 @@
 import path from 'node:path';
 import express from 'express';
 import hbs from 'express-handlebars';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
 
 /**
- * @typedef {import('./types').ExpressType} ExpressType
+ * @typedef {import('./types').ExpressType['Express']} ExpressInstance
  */
 
 /**
@@ -14,13 +16,15 @@ export default class ServerConfiguration {
   static PATHS = {
     PUBLIC: `${ServerConfiguration.BASE_DIR}/src/public`,
     VIEWS: `${ServerConfiguration.BASE_DIR}/src/views`,
+    APIS: `${ServerConfiguration.BASE_DIR}/src/controllers`,
   };
 
+  /** @type {ExpressInstance} */
   server;
 
   /**
    * Instances a new ServerConfiguration object
-   * @param {ExpressType} server Express server instance
+   * @param {ExpressInstance} server Express server instance
    */
   constructor(server) {
     this.server = server;
