@@ -35,5 +35,6 @@ module.exports = {
     'lines-between-class-members': 'off',
     indent: 'off',
     'object-curly-newline': 'off',
+    'no-underscore-dangle': 'off',
   },
 };

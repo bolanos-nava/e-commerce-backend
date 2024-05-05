@@ -37,6 +37,7 @@ const productSchema = {
       type: String,
       required: true,
       minLength: 1,
+      unique: true,
     },
     status: {
       type: Boolean,
@@ -46,18 +47,18 @@ const productSchema = {
   }),
 };
 
-productSchema.schema.pre('save', async function validateDuplicatedCode() {
-  const productWithSameCode = await model('Product').findOne({
-    _id: { $ne: this.id },
-    code: this.code,
-  });
-
-  if (productWithSameCode) {
-    throw new DuplicateResourceError(
-      `Product with code ${this.code} already exists`,
-    );
-  }
-});
+productSchema.schema.post(
+  ['save', 'update', 'findOneAndUpdate'],
+  function validateUniqueness(error, doc, next) {
+    if (error.name === 'MongoServerError' && error.code === 11000) {
+      next(
+        new DuplicateResourceError(
+          `Product with code ${doc.code} already exists`,
+        ),
+      );
+    }
+  },
+);
 
 class ProductModel extends BaseModel {
   static findByCode(code) {

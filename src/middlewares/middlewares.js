@@ -12,11 +12,17 @@ import { ResourceNotFoundError } from '../customErrors/index.js';
  */
 export function errorMiddleware(error, req, res, next) {
   let { message } = error;
+
   if (error.type === 'json') {
     message = JSON.parse(error.message);
   } else if (error instanceof ZodError) {
     message = error.issues.map(({ message: zodMessage }) => zodMessage);
+  } else if (error.name === 'ValidationError') {
+    message = Object.entries(error.errors).map(([key, err]) => err.message);
+  } else {
+    message = [message];
   }
+
   // eslint-disable-next-line no-console
   console.error(error.stack);
   res.status(error.statusCode || 500).json({

@@ -20,6 +20,7 @@ const cartSchema = {
             type: Number,
             required: true,
             default: 1,
+            min: [1, 'Quantity should be greater than 1'],
           },
         },
       ],
@@ -29,15 +30,12 @@ const cartSchema = {
 
 class CartModel extends BaseModel {
   static async findProductInCart(cartId, productId) {
-    const matchingProducts = await this.findOne(
-      {
-        _id: cartId,
-        'products.product': productId,
-      },
-      { 'products.$': 1 },
+    const matchingCart = await this.findOne(
+      { _id: cartId, 'products.product': productId },
+      { 'products.$': 1 }, // will project the products array with only the first element that matches the query condition, in this case, the product with id productId in the cart with id cartId
     );
 
-    return matchingProducts?.products[0];
+    return matchingCart?.products[0];
   }
 }
 

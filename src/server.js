@@ -20,7 +20,6 @@ const server = express();
 const configuration = new ServerConfiguration(server);
 configuration.setupMiddlewares();
 configuration.setupTemplateEngines();
-configuration.setupDocumentation();
 
 /* --------- SERVERS: HTTP AND WEBSOCKET ---------- */
 const { PORT } = env;

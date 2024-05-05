@@ -3,7 +3,11 @@ import docs from '../controllers/api/docs/index.js';
 
 const swaggerPaths = {};
 docs.forEach((doc) => {
-  swaggerPaths[doc.path] = doc.spec;
+  const { basePath, routes } = doc;
+  routes.forEach((route) => {
+    const { path, spec } = route;
+    swaggerPaths[`${basePath}${path}`] = spec;
+  });
 });
 
 const swaggerDefinition = {

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
 import { Cart, Product } from '../../daos/index.js';
@@ -25,9 +26,15 @@ export default class CartsController extends BaseController {
       httpMethod: 'POST',
       actions: this.update.bind(this),
     },
+    {
+      path: '/:cartId/products/:productId',
+      httpMethod: 'DELETE',
+      actions: this.removeProduct.bind(this),
+    },
   ];
 
-  /** Creates a new cart
+  /**
+   * Creates a new cart
    * @type {ExpressType['RequestHandler']}
    */
   async create(req, res, next) {
@@ -46,16 +53,47 @@ export default class CartsController extends BaseController {
     }
   }
 
-  /** Returns data of a single cart
+  /**
+   * Returns data of a single cart
    * @type {ExpressType['RequestHandler']}
    */
   async show(req, res, next) {
     try {
       const { cartId } = req.params;
-      const { products } = await Cart.findById(cartId);
+      const { products } = await Cart.findByIdAndThrow(cartId);
       res.json({
         status: 'success',
         payload: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Removes product from cart
+   * @type {ExpressType['RequestHandler']}
+   */
+  async removeProduct(req, res, next) {
+    try {
+      const { cartId, productId } = req.params;
+      await Cart.updateOne(
+        { _id: cartId },
+        {
+          $pull: {
+            products: {
+              product: productId,
+            },
+          },
+        },
+      );
+
+      res.json({
+        status: 'deleted',
+        payload: {
+          cartId,
+          removedProduct: productId,
+        },
       });
     } catch (error) {
       next(error);
@@ -68,13 +106,18 @@ export default class CartsController extends BaseController {
   async update(req, res, next) {
     try {
       const { cartId, productId } = req.params;
+      let { quantity } = req.body;
+      quantity = Number(quantity);
+      if (Number.isNaN(quantity) || !quantity) {
+        quantity = 1;
+      }
 
       await Cart.findByIdAndThrow(cartId);
       await Product.findByIdAndThrow(productId);
 
-      // TODO: add logic to add quantities different than one
       const matchingProduct = await Cart.findProductInCart(cartId, productId);
       let updatedResponse;
+
       if (!matchingProduct) {
         updatedResponse = await Cart.findOneAndUpdate(
           { _id: cartId },
@@ -82,20 +125,36 @@ export default class CartsController extends BaseController {
             $push: {
               products: {
                 product: productId,
-                quantity: 1,
+                quantity,
               },
             },
           },
-          { new: true },
+          { new: true, runValidators: true, upsert: true },
         );
+        const { products } = updatedResponse;
+        // Returns the newly added product in the response
+        updatedResponse = products[products.length - 1];
       } else {
-        updatedResponse = await Cart.findOneAndUpdate(
+        // Delete product if new quantity will be less than 0
+        if (matchingProduct.quantity + quantity <= 0) {
+          return this.removeProduct(req, res, next);
+        }
+
+        // The positional operator in 'products.$.quantity' is telling Mongoose to select the first element in the array of products that matches the query. In this case, the query looks for the cart with id == cartId that has a product with id == productId. So, the positional operator is selecting the matched product only, and then selects its "quantity" field and updates it.
+        await Cart.updateOne(
           { _id: cartId, 'products.product': productId },
+          // { 'products.$.quantity': matchingProduct.quantity + quantity },
           {
-            'products.$.quantity': matchingProduct.quantity + 1,
+            $inc: { 'products.$.quantity': quantity },
           },
-          { new: true },
         );
+
+        // Finds the updated product
+        const updatedProduct = await Cart.findOne(
+          { 'products._id': matchingProduct._id },
+          { 'products.$': 1 },
+        );
+        [updatedResponse] = updatedProduct.products;
       }
 
       res.json({
