@@ -11,11 +11,10 @@ Content-Type: application/json
 {
     "product": {
         "title": "Other",
-        "categoryId": "New",
         "description": "One",
         "price": 10.5,
         "stock": 20,
-        "code": "client2",
+        "code": "client10",
         "other": "value"
     }
 }

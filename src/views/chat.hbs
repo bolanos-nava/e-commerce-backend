@@ -1,3 +1,52 @@
-<div>Chat</div>
-<script src='/socket.io/socket.io.js'></script>
-<script src='/js/chat.js'></script>
+<main>
+  <h1>Chat</h1>
+
+  <div class="container">
+    <form class="form" id="chatForm">
+      <div class="form__input-group">
+        <label for="chatUsername">Nombre de usuario</label>
+        <input
+          type="text"
+          name="user"
+          id="chatUsername"
+          placeholder="Nombre de usuario"
+        />
+      </div>
+      <div class="form__input-group">
+        <label for="chatFormMessage">Nuevo mensaje</label>
+        <textarea
+          name="message"
+          id="chatFormMessage"
+          cols="30"
+          rows="10"
+        ></textarea>
+      </div>
+      <input id="chatFormBtnSubmit" type="submit" value="Enviar" />
+    </form>
+    <ul class="items-list messages-list" id="messagesList">
+      {{#each messages}}
+        <li class="item message">
+          <p class="item__data message__data message__user">{{{this.user}}}
+            dice:</p>
+          <p class="item__data message__data message__text">
+            "{{{this.message}}}"</p>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+</main>
+
+<template id="messageTemplate">
+  <li class="item message">
+    <p class="item__data message__data message__user"></p>
+    <p class="item__data message__data message__text">
+    </p>
+  </li>
+</template>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  window.env =
+  {{{json env}}};
+</script>
+<script src="/js/chat.js"></script>

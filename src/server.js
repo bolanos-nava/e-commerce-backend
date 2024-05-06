@@ -30,11 +30,11 @@ const httpServer = server.listen(PORT, () => {
 const socketServer = new Server(httpServer);
 
 /* --------- MONGODB CONNECTION ---------- */
-const { DB_HOST, DB_PORT, DB_NAME } = env;
-mongoose.connect(`${DB_HOST}:${DB_PORT}/${DB_NAME}`);
+const { NODE_ENV, DB_URI } = env;
+mongoose.connect(DB_URI);
 mongoose.connection.on('open', () =>
   console.log(
-    `Connected successfully to ${DB_NAME} db on URL ${DB_HOST}:${DB_PORT}`,
+    `Connected successfully to MongoDB${NODE_ENV === 'dev' ? ` on URI ${DB_URI}` : ' Atlas cluster'}`,
   ),
 );
 mongoose.connection.on('error', () =>

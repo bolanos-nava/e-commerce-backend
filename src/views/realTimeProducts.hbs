@@ -1,7 +1,7 @@
 <main>
   <h1>Productos - tiempo real</h1>
 
-  <div class="products-container">
+  <div class="container products-container">
     <form class="form" id="product-form">
       <h3>Nuevo producto</h3>
 
@@ -70,12 +70,12 @@
 
     <ul class="items-list" id="productsList">
       {{#each products}}
-        <li class="product">
-          <p class="product__data product__title">{{{this.title}}}</p>
-          <p class="product__data product__description">Descripción:
+        <li class="item">
+          <p class="item__data product__title">{{{this.title}}}</p>
+          <p class="item__data product__description">Descripción:
             {{{this.description}}}</p>
-          <p class="product__data product__price">Precio: ${{{this.price}}}</p>
-          <p class="product__data product__stock">Stock: {{{this.stock}}}</p>
+          <p class="item__data product__price">Precio: ${{{this.price}}}</p>
+          <p class="item__data product__stock">Stock: {{{this.stock}}}</p>
         </li>
       {{/each}}
     </ul>
@@ -84,7 +84,7 @@
 
 <script>
   window.env =
-  {{{json env}}}
+  {{{json env}}};
 </script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realTimeProducts.js"></script>

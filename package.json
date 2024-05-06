@@ -7,6 +7,10 @@
   "scripts": {
     "server": "node ./src/server.js",
     "server:watch": "node --trace-warnings --watch-path=./src ./src/server.js",
+    "dev": "NODE_ENV=dev npm run server",
+    "dev:watch": "NODE_ENV=dev npm run server:watch",
+    "cloud": "NODE_ENV=cloud npm run server",
+    "cloud:watch": "NODE_ENV=cloud npm run server:watch",
     "lint": "eslint . --ext js,ts --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [],

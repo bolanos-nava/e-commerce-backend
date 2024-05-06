@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
-import { Cart, Product } from '../../daos/index.js';
+import { Cart, Product } from '../../daos/models/index.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -106,6 +106,7 @@ export default class CartsController extends BaseController {
   async update(req, res, next) {
     try {
       const { cartId, productId } = req.params;
+
       let { quantity } = req.body;
       quantity = Number(quantity);
       if (Number.isNaN(quantity) || !quantity) {
@@ -113,7 +114,11 @@ export default class CartsController extends BaseController {
       }
 
       await Cart.findByIdAndThrow(cartId);
-      await Product.findByIdAndThrow(productId);
+      const productExists = await Product.findById(productId);
+      if (!productExists) {
+        return this.removeProduct(req, res, next);
+      }
+      // await Product.findByIdAndThrow(productId);
 
       const matchingProduct = await Cart.findProductInCart(cartId, productId);
       let updatedResponse;
@@ -143,10 +148,7 @@ export default class CartsController extends BaseController {
         // The positional operator in 'products.$.quantity' is telling Mongoose to select the first element in the array of products that matches the query. In this case, the query looks for the cart with id == cartId that has a product with id == productId. So, the positional operator is selecting the matched product only, and then selects its "quantity" field and updates it.
         await Cart.updateOne(
           { _id: cartId, 'products.product': productId },
-          // { 'products.$.quantity': matchingProduct.quantity + quantity },
-          {
-            $inc: { 'products.$.quantity': quantity },
-          },
+          { $inc: { 'products.$.quantity': quantity } },
         );
 
         // Finds the updated product

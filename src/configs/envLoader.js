@@ -1,14 +1,20 @@
+import path from 'node:path';
 import dotenv from 'dotenv';
 
+const { NODE_ENV } = process.env;
 // Loads vars in .env into the Node env variables
-dotenv.config();
+dotenv.config({
+  path:
+    NODE_ENV === 'dev'
+      ? `${path.resolve()}/.env`
+      : `${path.resolve()}/.env.${NODE_ENV}`,
+});
 
 const env = {
+  NODE_ENV: 'development',
   API_URL: 'http://localhost',
   PORT: 8080,
-  DB_HOST: 'mongodb://localhost',
-  DB_PORT: 27017,
-  DB_NAME: 'estore',
+  DB_URI: 'mongodb://localhost:27017/ecommerce',
 };
 
 Object.keys(env).forEach((envKey) => {

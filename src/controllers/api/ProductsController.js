@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { Product } from '../../daos/index.js';
+import { Product } from '../../daos/models/index.js';
 import BaseController from './BaseController.js';
 
 import { ParameterError } from '../../customErrors/ParameterError.js';
@@ -77,7 +77,6 @@ export default class ProductsController extends BaseController {
       const product = new Product(validRequest);
       const savedResponse = await product.save();
 
-      // Emitting the new product to the products socket to update the clients in real-time
       req.socketServer.emit('new_product', savedResponse);
 
       res.status(201).json({
