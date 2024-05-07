@@ -13,12 +13,14 @@ const productSchema = {
       type: String,
       required: true,
       minLength: 1,
+      index: true,
     },
     categoryId: {
       // type: Schema.ObjectId,
       type: String,
       // ref: 'Category',
       required: true,
+      index: true,
     },
     description: {
       type: String,
@@ -37,7 +39,7 @@ const productSchema = {
       type: String,
       required: true,
       minLength: 1,
-      unique: true,
+      unique: true, // generates unique index
     },
     status: {
       type: Boolean,
@@ -49,7 +51,7 @@ const productSchema = {
 
 productSchema.schema.post(
   ['save', 'update', 'findOneAndUpdate'],
-  function validateUniqueness(error, doc, next) {
+  function throwUniquenessError(error, doc, next) {
     if (error.name === 'MongoServerError' && error.code === 11000) {
       next(
         new DuplicateResourceError(

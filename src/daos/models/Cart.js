@@ -1,4 +1,4 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 /**
@@ -12,7 +12,7 @@ const cartSchema = {
       type: [
         {
           product: {
-            type: Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Product',
             required: true,
           },
@@ -36,6 +36,19 @@ class CartModel extends BaseModel {
     );
 
     return matchingCart?.products[0];
+  }
+
+  static async removeProduct(cartId, productId) {
+    return this.updateOne(
+      { _id: cartId },
+      {
+        $pull: {
+          products: {
+            product: productId,
+          },
+        },
+      },
+    );
   }
 }
 

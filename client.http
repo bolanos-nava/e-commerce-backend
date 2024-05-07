@@ -1,8 +1,8 @@
 ### GET LIST OF PRODUCTS
-GET http://localhost:8080/api/v1/products?limit=5 HTTP/1.1
+GET http://localhost:8080/api/v1/products?limit=6 HTTP/1.1
 
 ### GET A PRODUCT
-GET http://localhost:8080/api/v1/products/6635db7d414e2067475ba5f1 HTTP/1.1
+GET http://localhost:8080/api/v1/products/6639a2088bc9ad8f7b6451e8 HTTP/1.1
 
 ### ADD A NEW PRODUCT
 POST http://localhost:8080/api/v1/products HTTP/1.1
@@ -11,21 +11,21 @@ Content-Type: application/json
 {
     "product": {
         "title": "Other",
+        "categoryId": "cat1",
         "description": "One",
         "price": 10.5,
         "stock": 20,
-        "code": "client10",
-        "other": "value"
+        "code": "prod4"
     }
 }
 
 ### UPDATE A PRODUCT
-PUT http://localhost:8080/api/v1/products/662ea0e9fef5300a89002403 HTTP/1.1
+PUT http://localhost:8080/api/v1/products/6639a2088bc9ad8f7b6451e8 HTTP/1.1
 Content-Type: application/json
 
 {
     "product": {
-        "title": "ggggg",
+        "title": "Newwww",
         "code": "client200"
     }
     
@@ -35,20 +35,20 @@ Content-Type: application/json
 DELETE http://localhost:8080/api/v1/products/6635ca925d173e5ecd10952f HTTP/1.1
 
 
-
-### GET PRODUCTS OF A CART
-GET http://localhost:8080/api/v1/carts/6637dc5d5546f757167ef005 HTTP/1.1
-
 ### ADDS NEW CART
 POST http://localhost:8080/api/v1/carts HTTP/1.1
 
+### GET PRODUCTS OF A CART
+GET http://localhost:8080/api/v1/carts/6639a2588bc9ad8f7b645202 HTTP/1.1
+
+
 ### ADDS A PRODUCT WITH ITS QUANTITY TO A CART
-POST http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/6636c037b320bf869effa0a6 HTTP/1.1
+POST http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/6639a20d8bc9ad8f7b6451ec HTTP/1.1
 Content-Type: application/json
 
 {
-    "quantity": "-10"
+    "quantity": "2"
 }
 
 ### REMOVES A PRODUCT FROM A CART
-DELETE http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/6636c037b320bf869effa0a6 HTTP/1.1
+DELETE http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/6639a20d8bc9ad8f7b6451ec HTTP/1.1
