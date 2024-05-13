@@ -31,6 +31,7 @@ const socketServer = new Server(httpServer);
 
 /* --------- MONGODB CONNECTION ---------- */
 const { NODE_ENV, DB_URI } = env;
+console.log('DB_URI', DB_URI);
 mongoose.connect(DB_URI);
 mongoose.connection.on('open', () =>
   console.log(

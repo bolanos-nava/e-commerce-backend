@@ -11,6 +11,7 @@ export interface ICartModel extends BaseModel<ICart> {
    * Gets a product from a cart, or returns null if it doesn't exist
    * @param cartId
    * @param productId
+   * @returns Promise that resolves to null or to a product in the cart
    */
   findProductInCart(cartId: MongoIdType, productId: MongoIdType): Promise<any>;
 }

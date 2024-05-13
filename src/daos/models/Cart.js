@@ -38,7 +38,7 @@ class CartModel extends BaseModel {
     return matchingCart?.products[0];
   }
 
-  static async removeProduct(cartId, productId) {
+  static async removeOneProduct(cartId, productId) {
     return this.updateOne(
       { _id: cartId },
       {
@@ -50,6 +50,12 @@ class CartModel extends BaseModel {
       },
     );
   }
+
+  static async removeAllProducts(cartId) {
+    return this.updateOne({ _id: cartId }, { products: [] });
+  }
+
+    
 }
 
 /** @type {ICartModel} */

@@ -10,20 +10,11 @@ import { messageValidator } from '../../schemas/zod/message.validator.js';
  * @typedef {import('../../types').ControllerRoute} ControllerRoute
  */
 export default class MessagesController extends BaseController {
-  /** @type {ControllerRoute[]} */
-  routes = [
-    {
-      path: '/',
-      httpMethod: 'POST',
-      actions: this.create.bind(this),
-    },
-  ];
-
   /**
    * Creates a new message
    * @type {ExpressType['RequestHandlerWS']}
    */
-  async create(req, res, next) {
+  async createMessage(req, res, next) {
     try {
       const { message: request } = req.body;
       const validMessage = messageValidator.parse(request);
