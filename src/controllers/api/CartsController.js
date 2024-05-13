@@ -44,14 +44,14 @@ export default class CartsController extends BaseController {
     try {
       const { cartId } = req.params;
 
-      const { products } = await services.carts.getCart(cartId);
+      const cart = await services.carts.getCart(cartId);
 
       res.json({
         status: 'success',
         payload: {
           cart: {
             _id: cartId,
-            products,
+            products: cart.products,
           },
         },
       });
