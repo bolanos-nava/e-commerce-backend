@@ -1,10 +1,8 @@
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
-import { Schema, Types } from 'mongoose';
 import BaseController from './BaseController.js';
-import { Cart, Product } from '../../daos/models/index.js';
-import { ResourceNotFoundError } from '../../customErrors/ResourceNotFoundError.js';
 import services from '../../services/index.js';
+import { cartValidator } from '../../schemas/zod/cart.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -19,8 +17,6 @@ export default class CartsController extends BaseController {
   async createCart(req, res, next) {
     try {
       const savedResponse = await services.carts.saveCart();
-      // const cart = new Cart();
-      // await cart.save();
 
       res.status(201).json({
         status: 'created',
@@ -68,7 +64,7 @@ export default class CartsController extends BaseController {
     try {
       const { cartId } = req.params;
 
-      await Cart.removeAllProducts(cartId);
+      await services.carts.removeAllProducts(cartId);
 
       // No content
       res.status(204).send();
@@ -85,83 +81,23 @@ export default class CartsController extends BaseController {
     try {
       const { cartId, productId } = req.params;
 
-      let { quantity } = req.body;
-      quantity = Number(quantity);
-      if (Number.isNaN(quantity) || !quantity) {
+      let { quantity = 1 } = req.body;
+      quantity = Math.abs(Number.parseInt(quantity, 10));
+      if (!quantity || Number.isNaN(quantity)) {
         quantity = 1;
       }
 
-      const product = await Product.findById(productId);
-      const productInCart = await Cart.findProductInCart(cartId, productId);
-      const newQuantity = productInCart
-        ? productInCart.quantity + quantity
-        : quantity;
-
-      // if ((!product && productInCart) || newQuantity <= 0) {
-      //   await Cart.removeOneProduct(cartId, productId);
-      //   const response = this.#responses.deleteOneProduct(cartId, productId);
-      //   return res.json(response);
-      // }
-      if (!product) {
-        return next(
-          new ResourceNotFoundError(`Product with ${productId} not found`),
-        );
-      }
-      if (!product.status) {
-        return next(
-          new ResourceNotFoundError(`Product with ${productId} unavailable`, {
-            status: 403,
-          }),
-        );
-      }
-      if (!productInCart) {
-        await Cart.updateOne(
-          { _id: cartId },
-          {
-            $push: {
-              products: {
-                product: productId,
-                quantity,
-              },
-            },
-          },
-          { runValidators: true, upsert: true },
-        );
-
-        return res.status(201).json({
-          status: 'updated',
-          payload: {
-            cart: {
-              _id: cartId,
-              product: productId,
-              quantity,
-            },
-          },
-        });
-      }
-
-      await Cart.updateOne(
-        {
-          _id: cartId,
-          'products.product': productId,
-        },
-        {
-          $inc: {
-            'products.$.quantity': quantity,
-          },
-        },
+      const addedResponse = await services.carts.addProductToCart(
+        cartId,
+        productId,
+        quantity,
       );
 
-      res.json({
-        status: 'updated',
-        payload: {
-          cart: {
-            _id: cartId,
-            product: productId,
-            quantity: newQuantity,
-          },
-        },
-      });
+      let responseToSend = res;
+      if (addedResponse.type === 'push') {
+        responseToSend = responseToSend.status(201);
+      }
+      responseToSend.json(addedResponse.cart);
     } catch (error) {
       next(error);
     }
@@ -174,46 +110,23 @@ export default class CartsController extends BaseController {
   async updateProductQuantity(req, res, next) {
     try {
       const { cartId, productId } = req.params;
-      let { quantity } = req.body;
-      console.log(quantity, typeof quantity);
-      quantity = Number(quantity);
+      let { quantity = 1 } = req.body;
+      quantity = cartValidator.parse({ quantity }).quantity;
+
       if (Number.isNaN(quantity) || typeof quantity === 'undefined') {
         quantity = 1;
       }
 
-      const productInCart = await Cart.findProductInCart(cartId, productId);
-      if (!productInCart) {
-        return next(
-          new ResourceNotFoundError(
-            `Product with id ${productId} not in cart with id ${cartId}`,
-          ),
-        );
-      }
-
-      const product = await Product.exists({ _id: productId });
-
-      // if (!product || quantity <= 0) {
-      //   await Cart.removeOneProduct(cartId, productId);
-      //   const response = this.#responses.deleteOne(cartId, productId);
-      //   return res.json(response);
-      // }
-
-      await Cart.updateOne(
-        {
-          _id: cartId,
-          'products.product': productId,
-        },
-        {
-          'products.$.quantity': quantity,
-        },
+      const updatedResponse = await services.carts.updateProductQuantity(
+        cartId,
+        productId,
+        quantity,
       );
 
       res.json({
         status: 'updated',
         payload: {
-          cart: cartId,
-          product: productId,
-          quantity,
+          cart: updatedResponse,
         },
       });
     } catch (error) {
@@ -229,7 +142,7 @@ export default class CartsController extends BaseController {
     try {
       const { cartId, productId } = req.params;
 
-      await Cart.removeOneProduct(cartId, productId);
+      await services.carts.removeOneProduct(cartId, productId);
 
       // No content
       res.status(204).send();

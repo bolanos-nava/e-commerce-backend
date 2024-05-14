@@ -1,3 +1,3 @@
 import { z } from 'zod';
 
-export const quantityValidator = z.number().min(0);
+export const cartValidator = z.object({ quantity: z.number().min(1) });

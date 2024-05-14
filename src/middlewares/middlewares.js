@@ -19,6 +19,8 @@ export function errorMiddleware(error, req, res, next) {
     message = error.issues.map(({ message: zodMessage }) => zodMessage);
   } else if (error.name === 'ValidationError') {
     message = Object.entries(error.errors).map(([key, err]) => err.message);
+  } else if (error.name === 'MongoServerSelectionError') {
+    message = ['Error connecting to database'];
   } else {
     message = [message];
   }

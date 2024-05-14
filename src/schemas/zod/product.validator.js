@@ -8,6 +8,7 @@ import { capitalize } from '../../utils/index.js';
 
 /** @type {z.ZodErrorMap} */
 function errorMap(issue, ctx) {
+  console.log('issue', issue, 'ctx', ctx);
   const { code, path } = issue;
   const { invalid_type, too_small, too_big, invalid_string } = z.ZodIssueCode;
   const propWithError = capitalize(path[0]);
@@ -27,12 +28,12 @@ function errorMap(issue, ctx) {
   if (code === too_small || code === too_big) {
     const messages = {
       too_small: {
-        number: `${propWithError} must be a number greater than ${issue.minimum}`,
+        number: `${propWithError} must be a number greater than or equal to ${issue.minimum}`,
         string: `${propWithError} should not be empty`,
         default: `${propWithError} is too small`,
       },
       too_big: {
-        number: `${propWithError} must be a number less than ${issue.maximum}`,
+        number: `${propWithError} must be a number less than or equal to ${issue.maximum}`,
         string: `${propWithError} should be at most ${issue.maximum} characters long`,
         default: `${propWithError} is too large`,
       },

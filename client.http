@@ -32,7 +32,7 @@ Content-Type: application/json
 }
 
 ### DELETE A PRODUCT
-DELETE http://localhost:8080/api/v1/products/6635ca925d173e5ecd10952f HTTP/1.1
+DELETE http://localhost:8080/api/v1/products/6642fa77a978d8024902f36c HTTP/1.1
 
 
 ### ADDS NEW CART
@@ -43,20 +43,24 @@ GET http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c HTTP/1.1
 
 
 ### ADDS A PRODUCT WITH ITS QUANTITY TO A CART
-POST http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/6636ca8215d06c6832e138fd HTTP/1.1
-Content-Type: application/json
-
-{
-    "quantity": 2
-}
-
-### UPDATES QUANTITY
-PUT http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/6636ca8215d06c6832e138fd HTTP/1.1
+POST http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/66432b9373787b07c733cc85 HTTP/1.1
 Content-Type: application/json
 
 {
     "quantity": 1
 }
 
+### UPDATES QUANTITY
+PUT http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/66432b9373787b07c733cc85 HTTP/1.1
+Content-Type: application/json
+
+{
+    "quantity": 10
+}
+
 ### REMOVES A PRODUCT FROM A CART
 DELETE http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products/6639a20d8bc9ad8f7b6451ec HTTP/1.1
+
+
+### REMOVES ALL PRODUCTS FROM A CART
+DELETE http://localhost:8080/api/v1/carts/663809c890b09e7075e29e6c/products HTTP/1.1

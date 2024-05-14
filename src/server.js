@@ -13,39 +13,49 @@ import {
   guardRoute,
 } from './middlewares/index.js';
 
-/* --------- EXPRESS INITIALIZATION ---------- */
-const server = express();
+async function start() {
+  /* --------- MONGODB CONNECTION ---------- */
+  const { NODE_ENV, DB_URI } = env;
+  mongoose.connection.on('open', () =>
+    console.log(
+      `Connected successfully to MongoDB${NODE_ENV === 'dev' ? ` on URI ${DB_URI}` : ' Atlas cluster'}`,
+    ),
+  );
+  mongoose.connection.on('error', () =>
+    console.error('Failed to connect to database'),
+  );
+  mongoose.connection.on('disconnected', () =>
+    console.error('Failed to connect to database'),
+  );
+  try {
+    await mongoose.connect(DB_URI);
+  } catch (error) {
+    console.error('Failed to connect to database');
+  }
 
-/* --------- CONFIGURATIONS ---------- */
-const configuration = new ServerConfiguration(server);
-configuration.setupMiddlewares();
-configuration.setupTemplateEngines();
+  /* --------- EXPRESS INITIALIZATION ---------- */
+  const server = express();
 
-/* --------- SERVERS: HTTP AND WEBSOCKET ---------- */
-const { PORT } = env;
-const httpServer = server.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Server listening on port ${PORT}`);
-});
-const socketServer = new Server(httpServer);
+  /* --------- CONFIGURATIONS ---------- */
+  const configuration = new ServerConfiguration(server);
+  configuration.setupMiddlewares();
+  configuration.setupTemplateEngines();
 
-/* --------- MONGODB CONNECTION ---------- */
-const { NODE_ENV, DB_URI } = env;
-console.log('DB_URI', DB_URI);
-mongoose.connect(DB_URI);
-mongoose.connection.on('open', () =>
-  console.log(
-    `Connected successfully to MongoDB${NODE_ENV === 'dev' ? ` on URI ${DB_URI}` : ' Atlas cluster'}`,
-  ),
-);
-mongoose.connection.on('error', () =>
-  console.log('Failed to connect to database'),
-);
+  /* --------- SERVERS: HTTP AND WEBSOCKET ---------- */
+  const { PORT } = env;
+  const httpServer = server.listen(PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Server listening on port ${PORT}`);
+  });
+  const socketServer = new Server(httpServer);
 
-/* --------- ROUTERS ---------- */
-server.use('/', viewsRouter);
-server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
+  /* --------- ROUTERS ---------- */
+  server.use('/', viewsRouter);
+  server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
 
-/* --------- ERROR HANDLING MIDDLEWARES ---------- */
-server.use(guardRoute);
-server.use(errorMiddleware); // must be after all the other .use() calls
+  /* --------- ERROR HANDLING MIDDLEWARES ---------- */
+  server.use(guardRoute);
+  server.use(errorMiddleware); // must be after all the other .use() calls
+}
+
+start();
