@@ -25,7 +25,7 @@ async function start() {
     console.error('Failed to connect to database'),
   );
   mongoose.connection.on('disconnected', () =>
-    console.error('Failed to connect to database'),
+    console.error('Disconnected from database'),
   );
   try {
     await mongoose.connect(DB_URI);

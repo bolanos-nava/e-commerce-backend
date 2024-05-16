@@ -2,19 +2,19 @@
 
 **Cart responsibilities:**
 
-- When adding product, forbid to add a quantity bigger than the stock of the product (endpoint POST /:cartId/products/:productId)
-- The cart shouldn't keep track of which products exist and which don't. Would be an expensive operation
+- [ ] When adding product, forbid to add a quantity bigger than the stock of the product (endpoint POST /:cartId/products/:productId)
+- [X] The cart shouldn't update when a product is deleted. Would be an expensive operation.
 - Show its own products. Two nested responsibilities:
-  - Check if some of the added quantities are more than the available stock. The cart, then, updates the exceeding quantities to be equal to the available stock.
-  - If some product can't be populated it means that it was deleted from the database and it can be deleted from the cart as well.
-  - If some product has status "false", it shouldn't be deleted from the cart, just marked as "unavailable" in the frontend.
+  - [ ] Check if some of the added quantities are more than the available stock. The cart, then, updates the exceeding quantities to be equal to the available stock.
+  - [x] If some product can't be populated it means that it was deleted from the database and it can be deleted from the cart as well.
+  - [x] If some product has status "false", it shouldn't be deleted from the cart, just marked as "unavailable" in the frontend.
 
 **Product responsibilities**:
 
 - If a product is physically deleted:
-  - It won't be removed from the carts in which it appears. It's the cart's responsibility to keep track of its products.
-  - It will be deleted from the category it belongs to.
-- We will try to avoid physically deleting a product. To signal a logical deletion we mark the product with status = false.
+  - [ ] It won't be removed from the carts in which it appears. It's the cart's responsibility to keep track of its products.
+  - [ ] It will be deleted from the category it belongs to.
+- [ ] We will try to avoid physically deleting a product. To signal a logical deletion we mark the product with status = false.
 
 **Categories-products (one-to-many):**
 
@@ -30,9 +30,9 @@ In this kind of architecture, we are defining that the category has the responsi
 Architecture:
 
 - Mongoose models: they work as DAOs and models. They interact directly with the database but can also store business logic in custom static and instance methods.
-- Controllers: they serve as the managers. They receive the requests, call the model and then return the response.
-- Routers: they just take care of defining the route and the controller action to call.
-
+- Services: contain logic to access the models. The use of this layer is to have an abstraction between the controllers and the models and be able to reuse some of the logic defined here in different controllers, if needed.
+- Controllers: They receive the requests, call the services and return the response to the client.
+- Routers: they just take care of defining the paths and the controller action to call.
 
 ## Frontend
 

@@ -8,6 +8,6 @@ const { messages } = apiControllers;
 _messagesRouter.post('/', messages.createMessage);
 
 export const messagesRouter = {
-  basePath: '/products',
+  basePath: '/messages',
   router: _messagesRouter,
 };

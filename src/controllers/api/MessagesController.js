@@ -1,8 +1,8 @@
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
-import { Message } from '../../daos/models/index.js';
 import { messageValidator } from '../../schemas/zod/message.validator.js';
+import services from '../../services/index.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -12,18 +12,19 @@ import { messageValidator } from '../../schemas/zod/message.validator.js';
 export default class MessagesController extends BaseController {
   /**
    * Creates a new message
+   *
    * @type {ExpressType['RequestHandlerWS']}
    */
   async createMessage(req, res, next) {
     try {
       const { message: request } = req.body;
       const validMessage = messageValidator.parse(request);
-      const message = new Message(validMessage);
-      const savedResponse = await message.save();
+      const savedResponse =
+        await services.messages.createNewMessage(validMessage);
 
       req.socketServer.emit('new_message', savedResponse);
 
-      res.json({
+      res.status(201).json({
         status: 'success',
         payload: savedResponse,
       });

@@ -1,5 +1,11 @@
-import ViewsController from './ViewsController.js';
+import ProductsViewsController from './ProductsViewsController.js';
+import CartsViewsController from './CartsViewsController.js';
+import MessagesViewsController from './MessagesViewsController.js';
 
-const viewsController = new ViewsController();
+const viewsControllers = {
+  productsViews: new ProductsViewsController(),
+  cartsViews: new CartsViewsController(),
+  messagesViews: new MessagesViewsController(),
+};
 
-export default viewsController;
+export default viewsControllers;

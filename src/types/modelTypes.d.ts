@@ -1,7 +1,7 @@
-import { UUIDType } from './generalTypes';
+import { MongoIdType } from './mongooseTypes';
 
 export type ProductType = {
-  id: UUIDType;
+  id: MongoIdType;
   title: string;
   category: string;
   description: string;
@@ -18,6 +18,12 @@ export type CartProduct = {
 };
 
 export type CartType = {
-  id: UUIDType;
+  id: MongoIdType;
   products: CartProduct[];
+};
+
+export type MessageType = {
+  id: MongoIdType;
+  user: string;
+  message: string;
 };

@@ -8,7 +8,6 @@ import { capitalize } from '../../utils/index.js';
 
 /** @type {z.ZodErrorMap} */
 function errorMap(issue, ctx) {
-  console.log('issue', issue, 'ctx', ctx);
   const { code, path } = issue;
   const { invalid_type, too_small, too_big, invalid_string } = z.ZodIssueCode;
   const propWithError = capitalize(path[0]);

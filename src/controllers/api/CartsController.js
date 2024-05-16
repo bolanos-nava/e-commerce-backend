@@ -12,11 +12,12 @@ import { cartValidator } from '../../schemas/zod/cart.validator.js';
 export default class CartsController extends BaseController {
   /**
    * Creates a new cart
+   *
    * @type {ExpressType['RequestHandler']}
    */
   async createCart(req, res, next) {
     try {
-      const savedResponse = await services.carts.saveCart();
+      const savedResponse = await services.carts.createNewCart();
 
       res.status(201).json({
         status: 'created',
@@ -34,6 +35,7 @@ export default class CartsController extends BaseController {
 
   /**
    * Returns data of a single cart
+   *
    * @type {ExpressType['RequestHandler']}
    */
   async showCart(req, res, next) {
@@ -58,6 +60,7 @@ export default class CartsController extends BaseController {
 
   /**
    * Removes all products from a cart
+   *
    * @type {ExpressType['RequestHandler']}
    */
   async removeAllProducts(req, res, next) {
@@ -74,10 +77,11 @@ export default class CartsController extends BaseController {
   }
 
   /**
-   * Updates products in a cart
+   * Adds a product to a cart. If the product exists, it increases its quantity
+   *
    * @type {ExpressType['RequestHandler']}
    */
-  async addProduct(req, res, next) {
+  async addOneProductToCart(req, res, next) {
     try {
       const { cartId, productId } = req.params;
 
@@ -87,7 +91,7 @@ export default class CartsController extends BaseController {
         quantity = 1;
       }
 
-      const addedResponse = await services.carts.addProductToCart(
+      const addedResponse = await services.carts.addOneProductToCart(
         cartId,
         productId,
         quantity,
@@ -97,14 +101,43 @@ export default class CartsController extends BaseController {
       if (addedResponse.type === 'push') {
         responseToSend = responseToSend.status(201);
       }
-      responseToSend.json(addedResponse.cart);
+      responseToSend.json({
+        status: 'updated',
+        payload: { cart: addedResponse.cart },
+      });
     } catch (error) {
       next(error);
     }
   }
 
   /**
-   * Updates product quantity
+   * Adds an array of products to a cart. Pushes the ones which don't exist and increases the quantity of the ones which exist.
+   *
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
+  async addProductsToCart(req, res, next) {
+    try {
+      const { cartId } = req.params;
+      const { products } = req.body;
+
+      const addedResponse = await services.carts.addProductsToCart(
+        cartId,
+        products,
+      );
+
+      res.json({
+        status: 'updated',
+        payload: { cart: addedResponse },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Changes the quantity of a product in a cart. It is an idempotent operation
+   *
    * @type {ExpressType['RequestHandler']}
    */
   async updateProductQuantity(req, res, next) {
@@ -135,7 +168,8 @@ export default class CartsController extends BaseController {
   }
 
   /**
-   * Removes product from a cart
+   * Removes a product from a cart
+   *
    * @type {ExpressType['RequestHandler']}
    */
   async removeOneProduct(req, res, next) {

@@ -7,7 +7,7 @@ import { Product } from '../daos/models/index.js';
  * @typedef {import('../customErrors/ResourceNotFoundError')} ResourceNotFoundError
  */
 
-export class ProductsService {
+export default class ProductsService {
   /**
    * Return list of products
    *

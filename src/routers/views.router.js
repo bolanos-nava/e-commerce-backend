@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import viewsController from '../controllers/views/index.js';
+import viewsRouters from './views/index.js';
 
 export const viewsRouter = Router();
 
-viewsController.addViews(viewsRouter);
+viewsRouters.forEach((router) => {
+  viewsRouter.use('/', router);
+});
