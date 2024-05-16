@@ -54,8 +54,6 @@ class CartModel extends BaseModel {
   static async removeAllProducts(cartId) {
     return this.updateOne({ _id: cartId }, { products: [] });
   }
-
-    
 }
 
 /** @type {ICartModel} */

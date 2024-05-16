@@ -1,0 +1,26 @@
+<main>
+  <div class="d-flex justify-content-between">
+    <h1>Carrito</h1>
+  </div>
+
+  <ul class="products__list">
+    {{#each products}}
+      <li data-id={{this.product._id}} class="item">
+        <p class="item__data item__title">{{{this.product.title}}}</p>
+        <p class="item__data">Descripción:
+          {{{this.product.description}}}</p>
+        <p class="item__data">Precio: ${{{this.product.price}}}</p>
+
+        {{! TODO: + and - buttons should call the "change quantity" endpoint }}
+        <div class="d-flex justify-left gap-2">
+          Cantidad en el carrito:
+          <div class="d-flex border-1 align-items-center">
+            <button class="btn-minus-qty" type="button">-</button>
+            <span class="quantity-display">{{{this.quantity}}}</span>
+            <button class="btn-plus-qty" type="button">+</button>
+          </div>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+</main>

@@ -6,8 +6,8 @@ import { ResourceNotFoundError } from '../../customErrors/index.js';
 
 /** @type {BaseModel<any>} */
 export default class BaseModel {
-  static async findByIdAndThrow(id) {
-    const resource = await this.findById(id);
+  static async findByIdAndThrow(id, { lean = false } = {}) {
+    const resource = await this.findById(id, {}, { lean });
     if (!resource) {
       throw new ResourceNotFoundError(
         `${this.modelName} with id ${id} not found`,

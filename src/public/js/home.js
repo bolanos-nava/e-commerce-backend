@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { env } = window;
+const { env, pagination } = window;
 const DIRECTION = {
   '+': +1,
   '-': -1,
@@ -9,7 +9,6 @@ function changeQuantity(_direction, quantityText, stock) {
   const direction = DIRECTION[_direction];
 
   const quantity = Number(quantityText.textContent);
-  console.log(quantity + direction);
   if (quantity + direction >= 0 && quantity + direction <= stock) {
     quantityText.textContent = quantity + direction;
   }
@@ -33,9 +32,29 @@ function attatchListenerToCartButton() {
   });
 }
 
+function changeQueryParams(key, value) {
+  const params = new URLSearchParams(window.location.search);
+  params.set(key, value);
+  window.location.search = params.toString();
+}
+
 async function main() {
   attatchListenerToCartButton();
   const productsItems = document.querySelectorAll('.products__list .item');
+
+  const btnPrevPage = document.querySelector('#btnPrevPage');
+  const btnNextPage = document.querySelector('#btnNextPage');
+
+  if (pagination.hasPrevPage) {
+    btnPrevPage.addEventListener('click', () => {
+      changeQueryParams('page', pagination.prevPage);
+    });
+  }
+  if (pagination.hasNextPage) {
+    btnNextPage.addEventListener('click', () => {
+      changeQueryParams('page', pagination.nextPage);
+    });
+  }
 
   productsItems.forEach((productItem) => {
     const btnMinus = productItem.querySelector('.btn-minus-qty');

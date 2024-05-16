@@ -4,9 +4,16 @@ import services from '../../services/index.js';
 
 export default class ProductsViewsController {
   async renderProductsView(req, res, next) {
-    const products = await services.products.getProducts();
+    const { limit, page, sort, ...filter } = req.query;
+    const response = await services.products.getProducts(filter, {
+      limit,
+      page,
+      sort,
+      lean: true,
+    });
     const context = {
-      products: products.map((product) => product.toObject()),
+      products: response.payload.products,
+      pagination: response.payload.pagination,
       title: 'Tienda | Inicio',
       stylesheet: '/css/index.css',
       env: {
@@ -19,10 +26,17 @@ export default class ProductsViewsController {
   }
 
   async renderRealTimeProductsView(req, res, next) {
-    const products = await services.products.getProducts();
+    const { limit, page, sort, ...filter } = req.query;
+    const response = await services.products.getProducts(filter, {
+      limit,
+      page,
+      sort,
+      lean: true,
+    });
     const context = {
-      products: products.map((p) => p.toObject()),
-      title: 'Tienda | Productos',
+      products: response.payload.products,
+      pagination: response.payload.pagination,
+      title: 'Tienda | Inicio',
       stylesheet: '/css/index.css',
       env: {
         API_URL: env.API_URL,

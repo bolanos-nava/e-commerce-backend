@@ -24,9 +24,10 @@ export default class CartsService {
    * @param {MongoIdType} cartId
    * @returns
    */
-  async getCart(cartId) {
+  async getCart(cartId, { lean = false } = {}) {
     await this.#removeUndefinedProducts(cartId);
 
+    // TODO: try to solve the chaining of Mongoose methods with monads
     const cart = await Cart.findByIdAndThrow(cartId);
     const cartPopulated = await cart.populate({
       path: 'products',
@@ -35,7 +36,32 @@ export default class CartsService {
       },
     });
 
-    return cartPopulated;
+    // let cartPopulated;
+    // const populateQuery = {
+    //   path: 'products',
+    //   populate: {
+    //     path: 'product',
+    //   },
+    // };
+    // if (lean) {
+    //   cartPopulated = await Cart.findById(cartId)
+    //     .lean()
+    //     .populate(populateQuery);
+    // } else {
+    //   cartPopulated = await Cart.findById(cartId).populate(populateQuery);
+    // }
+
+    // if (!cartPopulated)
+    //   throw new ResourceNotFoundError(`Cart with id ${cartId} not found`);
+
+    // cartPopulated.products = cartPopulated.products.map((p) => p.toObject());
+
+    return lean
+      ? {
+          ...cartPopulated,
+          products: cartPopulated.products.map((p) => p.toObject()),
+        }
+      : cartPopulated;
   }
 
   /**
@@ -47,7 +73,6 @@ export default class CartsService {
    * @returns Information about the added/updated product
    */
   async addOneProductToCart(cartId, productId, quantity) {
-    console.log(cartId, productId, quantity);
     const product = await Product.findByIdAndThrow(productId);
     const productInCart = await Cart.findProductInCart(cartId, productId);
 

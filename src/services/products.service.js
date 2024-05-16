@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
 import { Product } from '../daos/models/index.js';
 
@@ -14,8 +15,37 @@ export default class ProductsService {
    * @param {number} limit Amount of products to return
    * @returns Products from database
    */
-  async getProducts(limit) {
-    return Product.find({}, {}, { limit });
+  async getProducts(filter = {}, opts = {}) {
+    const SORT_OPTIONS = {
+      ASC: { price: 1 },
+      DESC: { price: -1 },
+    };
+
+    if (opts.sort) opts.sort = SORT_OPTIONS[opts.sort.toUpperCase()];
+
+    Object.entries(opts).forEach(([optionName, optionValue]) => {
+      if (typeof optionValue === 'undefined') delete opts[optionName];
+    });
+
+    const options = {
+      limit: 10,
+      page: 1,
+      lean: false,
+      ...opts,
+    };
+
+    const paginationResponse = await Product.paginate(filter, options);
+
+    const products = paginationResponse.docs;
+    delete paginationResponse.docs;
+
+    return {
+      status: 'success',
+      payload: {
+        products,
+        pagination: paginationResponse,
+      },
+    };
   }
 
   /**

@@ -3,7 +3,7 @@ import { env } from '../../configs/index.js';
 import services from '../../services/index.js';
 
 export default class MessagesViewsController {
-  async renderChatView(req, res, next) {
+  renderChatView = async (req, res, next) => {
     const messages = await services.messages.getMessages();
     const context = {
       messages: messages.map((m) => m.toObject()),
@@ -16,5 +16,5 @@ export default class MessagesViewsController {
     };
 
     res.render('chat', context);
-  }
+  };
 }

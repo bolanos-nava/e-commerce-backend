@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 import BaseModel from './BaseModel.js';
 import { DuplicateResourceError } from '../../customErrors/DuplicateResourceError.js';
 
@@ -34,6 +35,7 @@ const productSchema = {
     stock: {
       type: Number,
       required: true,
+      index: true,
     },
     code: {
       type: String,
@@ -48,6 +50,7 @@ const productSchema = {
     thumbnails: [String],
   }),
 };
+productSchema.schema.plugin(paginate);
 
 productSchema.schema.post(
   ['save', 'update', 'findOneAndUpdate'],

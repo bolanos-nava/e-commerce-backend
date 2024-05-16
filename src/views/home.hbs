@@ -26,11 +26,32 @@
       </li>
     {{/each}}
   </ul>
+
+  <div class="d-flex justify-content-between">
+    <button
+      id="btnPrevPage"
+      {{#unless pagination.hasPrevPage}}
+      disabled="true"
+      {{/unless}}
+      type="button"
+    >
+      Página anterior
+    </button>
+    <button
+     id="btnNextPage"
+     type="button"
+     {{#unless pagination.hasNextPage}}
+     disabled="true"
+     {{/unless}}
+    >
+      Página siguiente
+    </button>
+  </div>
 </main>
 
 <script>
-  window.env =
-  {{{json env}}}; window.products =
-  {{{json products}}};
+  window.env = {{{json env}}}; 
+  window.products = {{{json products}}};
+  window.pagination = {{{json pagination}}};
 </script>
 <script src="/js/home.js"></script>

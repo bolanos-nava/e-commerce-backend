@@ -1,8 +1,12 @@
+/* eslint-disable no-console */
+/* eslint-disable class-methods-use-this */
 import path from 'node:path';
 import express from 'express';
+import mongoose from 'mongoose';
 import hbs from 'express-handlebars';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
+import { env } from './configs/index.js';
 
 /**
  * @typedef {import('./types').ExpressType['Express']} ExpressInstance
@@ -24,10 +28,11 @@ export default class ServerConfiguration {
 
   /**
    * Instances a new ServerConfiguration object
+   *
    * @param {ExpressInstance} server Express server instance
    */
-  constructor(server) {
-    this.server = server;
+  constructor() {
+    this.server = express();
   }
 
   /**
@@ -61,5 +66,25 @@ export default class ServerConfiguration {
     );
     this.server.set('views', ServerConfiguration.PATHS.VIEWS);
     this.server.set('view engine', 'hbs');
+  }
+
+  async setupDb() {
+    const { NODE_ENV, DB_URI } = env;
+    mongoose.connection.on('open', () =>
+      console.log(
+        `Connected successfully to MongoDB${NODE_ENV === 'dev' ? ` on URI ${DB_URI}` : ' Atlas cluster'}`,
+      ),
+    );
+    mongoose.connection.on('error', () =>
+      console.error('Failed to connect to database'),
+    );
+    mongoose.connection.on('disconnected', () =>
+      console.error('Disconnected from database'),
+    );
+    try {
+      await mongoose.connect(DB_URI);
+    } catch (error) {
+      console.error('Failed to connect to database');
+    }
   }
 }

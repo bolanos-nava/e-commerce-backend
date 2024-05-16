@@ -15,7 +15,7 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async createCart(req, res, next) {
+  createCart = async (req, res, next) => {
     try {
       const savedResponse = await services.carts.createNewCart();
 
@@ -31,16 +31,17 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Returns data of a single cart
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async showCart(req, res, next) {
+  showCart = async (req, res, next) => {
     try {
       const { cartId } = req.params;
+      this.validateIds({ cartId });
 
       const cart = await services.carts.getCart(cartId);
 
@@ -56,16 +57,17 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Removes all products from a cart
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async removeAllProducts(req, res, next) {
+  removeAllProducts = async (req, res, next) => {
     try {
       const { cartId } = req.params;
+      this.validateIds({ cartId });
 
       await services.carts.removeAllProducts(cartId);
 
@@ -74,16 +76,17 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Adds a product to a cart. If the product exists, it increases its quantity
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async addOneProductToCart(req, res, next) {
+  addOneProductToCart = async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
+      this.validateIds({ cartId }, { productId });
 
       let { quantity = 1 } = req.body;
       quantity = Math.abs(Number.parseInt(quantity, 10));
@@ -108,7 +111,7 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Adds an array of products to a cart. Pushes the ones which don't exist and increases the quantity of the ones which exist.
@@ -116,9 +119,11 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async addProductsToCart(req, res, next) {
+  addProductsToCart = async (req, res, next) => {
     try {
       const { cartId } = req.params;
+      this.validateIds({ cartId });
+
       const { products } = req.body;
 
       const addedResponse = await services.carts.addProductsToCart(
@@ -133,16 +138,18 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Changes the quantity of a product in a cart. It is an idempotent operation
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async updateProductQuantity(req, res, next) {
+  updateProductQuantity = async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
+      this.validateIds({ cartId }, { productId });
+
       let { quantity = 1 } = req.body;
       quantity = cartValidator.parse({ quantity }).quantity;
 
@@ -165,16 +172,17 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Removes a product from a cart
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async removeOneProduct(req, res, next) {
+  removeOneProduct = async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
+      this.validateIds({ cartId }, { productId });
 
       await services.carts.removeOneProduct(cartId, productId);
 
@@ -183,5 +191,5 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

@@ -12,36 +12,30 @@ import { productValidator } from '../../schemas/zod/product.validator.js';
  */
 
 export default class ProductsController extends BaseController {
-  invalidIdError(req, res, next) {
-    const { productId } = req.params;
-
-    if (!productId) throw new ParameterError('Id not present in request');
-    next();
-  }
-
   /**
    * Returns list of products
    * @type {ExpressType['RequestHandler']}
    */
-  async listProducts(req, res, next) {
+  listProducts = async (req, res, next) => {
     try {
-      const { limit } = req.query;
-      const products = await services.products.getProducts(limit);
-
-      res.json({
-        status: 'success',
-        payload: products,
+      const { limit, page, sort, ...filter } = req.query;
+      const response = await services.products.getProducts(filter, {
+        limit,
+        page,
+        sort,
       });
+
+      res.json(response);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Creates a new product
    * @type {ExpressType['RequestHandlerWS']}
    */
-  async createProduct(req, res, next) {
+  createProduct = async (req, res, next) => {
     try {
       const { product: request } = req.body;
       const validRequest = productValidator.parse(request);
@@ -56,15 +50,17 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Returns data of a single product
+   *
    * @type {ExpressType['RequestHandler']}
    */
-  async showProduct(req, res, next) {
+  showProduct = async (req, res, next) => {
     try {
       const { productId } = req.params;
+      this.validateIds({ productId });
 
       const product = await services.products.getProductById(productId);
 
@@ -75,15 +71,16 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Updates a single product
    * @type {ExpressType['RequestHandler']}
    */
-  async updateProduct(req, res, next) {
+  updateProduct = async (req, res, next) => {
     try {
       const { productId } = req.params;
+      this.validateIds({ productId });
       const { product: request } = req.body;
       const newData = productValidator.partial().parse(request);
 
@@ -99,20 +96,21 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Deletes a single product
    * @type {ExpressType['RequestHandler']}
    */
-  async deleteProduct(req, res, next) {
+  deleteProduct = async (req, res, next) => {
     try {
       const { productId } = req.params;
+      this.validateIds({ productId });
       await services.products.deleteProductById(productId);
 
       res.status(204).send();
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

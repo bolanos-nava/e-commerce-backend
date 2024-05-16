@@ -7,6 +7,7 @@ const { products } = apiControllers;
 
 _productsRouter.get('/', products.listProducts);
 _productsRouter.post('/', products.createProduct);
+
 _productsRouter.get('/:productId', products.showProduct);
 _productsRouter.put('/:productId', products.updateProduct);
 _productsRouter.delete('/:productId', products.deleteProduct);
