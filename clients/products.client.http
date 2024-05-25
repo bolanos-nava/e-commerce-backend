@@ -2,7 +2,7 @@
 // /api/v1/products endpoints
 ////////////////////
 ### GETS LIST OF PRODUCTS
-GET http://localhost:8080/api/v1/products?limit=3&sort=asc&page=1&categoryId=cat1 HTTP/1.1
+GET http://localhost:8080/api/v1/products?limit=3&sort=asc&page=1&categoryId=cat2 HTTP/1.1
 
 ### ADDS A NEW PRODUCT
 POST http://localhost:8080/api/v1/products HTTP/1.1
@@ -10,12 +10,12 @@ Content-Type: application/json
 
 {
     "product": {
-        "title": "dsfsssssssssssss",
+        "title": "Producto nuevecillo",
         "categoryId": "cat2",
         "description": "One",
         "price": 500.5,
         "stock": 20,
-        "code": "prod"
+        "code": "prod1"
     }
 }
 

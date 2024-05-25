@@ -12,7 +12,7 @@
 **Product responsibilities**:
 
 - If a product is physically deleted:
-  - [ ] It won't be removed from the carts in which it appears. It's the cart's responsibility to keep track of its products.
+  - [X] It won't be removed from the carts in which it appears. It's the cart's responsibility to keep track of its products.
   - [ ] It will be deleted from the category it belongs to.
 - [ ] We will try to avoid physically deleting a product. To signal a logical deletion we mark the product with status = false.
 
@@ -29,7 +29,7 @@ In this kind of architecture, we are defining that the category has the responsi
 
 Architecture:
 
-- Mongoose models: they work as DAOs and models. They interact directly with the database but can also store business logic in custom static and instance methods.
+- Mongoose models: They interact directly with the database but can also store business logic in custom static and instance methods.
 - Services: contain logic to access the models. The use of this layer is to have an abstraction between the controllers and the models and be able to reuse some of the logic defined here in different controllers, if needed.
 - Controllers: They receive the requests, call the services and return the response to the client.
 - Routers: they just take care of defining the paths and the controller action to call.
@@ -38,7 +38,7 @@ Architecture:
 
 **Create a cart**:
 
-- A cart will be created when the frontend sends a POST request to the `/api/v1/carts` and the cartId will be saved in localStorage. In further requests the cartId associated with the current session will be fetched from there. That request could be sent in two ways:
+- [x] A cart will be created when the frontend sends a POST request to the `/api/v1/carts` and the cartId will be saved in localStorage. In further requests the cartId associated with the current session will be fetched from there. That `POST` request could be sent in two ways:
   1. When the user wants to add a product to a cart
   2. When the user wants to access a cart.
 - To add a product to the cart there will be two ways to do it:

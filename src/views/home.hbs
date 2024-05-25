@@ -14,9 +14,9 @@
         <p class="item__data product__stock">Stock: {{{this.stock}}}</p>
 
         <div class="d-flex justify-left gap-4">
-          <div class="d-flex border-1 align-items-center">
+          <div class="d-flex border-1 align-items-center rounded-1">
             <button class="btn-minus-qty" type="button">-</button>
-            <span class="quantity-display">0</span>
+            <span>Cantidad: <span class="quantity-display">1</span></span>
             <button class="btn-plus-qty" type="button">+</button>
           </div>
           <div>
@@ -30,10 +30,10 @@
   <div class="d-flex justify-content-between">
     <button
       id="btnPrevPage"
+      type="button"
       {{#unless pagination.hasPrevPage}}
       disabled="true"
       {{/unless}}
-      type="button"
     >
       Página anterior
     </button>
