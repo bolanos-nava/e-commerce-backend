@@ -39,6 +39,12 @@ export default class ServerConfiguration {
    * Sets up initial middlewares
    */
   setupMiddlewares() {
+    // Headers
+    this.server.use((req, res, next) => {
+      res.removeHeader('x-powered-by');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      next();
+    });
     // Interprets JSON requests
     this.server.use(express.json());
     //

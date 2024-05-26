@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import { Server } from 'socket.io';
+import cookieParser from 'cookie-parser';
+import expressSession from 'express-session';
 
 import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
@@ -10,6 +12,7 @@ import {
   socketMiddleware,
   guardRoute,
 } from './middlewares/index.js';
+import testSessionsRouter from './testSessionsRouter.js';
 
 async function start() {
   /* --------- CONFIGURATIONS ---------- */
@@ -27,7 +30,18 @@ async function start() {
   });
   const socketServer = new Server(httpServer);
 
-  /* --------- ROUTERS ---------- */
+  /* --------- TESTING SESSIONS --------- */
+  server.use(
+    expressSession({
+      secret: 'password',
+      resave: true,
+      saveUninitialized: true,
+    }),
+  );
+  server.use(cookieParser('password'));
+  server.use('/test', testSessionsRouter);
+
+  /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);
   server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
 
