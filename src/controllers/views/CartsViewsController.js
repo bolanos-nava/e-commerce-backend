@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+import env from '../../configs/envLoader.js';
 import services from '../../services/index.js';
 
 export default class CartsViewsController {
@@ -11,6 +12,10 @@ export default class CartsViewsController {
         products: cart.products,
         title: 'Tienda | Carrito',
         stylesheet: '/css/index.css',
+        env: {
+          API_URL: env.API_URL,
+          PORT: env.PORT,
+        },
       };
 
       res.render('cart', context);

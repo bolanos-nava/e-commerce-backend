@@ -5,7 +5,11 @@
 
   <ul class="products__list">
     {{#each products}}
-      <li data-id={{this.product._id}} class="item">
+      <li
+        data-id={{this.product._id}}
+        data-stock={{this.product.stock}}
+        class="item"
+      >
         <p class="item__data item__title">{{{this.product.title}}}</p>
         <p class="item__data">Descripción:
           {{{this.product.description}}}</p>
@@ -24,3 +28,11 @@
     {{/each}}
   </ul>
 </main>
+
+<script>
+  window.env =
+  {{{json env}}}; window.products =
+  {{{json products}}};
+</script>
+<script type="module" src="/js/utils/cartUtils.js"></script>
+<script type="module" src="/js/cart.js"></script>

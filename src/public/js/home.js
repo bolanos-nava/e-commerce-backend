@@ -1,18 +1,6 @@
 /* eslint-disable no-param-reassign */
+
 const { env, pagination } = window;
-const DIRECTION = {
-  '+': +1,
-  '-': -1,
-};
-
-function changeQuantity(_direction, quantityText, stock) {
-  const direction = DIRECTION[_direction];
-
-  const quantity = Number(quantityText.textContent);
-  if (quantity + direction >= 0 && quantity + direction <= stock) {
-    quantityText.textContent = quantity + direction;
-  }
-}
 
 function attatchListenerToCartButton() {
   const btnCart = document.getElementById('btnCart');
@@ -59,18 +47,37 @@ async function main() {
   productsItems.forEach((productItem) => {
     const btnMinus = productItem.querySelector('.btn-minus-qty');
     const btnPlus = productItem.querySelector('.btn-plus-qty');
-    const quantityText = productItem.querySelector('.quantity-display');
+    const quantityDisplay = productItem.querySelector('.quantity-display');
     const btnAddToCart = productItem.querySelector('.btn-add-to-cart');
     const stockText = productItem.querySelector('.product__stock');
 
-    const stock = Number(stockText.textContent.split('Stock: ')[1]);
+    const stock = Number(stockText.textContent);
 
-    btnMinus.addEventListener('click', () =>
-      changeQuantity('-', quantityText, stock),
-    );
-    btnPlus.addEventListener('click', () =>
-      changeQuantity('+', quantityText, stock),
-    );
+    const changeDisplayedQuantity = (quantity, quantityDisplayElement) => {
+      if (quantity > 0 && quantity <= stock) {
+        quantityDisplayElement.textContent = quantity;
+      }
+    };
+
+    btnMinus.addEventListener('click', () => {
+      let quantity = Number(quantityDisplay.textContent);
+      changeDisplayedQuantity(quantity - 1, quantityDisplay);
+
+      quantity = Number(quantityDisplay.textContent);
+      if (quantity <= 0) btnMinus.setAttribute('disabled', true);
+      else btnMinus.removeAttribute('disabled');
+      if (quantity < stock) btnPlus.removeAttribute('disabled');
+    });
+    btnPlus.addEventListener('click', () => {
+      let quantity = Number(quantityDisplay.textContent);
+      changeDisplayedQuantity(quantity + 1, quantityDisplay);
+
+      quantity = Number(quantityDisplay.textContent);
+      if (quantity >= stock) btnPlus.setAttribute('disabled', true);
+      else btnPlus.removeAttribute('disabled');
+      if (quantity > 0) btnMinus.removeAttribute('disabled');
+    });
+
     btnAddToCart.addEventListener('click', async () => {
       let cartId = localStorage.getItem('cartId');
       if (!cartId) {
@@ -90,7 +97,7 @@ async function main() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ quantity: quantityText.textContent }),
+          body: JSON.stringify({ quantity: quantityDisplay.textContent }),
         },
       );
       const jsonResponse = await response.json();

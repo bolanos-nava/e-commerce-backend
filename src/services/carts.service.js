@@ -1,7 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import { Types } from 'mongoose';
 import { Cart, Product } from '../daos/models/index.js';
-import { ResourceNotFoundError } from '../customErrors/ResourceNotFoundError.js';
+import {
+  ParameterError,
+  ResourceNotFoundError,
+  InvalidFieldValueError,
+} from '../customErrors/index.js';
 
 /**
  * @typedef {import('../types').MongoIdType} MongoIdType
@@ -73,6 +77,9 @@ export default class CartsService {
    * @returns Information about the added/updated product
    */
   async addOneProductToCart(cartId, productId, quantity) {
+    /* This endpoint assumes the cart exists */
+
+    /* We don't assume the product exists in the database, it could have been deleted */
     const product = await Product.findByIdAndThrow(productId);
     const productInCart = await Cart.findProductInCart(cartId, productId);
 
@@ -106,19 +113,17 @@ export default class CartsService {
       };
     }
 
+    const newQuantity = productInCart.quantity + quantity;
+    if (newQuantity > product.stock) {
+      throw new InvalidFieldValueError(
+        "Quantity can't be greater than the available stock",
+      );
+    }
     await Cart.updateOne(
-      {
-        _id: cartId,
-        'products.product': productId,
-      },
-      {
-        $inc: {
-          'products.$.quantity': quantity,
-        },
-      },
+      { _id: cartId, 'products.product': productId },
+      { $inc: { 'products.$.quantity': quantity } },
     );
 
-    const newQuantity = productInCart.quantity + quantity;
     return {
       type: 'inc',
       cart: {
@@ -142,6 +147,9 @@ export default class CartsService {
    * @returns Result of updating the products in the cart
    */
   async addProductsToCart(cartId, products) {
+    /* This endpoint assumes all products that we want to push exist in the database */
+    // TODO: Check which products actually exist?
+
     const cart = await Cart.findByIdAndThrow(cartId);
 
     const { products: productsInCart } = cart;
@@ -209,21 +217,23 @@ export default class CartsService {
    * @returns
    */
   async updateProductQuantity(cartId, productId, quantity) {
-    const updatedResponse = await Cart.updateOne(
-      {
-        _id: cartId,
-        'products.product': productId,
-      },
-      {
-        'products.$.quantity': quantity,
-      },
-    );
+    /* Endpoint assumes the cart exists */
 
-    if (updatedResponse.matchedCount === 0) {
-      throw new ResourceNotFoundError(
-        `Product with id ${productId} might not exist in cart ${cartId}`,
-      );
+    const productInCart = await Cart.findProductInCart(cartId, productId, {
+      populate: true,
+    });
+    if (!productInCart) {
+      throw new ResourceNotFoundError("Product doesn't exist in cart");
     }
+    const increasingQuantity = quantity > productInCart.quantity;
+    if (increasingQuantity && quantity > productInCart.product.stock) {
+      throw new ParameterError('Quantity is greater than the available stock');
+    }
+
+    await Cart.updateOne(
+      { _id: cartId, 'products.product': productId },
+      { 'products.$.quantity': quantity },
+    );
 
     return {
       _id: cartId,

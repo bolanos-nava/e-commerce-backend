@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 /**
@@ -29,11 +29,19 @@ const cartSchema = {
 };
 
 class CartModel extends BaseModel {
-  static async findProductInCart(cartId, productId) {
-    const matchingCart = await this.findOne(
-      { _id: cartId, 'products.product': productId },
-      { 'products.$': 1 }, // will project the products array with only the first element that matches the query condition, in this case, the product with id productId in the cart with id cartId
-    );
+  static async findProductInCart(cartId, productId, { populate = false } = {}) {
+    let matchingCart;
+    if (populate) {
+      matchingCart = await this.findOne(
+        { _id: cartId, 'products.product': productId },
+        { 'products.$': 1 }, // will project the products array with only the first element that matches the query condition, in this case, the product with id productId in the cart with id cartId
+      ).populate({ path: 'products', populate: { path: 'product' } });
+    } else {
+      matchingCart = await this.findOne(
+        { _id: cartId, 'products.product': productId },
+        { 'products.$': 1 }, // will project the products array with only the first element that matches the query condition, in this case, the product with id productId in the cart with id cartId
+      );
+    }
 
     return matchingCart?.products[0];
   }

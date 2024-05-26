@@ -11,7 +11,7 @@
         <p class="item__data">Descripción:
           {{{this.description}}}</p>
         <p class="item__data">Precio: ${{{this.price}}}</p>
-        <p class="item__data product__stock">Stock: {{{this.stock}}}</p>
+        <p>Stock: <span class="item__data product__stock">{{{this.stock}}}</span></p>
 
         <div class="d-flex justify-left gap-4">
           <div class="d-flex border-1 align-items-center rounded-1">
@@ -54,4 +54,5 @@
   window.products = {{{json products}}};
   window.pagination = {{{json pagination}}};
 </script>
-<script src="/js/home.js"></script>
+<script type="module" src="/js/utils/cartUtils.js"></script>
+<script type="module" src="/js/home.js"></script>

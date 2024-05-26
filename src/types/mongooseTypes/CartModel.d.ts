@@ -1,10 +1,14 @@
 import { Document, Types } from 'mongoose';
 import { BaseModel } from './BaseModel';
 import { MongoIdType } from './mongooseTypes';
+import { IProduct } from './ProductModel';
 
+interface ICartProduct {
+  product: Types.ObjectId;
+  quantity: Number;
+}
 interface ICart extends Document {
-  products: { product: Types.ObjectId; quantity: Number }[];
-  print(): void;
+  products: ICartProduct[];
 }
 
 export interface ICartModel extends BaseModel<ICart> {
@@ -15,7 +19,10 @@ export interface ICartModel extends BaseModel<ICart> {
    * @param productId
    * @returns Promise that resolves to null or to a product in the cart
    */
-  findProductInCart(cartId: MongoIdType, productId: MongoIdType): Promise<any>;
+  findProductInCart(
+    cartId: MongoIdType,
+    productId: MongoIdType,
+  ): Promise<ICartProduct>;
 
   /**
    * Removes a product from a cart
