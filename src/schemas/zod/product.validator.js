@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { capitalize } from '../../utils/index.js';
 
 /**
- * @typedef {import('../../types/index.js').ProductType} ProductType
+ * @typedef {import('../../types').ProductType} ProductType
  */
 
 /** @type {z.ZodErrorMap} */

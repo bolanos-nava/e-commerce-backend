@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser';
-import expressSession from 'express-session';
+import session from 'express-session';
 
 import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
@@ -30,16 +30,19 @@ async function start() {
   });
   const socketServer = new Server(httpServer);
 
-  /* --------- TESTING SESSIONS --------- */
-  server.use(
-    expressSession({
-      secret: 'password',
-      resave: true,
-      saveUninitialized: true,
-    }),
-  );
-  server.use(cookieParser('password'));
-  server.use('/test', testSessionsRouter);
+  /* --------- SESSIONS --------- */
+  configuration.setupSessions();
+  // TEST: COOKIES AND IN-MEMORY SESSIONS
+  // server.use(
+  //   session({
+  //     secret: 'password',
+  //     resave: true,
+  //     saveUninitialized: true,
+  //   }),
+  // );
+  // server.use(cookieParser('password'));
+  // server.use('/test', testSessionsRouter);
+  // END TEST
 
   /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);

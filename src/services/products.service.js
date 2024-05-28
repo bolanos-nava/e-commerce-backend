@@ -3,15 +3,17 @@
 import { Product } from '../daos/models/index.js';
 
 /**
- * @typedef {import('../types/modelTypes.d.ts').ProductType} ProductType
- * @typedef {import('../types').MongoIdType} MongoIdType
- * @typedef {import('../customErrors/ResourceNotFoundError')} ResourceNotFoundError
+ * @typedef {import('mongoose').FilterQuery<IProduct>} FilterQueryProduct
+ * @typedef {import('../types').ProductType} ProductType
+ * @typedef {import('../types').IProduct} IProduct
+ * @typedef {import('../customErrors')} ResourceNotFoundError
  */
 
 export default class ProductsService {
   /**
    * Return list of products
    *
+   * @param {FilterQueryProduct} filter Filter object
    * @param {number} limit Amount of products to return
    * @returns Products from database
    */
@@ -62,7 +64,7 @@ export default class ProductsService {
   /**
    * Returns data of a product
    *
-   * @param {MongoIdType} productId
+   * @param {IProduct['_id']} productId
    * @throws ResourceNotFoundError
    * @returns Product from database
    */
@@ -73,7 +75,7 @@ export default class ProductsService {
   /**
    * Updates a product from the database
    *
-   * @param {MongoIdType} productId
+   * @param {IProduct['_id']} productId
    * @param {Partial<ProductType>} request
    * @returns Response after saving
    */
@@ -86,7 +88,7 @@ export default class ProductsService {
   /**
    * Deletes product from the database
    *
-   * @param {MongoIdType} productId
+   * @param {IProduct['_id']} productId
    * @returns Response after deleting
    */
   async deleteProductById(productId) {

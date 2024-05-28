@@ -17,7 +17,7 @@ export default class CartsController extends BaseController {
    */
   createCart = async (req, res, next) => {
     try {
-      const savedResponse = await services.carts.createNewCart();
+      const savedResponse = await services.carts.saveNewCart();
 
       res.status(201).json({
         status: 'created',

@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
-/* eslint-disable class-methods-use-this */
 import path from 'node:path';
 import express from 'express';
-import mongoose from 'mongoose';
+import session from 'express-session';
 import hbs from 'express-handlebars';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJsDoc from 'swagger-jsdoc';
+import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
 import { env } from './configs/index.js';
 
 /**
@@ -74,6 +73,27 @@ export default class ServerConfiguration {
     this.server.set('view engine', 'hbs');
   }
 
+  /**
+   * Sets up sessions with MongoDB as store
+   */
+  setupSessions() {
+    const { DB_URI } = env;
+    this.server.use(
+      session({
+        store: MongoStore.create({
+          mongoUrl: DB_URI,
+          ttl: 60 * 15,
+        }),
+        secret: 'password', // TODO: write more secure password
+        resave: true,
+        saveUninitialized: true,
+      }),
+    );
+  }
+
+  /**
+   * Sets up MongoDB
+   */
   async setupDb() {
     const { NODE_ENV, DB_URI } = env;
     mongoose.connection.on('open', () =>

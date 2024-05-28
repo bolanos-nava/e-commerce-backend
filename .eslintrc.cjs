@@ -36,5 +36,6 @@ module.exports = {
     indent: 'off',
     'object-curly-newline': 'off',
     'no-underscore-dangle': 'off',
+    'class-methods-use-this': 'off',
   },
 };

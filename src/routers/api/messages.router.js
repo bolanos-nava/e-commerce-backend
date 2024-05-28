@@ -5,7 +5,7 @@ const _messagesRouter = Router();
 
 const { messages } = apiControllers;
 
-_messagesRouter.post('/', messages.createMessage);
+_messagesRouter.post('/', messages.saveNewMessage);
 
 export const messagesRouter = {
   basePath: '/messages',

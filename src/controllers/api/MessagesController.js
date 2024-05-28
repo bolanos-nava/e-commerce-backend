@@ -15,7 +15,7 @@ export default class MessagesController extends BaseController {
    *
    * @type {ExpressType['RequestHandlerWS']}
    */
-  async createMessage(req, res, next) {
+  async saveNewMessage(req, res, next) {
     try {
       const { message: request } = req.body;
       const validMessage = messageValidator.parse(request);

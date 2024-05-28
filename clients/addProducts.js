@@ -73,7 +73,7 @@ const products = [
     product.description = `This is product ${idx + 1}`;
     product.code = `prod${idx + 1}`;
 
-    const response = await fetch(`${env.API_URL}/api/v1/products`, {
+    const response = await fetch('/api/v1/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,22 +1,28 @@
 /* eslint-disable no-param-reassign */
 
-const { env, pagination } = window;
+const { pagination } = window;
 
 function attatchListenerToCartButton() {
   const btnCart = document.getElementById('btnCart');
   btnCart.addEventListener('click', async () => {
     let cartId = localStorage.getItem('cartId');
     if (!cartId) {
-      let cartCreationResponse = await fetch(
-        `${env.API_URL}:${env.PORT}/api/v1/carts`,
-        { method: 'POST' },
-      );
+      let cartCreationResponse = await fetch('/api/v1/carts', {
+        method: 'POST',
+      });
       cartCreationResponse = await cartCreationResponse.json();
       cartId = cartCreationResponse.payload.cart._id;
       localStorage.setItem('cartId', cartId);
     }
 
     window.location.href = `/cart/${cartId}`;
+  });
+}
+
+function attatchListenerToLogoutButton() {
+  document.getElementById('btnLogout').addEventListener('click', async () => {
+    const response = await fetch('/api/v1/sessions', { method: 'DELETE' });
+    if (response.ok) window.location.pathname = '/login';
   });
 }
 
@@ -28,6 +34,7 @@ function changeQueryParams(key, value) {
 
 async function main() {
   attatchListenerToCartButton();
+  attatchListenerToLogoutButton();
   const productsItems = document.querySelectorAll('.products__list .item');
 
   const btnPrevPage = document.querySelector('#btnPrevPage');
@@ -81,17 +88,16 @@ async function main() {
     btnAddToCart.addEventListener('click', async () => {
       let cartId = localStorage.getItem('cartId');
       if (!cartId) {
-        let cartCreationResponse = await fetch(
-          `${env.API_URL}:${env.PORT}/api/v1/carts`,
-          { method: 'POST' },
-        );
+        let cartCreationResponse = await fetch('/api/v1/carts', {
+          method: 'POST',
+        });
         cartCreationResponse = await cartCreationResponse.json();
         cartId = cartCreationResponse.payload.cart._id;
         localStorage.setItem('cartId', cartId);
       }
 
       const response = await fetch(
-        `${env.API_URL}:${env.PORT}/api/v1/carts/${cartId}/products/${productItem.dataset.id}`,
+        `/api/v1/carts/${cartId}/products/${productItem.dataset.id}`,
         {
           method: 'POST',
           headers: {

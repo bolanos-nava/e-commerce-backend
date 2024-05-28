@@ -8,7 +8,9 @@ import {
 } from '../customErrors/index.js';
 
 /**
- * @typedef {import('../types').MongoIdType} MongoIdType
+ * @typedef {import('../types').ICart} ICart
+ * @typedef {import('../types').CartProduct} CartProduct
+ * @typedef {import('../types').IProduct} IProduct
  */
 
 export default class CartsService {
@@ -17,7 +19,7 @@ export default class CartsService {
    *
    * @returns Response after save
    */
-  async createNewCart() {
+  async saveNewCart() {
     const cart = new Cart();
     return cart.save();
   }
@@ -25,7 +27,7 @@ export default class CartsService {
   /**
    * Returns a cart with populated products
    *
-   * @param {MongoIdType} cartId
+   * @param {ICart['_id']} cartId
    * @returns
    */
   async getCart(cartId, { lean = false } = {}) {
@@ -71,8 +73,8 @@ export default class CartsService {
   /**
    * Adds a product to the cart in the case it doesn't exist. If it exists, increases its quantity
    *
-   * @param {MongoIdType} cartId
-   * @param {MongoIdType} productId
+   * @param {ICart['_id']} cartId
+   * @param {IProduct['_id']} productId
    * @param {number} quantity
    * @returns Information about the added/updated product
    */
@@ -142,8 +144,8 @@ export default class CartsService {
    *
    * Note: the quantity change is always incremental.
    *
-   * @param {MongoIdType} cartId
-   * @param {{product: MongoIdType, quantity: number}[]} products
+   * @param {ICart['_id']} cartId
+   * @param {CartProduct[]} products
    * @returns Result of updating the products in the cart
    */
   async addProductsToCart(cartId, products) {
@@ -211,8 +213,8 @@ export default class CartsService {
    * in a cart. It is idempotent because it updates
    * the quantity absolutely, not incrementally.
    *
-   * @param {MongoIdType} cartId
-   * @param {MongoIdType} productId
+   * @param {ICart['_id']} cartId
+   * @param {IProduct['_id']} productId
    * @param {number} quantity
    * @returns
    */
@@ -245,8 +247,8 @@ export default class CartsService {
   /**
    * Removes a product from a cart
    *
-   * @param {MongoIdType} cartId
-   * @param {MongoIdType} productId
+   * @param {ICart['_id']} cartId
+   * @param {IProduct['_id']} productId
    * @returns Response from removing a product from a cart
    */
   async removeOneProduct(cartId, productId) {
@@ -256,7 +258,7 @@ export default class CartsService {
   /**
    * Removes all products from a cart
    *
-   * @param {MongoIdType} cartId
+   * @param {ICart['_id']} cartId
    * @returns Response of removing all products from a cart
    */
   async removeAllProducts(cartId) {
@@ -266,7 +268,7 @@ export default class CartsService {
   /**
    * Helper method to remove products from cart which no longer exist on the products collection
    *
-   * @param {MongoIdType} cartId
+   * @param {ICart['_id']} cartId
    * @returns Result of updating the cart
    */
   async #removeUndefinedProducts(cartId) {

@@ -1,14 +1,10 @@
-/* eslint-disable class-methods-use-this */
 import services from '../../services/index.js';
 import BaseController from './BaseController.js';
 
-import { ParameterError } from '../../customErrors/ParameterError.js';
 import { productValidator } from '../../schemas/zod/product.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
- * @typedef {import('../../types').ProductType} ProductType
- * @typedef {import('../../types').ControllerRoute} ControllerRoute
  */
 
 export default class ProductsController extends BaseController {

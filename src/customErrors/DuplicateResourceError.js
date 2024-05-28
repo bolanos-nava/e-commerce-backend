@@ -1,7 +1,7 @@
 export class DuplicateResourceError extends Error {
-  constructor(message) {
+  constructor(message, statusCode = 409) {
     super(message);
     this.name = 'DuplicateResourceError';
-    this.statusCode = 400;
+    this.statusCode = statusCode;
   }
 }

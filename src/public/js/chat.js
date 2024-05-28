@@ -21,27 +21,20 @@ function addMessageToFrontend(data) {
   });
 }
 
-const { env } = window;
 const chatForm = document.getElementById('chatForm');
 chatForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   // extracts data from form
-  const messageData = new FormData(chatForm);
-
-  // constructs new object from the form data
-  const newMessage = {};
-  messageData.entries().forEach(([key, value]) => {
-    newMessage[key] = value;
-  });
+  const message = Object.fromEntries(new FormData(chatForm));
 
   try {
-    const response = await fetch(`${env.API_URL}:${env.PORT}/api/v1/messages`, {
+    const response = await fetch('/api/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: newMessage }),
+      body: JSON.stringify({ message }),
     });
     const jsonResponse = await response.json();
     if (!response.ok) throw Error(jsonResponse.message);
