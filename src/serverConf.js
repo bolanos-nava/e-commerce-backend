@@ -95,7 +95,7 @@ export default class ServerConfiguration {
    * Sets up MongoDB
    */
   async setupDb() {
-    const { NODE_ENV, DB_URI } = env;
+    const { NODE_ENV, DB_URI, DB_NAME } = env;
     mongoose.connection.on('open', () =>
       console.log(
         `Connected successfully to MongoDB${NODE_ENV === 'dev' ? ` on URI ${DB_URI}` : ' Atlas cluster'}`,
@@ -108,7 +108,7 @@ export default class ServerConfiguration {
       console.error('Disconnected from database'),
     );
     try {
-      await mongoose.connect(DB_URI);
+      await mongoose.connect(DB_URI, { dbName: DB_NAME });
     } catch (error) {
       console.error('Failed to connect to database');
     }

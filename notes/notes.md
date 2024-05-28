@@ -52,3 +52,5 @@ Architecture:
 [ ] Standardize responses
 [ ] Add categories collection
 [ ] Add SweetAlert to show popup when a product is added to cart
+[ ] Encode cartId in base64 so a user doesn't know how to access to a cart different than the one saved in local storage
+[ ] Associate cart with a user
