@@ -1,8 +1,12 @@
 <main>
   <div class="d-flex justify-content-between">
     <h1>Productos</h1>
-    <button id="btnCart" type="button">Carrito</button>
-    <button type="button" id="btnLogout">Cerrar sesión</button>
+    <div class="d-flex justify-content-right gap-4">
+      <button type="button" id="btnCart" class="btn btn-secondary">Carrito</button>
+      <a class="btn btn-primary d-flex align-items-center" href="/login" style="text-decoration:none; color:white">Iniciar sesión</a>
+      <a class="btn btn-primary d-flex align-items-center" href="/register" style="text-decoration:none; color:white">Registrarse</a>
+      <button type="button" id="btnLogout" class="btn btn-primary">Cerrar sesión</button>
+    </div>
   </div>
 
   <ul class="products__list">
