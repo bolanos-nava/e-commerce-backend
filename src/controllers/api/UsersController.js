@@ -20,6 +20,7 @@ export default class UsersController extends BaseController {
       // Redirect to login page
       res.redirect('/login');
     } catch (error) {
+      console.error(error);
       // TODO: show error message in frontend
       res.redirect('/register?error=Bad_Form');
     }

@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { paginate } from 'mongoose-paginate-v2';
+import paginate from 'mongoose-paginate-v2';
 import BaseModel from './BaseModel.js';
 import { DuplicateResourceError } from '../../customErrors/DuplicateResourceError.js';
 
@@ -7,26 +7,27 @@ import { DuplicateResourceError } from '../../customErrors/DuplicateResourceErro
  * @typedef {import('../../types').IUserModel} IUserModel
  */
 
+// TODO: readd validations
 const userSchema = {
   name: 'User',
   schema: new Schema({
     firstName: {
       type: String,
       required: true,
-      minLength: 3,
+      // minLength: 3,
     },
     lastName: String,
     email: {
       type: String,
       required: true,
-      minLength: 5,
+      // minLength: 5,
       unique: true, // generates unique index
     },
     password: {
       type: String,
       required: true,
-      minLength: 8,
-      maxLength: 16,
+      // minLength: 8,
+      // maxLength: 16,
     },
     role: {
       type: String,
@@ -35,7 +36,9 @@ const userSchema = {
     },
   }),
 };
-// userSchema.schema.plugin(paginate);
+
+// TODO: find out why this fails
+userSchema.schema.plugin(paginate);
 
 userSchema.schema.post(
   ['save', 'update', 'findOneAndUpdate'],
@@ -43,6 +46,7 @@ userSchema.schema.post(
     if (error.name === 'MongoServerError' && error.code === 11000) {
       next(new DuplicateResourceError('Email already registered'));
     }
+    next();
   },
 );
 

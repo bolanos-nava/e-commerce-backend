@@ -62,6 +62,7 @@ productSchema.schema.post(
         ),
       );
     }
+    next();
   },
 );
 
