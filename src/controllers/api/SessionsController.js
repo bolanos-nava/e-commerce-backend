@@ -1,6 +1,7 @@
-import { InvalidFieldValueError } from '../../customErrors/InvalidFieldValueError.js';
+import { ForbiddenError } from '../../customErrors/index.js';
 import { sessionValidator } from '../../schemas/zod/index.js';
 import services from '../../services/index.js';
+import { isValidPassword } from '../../utils/passwordEncryption.js';
 import BaseController from './BaseController.js';
 
 /**
@@ -19,8 +20,8 @@ export default class SessionsController extends BaseController {
       const user = await services.users.getUserByEmail(credentials.email, {
         throws: true,
       });
-      if (user.password !== credentials.password) {
-        throw new InvalidFieldValueError("Passwords don't match", 403);
+      if (!isValidPassword(credentials.password, user.password)) {
+        throw new ForbiddenError("Passwords don't match", 403);
       }
 
       req.session.user = {
@@ -28,9 +29,9 @@ export default class SessionsController extends BaseController {
         admin: true,
       };
 
-      res.redirect('/');
+      res.redirect('/'); // redirect to homepage
     } catch (error) {
-      res.redirect('/login?error=Bad_Credentials');
+      res.redirect('/login?error=bad_credentials');
     }
   };
 
@@ -43,5 +44,9 @@ export default class SessionsController extends BaseController {
       if (error) return next(error);
       return res.status(204).end(); // no content
     });
+  };
+
+  loginP = async (req, res) => {
+    res.redirect('/');
   };
 }

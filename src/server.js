@@ -32,6 +32,7 @@ async function start() {
 
   /* --------- SESSIONS --------- */
   configuration.setupSessions();
+  configuration.setupPassport();
   // TEST: COOKIES AND IN-MEMORY SESSIONS
   // server.use(
   //   session({

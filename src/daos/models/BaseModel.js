@@ -16,14 +16,17 @@ export default class BaseModel {
     return resource;
   }
 
-  static async findOneAndThrow(filter, { lean = false, property } = {}) {
+  static async findOneAndThrow(
+    filter,
+    { lean = false, errorMessage, errorProperty } = {},
+  ) {
     const resource = await this.findOne(filter, {}, { lean });
     if (!resource) {
-      const customMessage = property
-        ? ` with ${property.name} ${property.value} `
+      const customMessage = errorProperty
+        ? ` with ${errorProperty.name} ${errorProperty.value} `
         : '';
       throw new ResourceNotFoundError(
-        `${this.modelName}${customMessage}not found`,
+        errorMessage || `${this.modelName}${customMessage}not found`,
       );
     }
     return resource;

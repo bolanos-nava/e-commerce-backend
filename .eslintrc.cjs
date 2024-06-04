@@ -37,5 +37,6 @@ module.exports = {
     'object-curly-newline': 'off',
     'no-underscore-dangle': 'off',
     'class-methods-use-this': 'off',
+    'consistent-return': 'off',
   },
 };

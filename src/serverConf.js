@@ -5,6 +5,8 @@ import session from 'express-session';
 import hbs from 'express-handlebars';
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
+import passport from 'passport';
+import { passportMiddlewares } from './middlewares/index.js';
 import { env } from './configs/index.js';
 
 /**
@@ -19,7 +21,6 @@ export default class ServerConfiguration {
   static PATHS = {
     PUBLIC: `${ServerConfiguration.BASE_DIR}/src/public`,
     VIEWS: `${ServerConfiguration.BASE_DIR}/src/views`,
-    APIS: `${ServerConfiguration.BASE_DIR}/src/controllers`,
   };
 
   /** @type {ExpressInstance} */
@@ -46,7 +47,7 @@ export default class ServerConfiguration {
     });
     // Interprets JSON requests
     this.server.use(express.json());
-    //
+    // Use encoded URL
     this.server.use(express.urlencoded({ extended: true }));
     // Serves static files to the client
     this.server.use(express.static(ServerConfiguration.PATHS.PUBLIC));
@@ -74,24 +75,6 @@ export default class ServerConfiguration {
   }
 
   /**
-   * Sets up sessions with MongoDB as store
-   */
-  setupSessions() {
-    const { DB_URI } = env;
-    this.server.use(
-      session({
-        store: MongoStore.create({
-          mongoUrl: DB_URI,
-          ttl: 60 * 15,
-        }),
-        secret: 'password', // TODO: write more secure password
-        resave: true,
-        saveUninitialized: true,
-      }),
-    );
-  }
-
-  /**
    * Sets up MongoDB
    */
   async setupDb() {
@@ -112,5 +95,29 @@ export default class ServerConfiguration {
     } catch (error) {
       console.error('Failed to connect to database');
     }
+  }
+
+  /**
+   * Sets up sessions with MongoDB as store
+   */
+  setupSessions() {
+    const { DB_URI } = env;
+    this.server.use(
+      session({
+        store: MongoStore.create({
+          mongoUrl: DB_URI,
+          ttl: 60 * 15,
+        }),
+        secret: 'password', // TODO: write more secure password
+        resave: true,
+        saveUninitialized: true,
+      }),
+    );
+  }
+
+  setupPassport() {
+    passportMiddlewares();
+    this.server.use(passport.initialize());
+    this.server.use(passport.session());
   }
 }

@@ -15,14 +15,15 @@ export interface BaseModel<T> extends Model<T> {
   /**
    * Attempts to fetch the resource based on some filter
    *
-   * @param id Id of the resource
+   * @param filter Query to filter the collection
    * @throws {ResourceNotFoundError}
    */
   findOneAndThrow(
-    filter: ObjectType,
+    filter: FilterQuery<T>,
     options: {
       lean: boolean;
-      property: { name: string; value: any };
+      errorMessage: String;
+      errorProperty: { name: string; value: any };
     },
   ): Promise<T>;
 

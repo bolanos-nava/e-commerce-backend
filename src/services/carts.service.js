@@ -86,9 +86,7 @@ export default class CartsService {
     const productInCart = await Cart.findProductInCart(cartId, productId);
 
     if (!product.status) {
-      throw new ResourceNotFoundError(`Product with ${productId} unavailable`, {
-        status: 403,
-      });
+      throw new ResourceNotFoundError(`Product with ${productId} unavailable`);
     }
 
     if (!productInCart) {

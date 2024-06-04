@@ -7,7 +7,7 @@ import { DuplicateResourceError } from '../../customErrors/DuplicateResourceErro
  * @typedef {import('../../types').IUserModel} IUserModel
  */
 
-// TODO: readd validations
+// TODO: re-add validations
 const userSchema = {
   name: 'User',
   schema: new Schema({
