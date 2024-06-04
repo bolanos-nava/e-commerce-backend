@@ -1,7 +1,8 @@
 <main class="container">
   <h1>Registro de usuario</h1>
 
-  <div id="errorAlert" class="alert alert-danger d-none">Error: campos faltantes</div>
+  <div id="errorAlert" class="alert alert-danger d-none">Error:
+    <span id="errorAlertSpan"></span></div>
 
   <form action="/api/v1/users" method="post" id="registerForm">
     <label for="firstName" class="form-label">Primer nombre</label>

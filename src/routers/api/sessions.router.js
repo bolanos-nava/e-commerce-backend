@@ -11,7 +11,7 @@ _sessionsRouter.post(
   passport.authenticate('login', {
     failureRedirect: '/login?error=bad_credentials',
   }),
-  sessions.loginP,
+  sessions.login,
 );
 _sessionsRouter.delete('/', sessions.logout);
 

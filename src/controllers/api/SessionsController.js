@@ -14,25 +14,7 @@ export default class SessionsController extends BaseController {
    * @type {ExpressType['RequestHandler']}
    */
   login = async (req, res) => {
-    try {
-      const credentials = sessionValidator.parse(req.body);
-
-      const user = await services.users.getUserByEmail(credentials.email, {
-        throws: true,
-      });
-      if (!isValidPassword(credentials.password, user.password)) {
-        throw new ForbiddenError("Passwords don't match", 403);
-      }
-
-      req.session.user = {
-        email: credentials.email,
-        admin: true,
-      };
-
-      res.redirect('/'); // redirect to homepage
-    } catch (error) {
-      res.redirect('/login?error=bad_credentials');
-    }
+    res.redirect('/');
   };
 
   /**
@@ -44,9 +26,5 @@ export default class SessionsController extends BaseController {
       if (error) return next(error);
       return res.status(204).end(); // no content
     });
-  };
-
-  loginP = async (req, res) => {
-    res.redirect('/');
   };
 }

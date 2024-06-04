@@ -3,8 +3,11 @@ import passportLocal from 'passport-local';
 import services from '../services/index.js';
 import { userValidator } from '../schemas/zod/index.js';
 import { encryptPassword, isValidPassword } from '../utils/index.js';
-import { ResourceNotFoundError } from '../customErrors/ResourceNotFoundError.js';
-import { UnauthorizedError } from '../customErrors/UnauthorizedError.js';
+import {
+  InternalServerError,
+  DuplicateResourceError,
+} from '../customErrors/index.js';
+import { User } from '../daos/models/User.js';
 
 const { Strategy: LocalStrategy } = passportLocal;
 
@@ -16,15 +19,16 @@ export function passportMiddlewares() {
       async (req, username, password, done) => {
         try {
           const dbUser = await services.users.getUserByEmail(username);
-          if (dbUser)
-            return done(null, false, { message: 'User already exists' });
+          if (dbUser) {
+            return done(new DuplicateResourceError('User already exists'));
+          }
 
           const reqUser = userValidator.parse(req.body);
           reqUser.password = encryptPassword(password);
           const response = await services.users.saveNewUser(reqUser);
           return done(null, response);
         } catch (error) {
-          return done(`Error ${error}`);
+          return done(error);
         }
       },
     ),
@@ -37,11 +41,8 @@ export function passportMiddlewares() {
       async (username, password, done) => {
         try {
           const user = await services.users.getUserByEmail(username);
-          if (!user) {
-            return done(new ResourceNotFoundError('User not found'));
-          }
-          if (!isValidPassword(password, user.password)) {
-            return done(new UnauthorizedError('Incorrect password'));
+          if (!user || !isValidPassword(password, user.password)) {
+            return done(null, false);
           }
           return done(null, user);
         } catch (error) {
@@ -52,15 +53,21 @@ export function passportMiddlewares() {
   );
 
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user.email);
   });
 
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser(async (email, done) => {
     try {
-      const user = await services.users.getUserById(id);
-      return done(null, user);
+      const user = await services.users.getUserByEmail(email);
+      return done(null, {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      });
     } catch (error) {
-      done(error);
+      done(new InternalServerError(error));
     }
   });
 }

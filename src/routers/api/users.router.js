@@ -8,11 +8,12 @@ const { users } = apiControllers;
 
 _usersRouter.post(
   '/',
-  passport.authenticate('register', {
-    failureRedirect: '/register?error=bad_form',
-    failureMessage: true,
-  }),
-  users.registerUserP,
+  (req, res, next) => {
+    req.body = req.body.user;
+    next();
+  },
+  passport.authenticate('register'),
+  users.registerUser,
 );
 
 export const usersRouter = {
