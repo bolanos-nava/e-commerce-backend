@@ -15,6 +15,21 @@ _sessionsRouter.post(
 );
 _sessionsRouter.delete('/', sessions.logout);
 
+_sessionsRouter.get(
+  '/github/login',
+  passport.authenticate('github', { scope: ['user:email'] }),
+);
+_sessionsRouter.get(
+  '/github',
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  sessions.loginGitHub,
+);
+// _sessionsRouter.get(
+//   '/github',
+//   passport.authenticate('github', { scope: ['user:email'] }),
+//   sessions.loginGitHub,
+// );
+
 export const sessionsRouter = {
   basePath: '/sessions',
   router: _sessionsRouter,

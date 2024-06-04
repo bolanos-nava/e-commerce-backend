@@ -1,7 +1,3 @@
-import { ForbiddenError } from '../../customErrors/index.js';
-import { sessionValidator } from '../../schemas/zod/index.js';
-import services from '../../services/index.js';
-import { isValidPassword } from '../../utils/passwordEncryption.js';
 import BaseController from './BaseController.js';
 
 /**
@@ -10,10 +6,20 @@ import BaseController from './BaseController.js';
 
 export default class SessionsController extends BaseController {
   /**
-   * Creates a new user
+   * Redirects to homepage after logging in
    * @type {ExpressType['RequestHandler']}
    */
   login = async (req, res) => {
+    res.redirect('/');
+  };
+
+  /**
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
+  loginGitHub = async (req, res) => {
+    console.log(req.user);
+    req.session.user = req.user;
     res.redirect('/');
   };
 

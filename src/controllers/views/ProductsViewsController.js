@@ -4,6 +4,7 @@ import services from '../../services/index.js';
 
 export default class ProductsViewsController {
   async renderProductsView(req, res, next) {
+    console.log(req.session);
     const { limit, page, sort, ...filter } = req.query;
     const response = await services.products.getProducts(filter, {
       limit,

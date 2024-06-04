@@ -1,5 +1,6 @@
 import passport from 'passport';
 import passportLocal from 'passport-local';
+import GitHubStrategy from 'passport-github2';
 import services from '../services/index.js';
 import { userValidator } from '../schemas/zod/index.js';
 import { encryptPassword, isValidPassword } from '../utils/index.js';
@@ -7,7 +8,6 @@ import {
   InternalServerError,
   DuplicateResourceError,
 } from '../customErrors/index.js';
-import { User } from '../daos/models/User.js';
 
 const { Strategy: LocalStrategy } = passportLocal;
 
@@ -25,8 +25,8 @@ export function passportMiddlewares() {
 
           const reqUser = userValidator.parse(req.body);
           reqUser.password = encryptPassword(password);
-          const response = await services.users.saveNewUser(reqUser);
-          return done(null, response);
+          const savedResponse = await services.users.saveNewUser(reqUser);
+          return done(null, savedResponse);
         } catch (error) {
           return done(error);
         }
@@ -45,6 +45,44 @@ export function passportMiddlewares() {
             return done(null, false);
           }
           return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      },
+    ),
+  );
+
+  passport.use(
+    'github',
+    new GitHubStrategy(
+      {
+        clientID: 'Iv23liHfrzmE7rV1Bwuj',
+        clientSecret: '27ca6825a2c98166ef9f8eef1a56ba64e90fa15c',
+        callbackURL: 'http://localhost:8080/api/v1/sessions/github',
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        console.log('profile', profile);
+        try {
+          const user = await services.users.getUserByEmail(profile._json.email);
+          const briefedUser = (u) => ({
+            id: u.id,
+            firstName: u.firstName,
+            lastName: u.lastName,
+            email: u.email,
+            role: u.role,
+          });
+          if (user) {
+            return done(null, briefedUser(user));
+          }
+          const newUser = userValidator.partial({ password: true }).parse({
+            firstName: profile._json.name,
+            lastName: '',
+            email: profile._json.email,
+            password: '',
+          });
+          const savedResponse = await services.users.saveNewUser(newUser);
+
+          return done(null, briefedUser(savedResponse));
         } catch (error) {
           return done(error);
         }
