@@ -59,6 +59,7 @@ export function passportMiddlewares() {
         clientID: 'Iv23liHfrzmE7rV1Bwuj',
         clientSecret: '27ca6825a2c98166ef9f8eef1a56ba64e90fa15c',
         callbackURL: 'http://localhost:8080/api/v1/sessions/github',
+        
       },
       async (accessToken, refreshToken, profile, done) => {
         console.log('profile', profile);
@@ -74,12 +75,14 @@ export function passportMiddlewares() {
           if (user) {
             return done(null, briefedUser(user));
           }
-          const newUser = userValidator.partial({ password: true }).parse({
-            firstName: profile._json.name,
-            lastName: '',
-            email: profile._json.email,
-            password: '',
-          });
+
+          const newUser = userValidator
+            .omit({ password: true }) // omits password field from parsed object to remove validations
+            .passthrough() // allows unknown keys (password in this case, which was omitted)
+            .parse({
+              firstName: profile._json.name,
+              email: profile._json.email,
+            });
           const savedResponse = await services.users.saveNewUser(newUser);
 
           return done(null, briefedUser(savedResponse));
@@ -97,14 +100,18 @@ export function passportMiddlewares() {
   passport.deserializeUser(async (email, done) => {
     try {
       const user = await services.users.getUserByEmail(email);
-      return done(null, {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role,
-      });
+      return done(
+        null,
+        user && {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          role: user.role,
+        },
+      );
     } catch (error) {
+      // TODO: when a user is deleted
       done(new InternalServerError(error));
     }
   });

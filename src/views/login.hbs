@@ -1,8 +1,9 @@
 <main class="container">
   <h1>Inicio de sesión</h1>
 
-  <div id="errorAlert" class="alert alert-danger d-none">Error: correo o
-    contraseña incorrectas</div>
+  <div id="errorAlert" class="alert alert-danger d-none">Error:
+    <span id="errorAlertSpan"></span>
+  </div>
 
   <form action="/api/v1/sessions" method="post" id="loginForm">
 

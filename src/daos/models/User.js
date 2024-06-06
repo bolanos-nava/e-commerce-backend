@@ -16,7 +16,10 @@ const userSchema = {
       required: true,
       // minLength: 3,
     },
-    lastName: String,
+    lastName: {
+      type: String,
+      default: '',
+    },
     email: {
       type: String,
       required: true,
@@ -25,7 +28,7 @@ const userSchema = {
     },
     password: {
       type: String,
-      required: true,
+      default: '',
       // minLength: 8,
       // maxLength: 16,
     },
