@@ -5,6 +5,14 @@ import BaseController from './BaseController.js';
  */
 
 export default class UsersController extends BaseController {
+  /** @type UsersServiceType */
+  #usersService;
+
+  constructor(usersService) {
+    super();
+    this.#usersService = usersService;
+  }
+
   /**
    * Endpoint executed after authenticating with Passport
    *

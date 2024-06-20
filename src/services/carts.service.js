@@ -1,6 +1,4 @@
-/* eslint-disable class-methods-use-this */
 import { Types } from 'mongoose';
-import { Cart, Product } from '../daos/models/index.js';
 import {
   ParameterError,
   ResourceNotFoundError,
@@ -9,18 +7,36 @@ import {
 
 /**
  * @typedef {import('../types').ICart} ICart
+ * @typedef {import('../types').ICartModel} ICartModel
  * @typedef {import('../types').CartProduct} CartProduct
  * @typedef {import('../types').IProduct} IProduct
+ * @typedef {import('../types').IProductModel} IProductModel
  */
 
 export default class CartsService {
+  /** @type ICartModel */
+  #Cart;
+  /** @type IProductModel */
+  #Product;
+
+  /**
+   * Constructs new carts service
+   *
+   * @param {ICartModel} Cart - Cart model
+   * @param {IProductModel} Product - Product model
+   */
+  constructor(Cart, Product) {
+    this.#Cart = Cart;
+    this.#Product = Product;
+  }
+
   /**
    * Saves a cart to the database
    *
    * @returns Response after save
    */
   async saveNewCart() {
-    const cart = new Cart();
+    const cart = new this.#Cart();
     return cart.save();
   }
 
@@ -33,41 +49,30 @@ export default class CartsService {
   async getCart(cartId, { lean = false } = {}) {
     await this.#removeUndefinedProducts(cartId);
 
-    // TODO: try to solve the chaining of Mongoose methods with monads
-    const cart = await Cart.findByIdAndThrow(cartId);
-    const cartPopulated = await cart.populate({
+    const cartQuery = this.#Cart.findById(cartId);
+    if (lean) cartQuery.lean();
+    const cart = await cartQuery.populate({
       path: 'products',
       populate: {
         path: 'product',
       },
     });
+    if (!cart) {
+      throw new ResourceNotFoundError(`Cart with id ${cartId} not found`);
+    }
+    return cartQuery;
 
-    // let cartPopulated;
-    // const populateQuery = {
-    //   path: 'products',
-    //   populate: {
-    //     path: 'product',
-    //   },
-    // };
-    // if (lean) {
-    //   cartPopulated = await Cart.findById(cartId)
-    //     .lean()
-    //     .populate(populateQuery);
-    // } else {
-    //   cartPopulated = await Cart.findById(cartId).populate(populateQuery);
-    // }
-
-    // if (!cartPopulated)
-    //   throw new ResourceNotFoundError(`Cart with id ${cartId} not found`);
-
-    // cartPopulated.products = cartPopulated.products.map((p) => p.toObject());
-
-    return lean
-      ? {
-          ...cartPopulated,
-          products: cartPopulated.products.map((p) => p.toObject()),
-        }
-      : cartPopulated;
+    /**
+     * The problem with the chaining of Mongoose methods is that you can't do something like
+     * <code>
+     *    const method = Cart.findByIdAndThrow(cartId)
+     *    const a = method.lean()
+     *    const b = await method.populate()
+     * </code>
+     * Because my custom method "Cart.findByIdAndThrow()" returns a Promise. On the contrary, the original "Cart.findById" returns a QueryHelper, which you can execute if you await the promise
+     *
+     * I think monads would be unnecessary here and wouldn't actually solve the problem... Which is that my custom method "findByIdAndThrow()" executes the query internally to check if the resource exists. If it doesn't, throws. If it does, returns the resource. The problem is that for that method to work, I would have to return the query, but then, how would I execute it if I'm returning the actual query object? There's just no way
+     */
   }
 
   /**
@@ -82,15 +87,15 @@ export default class CartsService {
     /* This endpoint assumes the cart exists */
 
     /* We don't assume the product exists in the database, it could have been deleted */
-    const product = await Product.findByIdAndThrow(productId);
-    const productInCart = await Cart.findProductInCart(cartId, productId);
+    const product = await this.#Product.findByIdAndThrow(productId);
+    const productInCart = await this.#Cart.findProductInCart(cartId, productId);
 
     if (!product.status) {
       throw new ResourceNotFoundError(`Product with ${productId} unavailable`);
     }
 
     if (!productInCart) {
-      await Cart.updateOne(
+      await this.#Cart.updateOne(
         { _id: cartId },
         {
           $push: {
@@ -119,7 +124,7 @@ export default class CartsService {
         "Quantity can't be greater than the available stock",
       );
     }
-    await Cart.updateOne(
+    await this.#Cart.updateOne(
       { _id: cartId, 'products.product': productId },
       { $inc: { 'products.$.quantity': quantity } },
     );
@@ -150,7 +155,7 @@ export default class CartsService {
     /* This endpoint assumes all products that we want to push exist in the database */
     // TODO: Check which products actually exist?
 
-    const cart = await Cart.findByIdAndThrow(cartId);
+    const cart = await this.#Cart.findByIdAndThrow(cartId);
 
     const { products: productsInCart } = cart;
     const productsInCartIds = productsInCart.map(({ product }) =>
@@ -166,7 +171,7 @@ export default class CartsService {
     });
 
     if (productsToPush.length) {
-      await Cart.updateOne(
+      await this.#Cart.updateOne(
         { _id: cartId },
         {
           $push: { products: { $each: productsToPush } },
@@ -177,13 +182,13 @@ export default class CartsService {
     // eslint-disable-next-line no-restricted-syntax
     for (const { product, quantity } of productsToUpdate) {
       // eslint-disable-next-line no-await-in-loop
-      await Cart.updateOne(
+      await this.#Cart.updateOne(
         { _id: cartId, 'products.product': product },
         { $inc: { 'products.$.quantity': quantity } },
       );
     }
 
-    const updatedCart = await Cart.aggregate([
+    const updatedCart = await this.#Cart.aggregate([
       { $match: { _id: new Types.ObjectId(cartId) } },
       {
         $addFields: {
@@ -219,9 +224,13 @@ export default class CartsService {
   async updateProductQuantity(cartId, productId, quantity) {
     /* Endpoint assumes the cart exists */
 
-    const productInCart = await Cart.findProductInCart(cartId, productId, {
-      populate: true,
-    });
+    const productInCart = await this.#Cart.findProductInCart(
+      cartId,
+      productId,
+      {
+        populate: true,
+      },
+    );
     if (!productInCart) {
       throw new ResourceNotFoundError("Product doesn't exist in cart");
     }
@@ -230,7 +239,7 @@ export default class CartsService {
       throw new ParameterError('Quantity is greater than the available stock');
     }
 
-    await Cart.updateOne(
+    await this.#Cart.updateOne(
       { _id: cartId, 'products.product': productId },
       { 'products.$.quantity': quantity },
     );
@@ -250,7 +259,7 @@ export default class CartsService {
    * @returns Response from removing a product from a cart
    */
   async removeOneProduct(cartId, productId) {
-    return Cart.removeOneProduct(cartId, productId);
+    return this.#Cart.removeOneProduct(cartId, productId);
   }
 
   /**
@@ -260,7 +269,7 @@ export default class CartsService {
    * @returns Response of removing all products from a cart
    */
   async removeAllProducts(cartId) {
-    return Cart.removeAllProducts(cartId);
+    return this.#Cart.removeAllProducts(cartId);
   }
 
   /**
@@ -270,7 +279,7 @@ export default class CartsService {
    * @returns Result of updating the cart
    */
   async #removeUndefinedProducts(cartId) {
-    const undefinedProductsAggregation = await Cart.aggregate([
+    const undefinedProductsAggregation = await this.#Cart.aggregate([
       {
         // Selects the cart with id == cartId
         $match: { _id: new Types.ObjectId(cartId) },
@@ -335,7 +344,7 @@ export default class CartsService {
     const productsToDelete = undefinedProductsAggregation[0].undefinedProducts;
 
     if (productsToDelete.length) {
-      return Cart.updateOne(
+      return this.#Cart.updateOne(
         { _id: cartId },
         {
           $pull: {

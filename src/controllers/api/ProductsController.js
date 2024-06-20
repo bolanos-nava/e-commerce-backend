@@ -1,13 +1,26 @@
-import services from '../../services/index.js';
 import BaseController from './BaseController.js';
 
 import { productValidator } from '../../schemas/zod/product.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
+ * @typedef {import('../../types').ServicesType['products']} ProductsServiceType
  */
 
 export default class ProductsController extends BaseController {
+  /** @type ProductsServiceType */
+  #productsService;
+
+  /**
+   * Constructs a new products controller
+   *
+   * @param {ProductsServiceType} productsService - Products service instance
+   */
+  constructor(productsService) {
+    super();
+    this.#productsService = productsService;
+  }
+
   /**
    * Returns list of products
    * @type {ExpressType['RequestHandler']}
@@ -15,7 +28,7 @@ export default class ProductsController extends BaseController {
   listProducts = async (req, res, next) => {
     try {
       const { limit, page, sort, ...filter } = req.query;
-      const response = await services.products.getProducts(filter, {
+      const response = await this.#productsService.getProducts(filter, {
         limit,
         page,
         sort,
@@ -35,7 +48,8 @@ export default class ProductsController extends BaseController {
     try {
       const { product: request } = req.body;
       const validRequest = productValidator.parse(request);
-      const savedResponse = await services.products.saveProduct(validRequest);
+      const savedResponse =
+        await this.#productsService.saveProduct(validRequest);
 
       req.socketServer.emit('new_product', savedResponse);
 
@@ -58,7 +72,7 @@ export default class ProductsController extends BaseController {
       const { productId } = req.params;
       this.validateIds({ productId });
 
-      const product = await services.products.getProductById(productId);
+      const product = await this.#productsService.getProductById(productId);
 
       res.json({
         status: 'success',
@@ -80,7 +94,7 @@ export default class ProductsController extends BaseController {
       const { product: request } = req.body;
       const newData = productValidator.partial().parse(request);
 
-      const updatedResponse = await services.products.updateProductById(
+      const updatedResponse = await this.#productsService.updateProductById(
         productId,
         newData,
       );
@@ -102,7 +116,7 @@ export default class ProductsController extends BaseController {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
-      await services.products.deleteProductById(productId);
+      await this.#productsService.deleteProductById(productId);
 
       res.status(204).send();
     } catch (error) {

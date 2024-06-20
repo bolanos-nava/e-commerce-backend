@@ -1,15 +1,26 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable class-methods-use-this */
-import { Product } from '../daos/models/index.js';
 
 /**
  * @typedef {import('mongoose').FilterQuery<IProduct>} FilterQueryProduct
  * @typedef {import('../types').ProductType} ProductType
  * @typedef {import('../types').IProduct} IProduct
+ * @typedef {import('../types').IProductModel} IProductModel
  * @typedef {import('../customErrors')} ResourceNotFoundError
  */
 
 export default class ProductsService {
+  /** @type IProductModel */
+  #Product;
+
+  /**
+   * Constructs a new products service
+   *
+   * @param {IProductModel} Product - Product model
+   */
+  constructor(Product) {
+    this.#Product = Product;
+  }
+
   /**
    * Return list of products
    *
@@ -36,7 +47,7 @@ export default class ProductsService {
       ...opts,
     };
 
-    const paginationResponse = await Product.paginate(filter, options);
+    const paginationResponse = await this.#Product.paginate(filter, options);
 
     const products = paginationResponse.docs;
     delete paginationResponse.docs;
@@ -57,7 +68,7 @@ export default class ProductsService {
    * @returns Response after save
    */
   async saveProduct(request) {
-    const product = new Product(request);
+    const product = new this.#Product(request);
     return product.save();
   }
 
@@ -69,7 +80,7 @@ export default class ProductsService {
    * @returns Product from database
    */
   async getProductById(productId) {
-    return Product.findByIdAndThrow(productId);
+    return this.#Product.findByIdAndThrow(productId);
   }
 
   /**
@@ -80,7 +91,7 @@ export default class ProductsService {
    * @returns Response after saving
    */
   async updateProductById(productId, request) {
-    const product = await Product.findByIdAndThrow(productId);
+    const product = await this.#Product.findByIdAndThrow(productId);
     const newProduct = Object.assign(product, request);
     return newProduct.save();
   }
@@ -92,7 +103,7 @@ export default class ProductsService {
    * @returns Response after deleting
    */
   async deleteProductById(productId) {
-    const product = await Product.findByIdAndThrow(productId);
+    const product = await this.#Product.findByIdAndThrow(productId);
     return product.deleteOne();
   }
 }

@@ -1,15 +1,28 @@
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
-import services from '../../services/index.js';
 import { cartValidator } from '../../schemas/zod/cart.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').MongoIdType} MongoIdType
  * @typedef {import('../../types').ControllerRoute} ControllerRoute
+ * @typedef {import('../../types').ServicesType['carts']} CartsServiceType
  */
 export default class CartsController extends BaseController {
+  /** @type CartsServiceType */
+  #cartsService;
+
+  /**
+   * Constructs a new carts controller
+   *
+   * @param {CartsServiceType} cartsService - Carts service instance
+   */
+  constructor(cartsService) {
+    super();
+    this.#cartsService = cartsService;
+  }
+
   /**
    * Creates a new cart
    *
@@ -17,7 +30,7 @@ export default class CartsController extends BaseController {
    */
   createCart = async (req, res, next) => {
     try {
-      const savedResponse = await services.carts.saveNewCart();
+      const savedResponse = await this.#cartsService.saveNewCart();
 
       res.status(201).json({
         status: 'created',
@@ -43,7 +56,7 @@ export default class CartsController extends BaseController {
       const { cartId } = req.params;
       this.validateIds({ cartId });
 
-      const cart = await services.carts.getCart(cartId);
+      const cart = await this.#cartsService.getCart(cartId);
 
       res.json({
         status: 'success',
@@ -69,7 +82,7 @@ export default class CartsController extends BaseController {
       const { cartId } = req.params;
       this.validateIds({ cartId });
 
-      await services.carts.removeAllProducts(cartId);
+      await this.#cartsService.removeAllProducts(cartId);
 
       // No content
       res.status(204).send();
@@ -94,7 +107,7 @@ export default class CartsController extends BaseController {
         quantity = 1;
       }
 
-      const addedResponse = await services.carts.addOneProductToCart(
+      const addedResponse = await this.#cartsService.addOneProductToCart(
         cartId,
         productId,
         quantity,
@@ -126,7 +139,7 @@ export default class CartsController extends BaseController {
 
       const { products } = req.body;
 
-      const addedResponse = await services.carts.addProductsToCart(
+      const addedResponse = await this.#cartsService.addProductsToCart(
         cartId,
         products,
       );
@@ -157,7 +170,7 @@ export default class CartsController extends BaseController {
         quantity = 1;
       }
 
-      const updatedResponse = await services.carts.updateProductQuantity(
+      const updatedResponse = await this.#cartsService.updateProductQuantity(
         cartId,
         productId,
         quantity,
@@ -184,7 +197,7 @@ export default class CartsController extends BaseController {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
 
-      await services.carts.removeOneProduct(cartId, productId);
+      await this.#cartsService.removeOneProduct(cartId, productId);
 
       // No content
       res.status(204).send();

@@ -1,19 +1,31 @@
 /* eslint-disable class-methods-use-this */
-import { Message } from '../daos/models/index.js';
 
 /**
  * @typedef {import('../types').MessageType} MessageType
+ * @typedef {import('../types').IMessageModel} IMessageModel
  */
 
 export default class MessagesService {
+  /** @type IMessageModel */
+  #Message;
+
+  /**
+   * Constructs a new messages service
+   *
+   * @param {IMessageModel} Message - Message model
+   */
+  constructor(Message) {
+    this.#Message = Message;
+  }
+
   /**
    * Saves a new message to the database
    *
-   * @param {MessageType} body
+   * @param {MessageType} body - Body object
    * @returns Response after saving message
    */
   async createNewMessage(body) {
-    const message = new Message(body);
+    const message = new this.#Message(body);
     return message.save();
   }
 
@@ -23,6 +35,6 @@ export default class MessagesService {
    * @returns List of messages
    */
   async getMessages() {
-    return Message.find();
+    return this.#Message.find();
   }
 }
