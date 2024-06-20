@@ -54,6 +54,19 @@ export default class SessionsController extends BaseController {
   };
 
   /**
+   * Logout, clear JWT cookie
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
+  jwtLogout = async (req, res, next) => {
+    try {
+      res.clearCookie('jwt').status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
    * Login with JWT
    *
    * @type {ExpressType['RequestHandler']}
@@ -77,8 +90,7 @@ export default class SessionsController extends BaseController {
       res
         .cookie('jwt', jwt, {
           maxAge: 1000 * 60 * 15, // base unit of maxAge is ms
-          httpOnly: true,
-          signed: true,
+          httpOnly: true, // so jwt can't be obtained with js from the client
         })
         .status(204)
         .send();

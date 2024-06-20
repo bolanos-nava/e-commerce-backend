@@ -1,5 +1,6 @@
 import passport from 'passport';
-import passportLocal from 'passport-local';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import GitHubStrategy from 'passport-github2';
 import services from '../services/index.js';
 import { userValidator } from '../schemas/zod/index.js';
@@ -9,9 +10,19 @@ import {
   DuplicateResourceError,
 } from '../customErrors/index.js';
 
-const { Strategy: LocalStrategy } = passportLocal;
+function cookieJwtExtractor(req) {
+  return req?.cookies ? req.cookies.token : null;
+}
 
 export function passportMiddlewares() {
+  // passport.use(
+  //   'jwt',
+  //   new JwtStrategy({
+  //     jwtFromRequest: ExtractJwt.fromExtractors([cookieJwtExtractor]),
+  //     secretOrKey: PRIVATE_KEY,
+  //   }),
+  // );
+
   passport.use(
     'register',
     new LocalStrategy(
@@ -59,7 +70,6 @@ export function passportMiddlewares() {
         clientID: 'Iv23liHfrzmE7rV1Bwuj',
         clientSecret: '27ca6825a2c98166ef9f8eef1a56ba64e90fa15c',
         callbackURL: 'http://localhost:8080/api/v1/sessions/github',
-        
       },
       async (accessToken, refreshToken, profile, done) => {
         console.log('profile', profile);

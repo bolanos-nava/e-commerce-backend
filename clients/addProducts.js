@@ -99,9 +99,6 @@ const products = [
 
     const response = await fetch(`${env.API_URL}:${env.PORT}/api/v1/products`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ product }),
     });
     try {

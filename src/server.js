@@ -34,6 +34,7 @@ async function start() {
   configuration.setupSessions();
   configuration.setupPassport();
   // TEST: COOKIES AND IN-MEMORY SESSIONS
+  server.use(cookieParser(env.JWT_PRIVATE_KEY));
   // server.use(
   //   session({
   //     secret: 'password',

@@ -21,8 +21,15 @@ function attatchListenerToCartButton() {
 
 function attatchListenerToLogoutButton() {
   document.getElementById('btnLogout').addEventListener('click', async () => {
-    const response = await fetch('/api/v1/sessions', { method: 'DELETE' });
+    localStorage.removeItem('token');
+    localStorage.removeItem('logged');
+    // window.location.pathname = '/login';
+
+    const response = await fetch('/api/v1/sessions/jwt', { method: 'DELETE' });
     if (response.ok) window.location.pathname = '/login';
+
+    // const response = await fetch('/api/v1/sessions', { method: 'DELETE' });
+    // if (response.ok) window.location.pathname = '/login';
   });
 }
 
@@ -32,9 +39,25 @@ function changeQueryParams(key, value) {
   window.location.search = params.toString();
 }
 
+function hideLoginButtons() {
+  const btnLogin = document.getElementById('btnLogin');
+  const btnRegister = document.getElementById('btnRegister');
+  const btnLogout = document.getElementById('btnLogout');
+  if (localStorage.getItem('logged')) {
+    btnLogin.classList.add('d-none'); // hide login
+    btnRegister.classList.add('d-none'); // hide register
+    btnLogout.classList.remove('d-none'); // show logout
+  } else {
+    btnLogin.classList.remove('d-none'); // show login
+    btnRegister.classList.remove('d-none'); // show register
+    btnLogout.classList.add('d-none'); // hide logout
+  }
+}
+
 async function main() {
   attatchListenerToCartButton();
   attatchListenerToLogoutButton();
+  hideLoginButtons();
   const productsItems = document.querySelectorAll('.products__list .item');
 
   const btnPrevPage = document.querySelector('#btnPrevPage');

@@ -6,6 +6,9 @@ const _sessionsRouter = Router();
 
 const { sessions } = apiControllers;
 
+_sessionsRouter.post('/jwt', sessions.jwtLogin);
+_sessionsRouter.delete('/jwt', sessions.jwtLogout);
+
 _sessionsRouter.post(
   '/',
   passport.authenticate('login', {

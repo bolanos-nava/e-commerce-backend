@@ -106,7 +106,7 @@ export default class ServerConfiguration {
       session({
         store: MongoStore.create({
           mongoUrl: DB_URI,
-          ttl: 60 * 15,
+          ttl: 60 * 15, // sessions last for 15 minutes
         }),
         secret: 'password', // TODO: write more secure password
         resave: true,
@@ -118,6 +118,6 @@ export default class ServerConfiguration {
   setupPassport() {
     passportMiddlewares();
     this.server.use(passport.initialize());
-    this.server.use(passport.session());
+    this.server.use(passport.session()); // TODO: change to JWT
   }
 }
