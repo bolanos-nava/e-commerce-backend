@@ -8,20 +8,37 @@ import { encryptPassword, isValidPassword } from '../utils/index.js';
 import {
   InternalServerError,
   DuplicateResourceError,
+  UnauthorizedError,
 } from '../customErrors/index.js';
+import { env } from '../configs/index.js';
 
 function cookieJwtExtractor(req) {
-  return req?.cookies ? req.cookies.token : null;
+  console.log('token in cookie extractor', req?.cookies?.token);
+  const token = req?.cookies?.token || null;
+  if (!token) {
+    throw new UnauthorizedError('No token present');
+  }
+  return token;
 }
 
-export function passportMiddlewares() {
-  // passport.use(
-  //   'jwt',
-  //   new JwtStrategy({
-  //     jwtFromRequest: ExtractJwt.fromExtractors([cookieJwtExtractor]),
-  //     secretOrKey: PRIVATE_KEY,
-  //   }),
-  // );
+export function passportStrategies() {
+  passport.use(
+    'jwt',
+    new JwtStrategy(
+      {
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieJwtExtractor]),
+        secretOrKey: env.JWT_PRIVATE_KEY,
+      },
+      async (jwtPayload, done) => {
+        console.log('jwt payload', jwtPayload);
+        try {
+          return done(null, jwtPayload);
+        } catch (error) {
+          return done(error);
+        }
+      },
+    ),
+  );
 
   passport.use(
     'register',

@@ -9,10 +9,12 @@ import {
 } from 'express';
 import { Server } from 'socket.io';
 import services from '../services';
+import { JwtTokenFactory } from '../utils';
 
 export type UUIDType = `${string}-${string}-${string}-${string}`;
 
 export type ServicesType = typeof services;
+export type JwtTokenFactoryType = typeof JwtTokenFactory;
 
 export type ObjectType<T = any> = {
   [key: string]: T;

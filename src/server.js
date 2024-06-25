@@ -16,7 +16,7 @@ import testSessionsRouter from './testSessionsRouter.js';
 
 async function start() {
   /* --------- CONFIGURATIONS ---------- */
-  const configuration = new ServerConfiguration();
+  const configuration = ServerConfiguration.instance;
   await configuration.setupDb();
   configuration.setupMiddlewares();
   configuration.setupTemplateEngines();
@@ -30,21 +30,10 @@ async function start() {
   });
   const socketServer = new Server(httpServer);
 
-  /* --------- SESSIONS --------- */
+  /* --------- PASSPORT --------- */
   configuration.setupSessions();
   configuration.setupPassport();
-  // TEST: COOKIES AND IN-MEMORY SESSIONS
-  server.use(cookieParser(env.JWT_PRIVATE_KEY));
-  // server.use(
-  //   session({
-  //     secret: 'password',
-  //     resave: true,
-  //     saveUninitialized: true,
-  //   }),
-  // );
-  // server.use(cookieParser('password'));
-  // server.use('/test', testSessionsRouter);
-  // END TEST
+ 
 
   /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);

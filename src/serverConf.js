@@ -6,15 +6,17 @@ import hbs from 'express-handlebars';
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 import passport from 'passport';
-import { passportMiddlewares } from './middlewares/index.js';
+import cookieParser from 'cookie-parser';
+import { passportStrategies } from './middlewares/index.js';
 import { env } from './configs/index.js';
+import testSessionsRouter from './testSessionsRouter.js';
 
 /**
  * @typedef {import('./types').ExpressType['Express']} ExpressInstance
  */
 
 /**
- * Class to execute initial server configurations, like general middlewares and template engines
+ * Singleton class to execute initial server configurations, like general middlewares and template engines
  */
 export default class ServerConfiguration {
   static BASE_DIR = path.resolve();
@@ -26,6 +28,9 @@ export default class ServerConfiguration {
   /** @type {ExpressInstance} */
   server;
 
+  /** @type ServerConfiguration */
+  static #instance;
+
   /**
    * Instances a new ServerConfiguration object
    *
@@ -33,6 +38,18 @@ export default class ServerConfiguration {
    */
   constructor() {
     this.server = express();
+  }
+
+  /**
+   * Singleton method. Initializes a new ServerConfiguration or returns existing instance
+   *
+   * @returns ServerConfiguration instance
+   */
+  static get instance() {
+    if (!this.#instance) {
+      this.#instance = new ServerConfiguration();
+    }
+    return this.#instance;
   }
 
   /**
@@ -98,6 +115,7 @@ export default class ServerConfiguration {
   }
 
   /**
+   * OMIT IF NOT USING SESSIONS
    * Sets up sessions with MongoDB as store
    */
   setupSessions() {
@@ -115,9 +133,33 @@ export default class ServerConfiguration {
     );
   }
 
+  /**
+   * Sets up passport configurations
+   */
   setupPassport() {
-    passportMiddlewares();
+    // We will save the JWT as cookies
+    this.server.use(cookieParser());
+    // Sets up passport strategies
+    passportStrategies();
+    // Initializes passport
     this.server.use(passport.initialize());
-    this.server.use(passport.session()); // TODO: change to JWT
+
+    // this.server.use(passport.session()); // TODO: see how to change sessions in the case of logging in with GitHub
+  }
+
+  /**
+   * TEST: in-memory sessions
+   */
+  testMemorySessions() {
+    const { COOKIE_SECRET } = env;
+    this.server.use(
+      session({
+        secret: COOKIE_SECRET,
+        resave: true,
+        saveUninitialized: true,
+      }),
+    );
+    this.server.use(cookieParser(COOKIE_SECRET));
+    this.server.use('/test', testSessionsRouter);
   }
 }

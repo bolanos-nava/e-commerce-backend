@@ -55,6 +55,13 @@ function hideLoginButtons() {
 }
 
 async function main() {
+  const resp = await fetch('/api/v1/sessions/current', { method: 'POST' });
+  try {
+    console.log('jwt', await resp.json());
+  } catch (error) {
+    console.log('no jwt');
+  }
+
   attatchListenerToCartButton();
   attatchListenerToLogoutButton();
   hideLoginButtons();
