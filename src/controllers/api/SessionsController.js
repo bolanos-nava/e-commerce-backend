@@ -83,36 +83,4 @@ export default class SessionsController extends BaseController {
       next(error);
     }
   };
-
-  /**
-   * Redirects to homepage after logging in
-   *
-   * @type {ExpressType['RequestHandler']}
-   */
-  loginSessions = async (req, res) => {
-    res.redirect('/');
-  };
-
-  /**
-   * Callback after login with GitHub
-   *
-   * @type {ExpressType['RequestHandler']}
-   */
-  loginGitHubSessions = async (req, res) => {
-    console.log('user after logging in with GH', req.user);
-    req.session.user = req.user;
-    res.redirect('/');
-  };
-
-  /**
-   * Destroys a session
-   *
-   * @type {ExpressType['RequestHandler']}
-   */
-  logoutSessions = async (req, res, next) => {
-    req.session.destroy((error) => {
-      if (error) return next(error);
-      return res.status(204).end(); // no content
-    });
-  };
 }

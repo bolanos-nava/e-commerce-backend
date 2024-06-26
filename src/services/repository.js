@@ -6,9 +6,10 @@ const PERSISTENCE_TYPES = {
 };
 
 /**
+ * Object to interchange services according to the selected persistence
+ *
  * @type {import('../types').RepositoryType} RepositoryType
  */
 const repository = PERSISTENCE_TYPES[env.PERSISTENCE];
-// const repository = PERSISTENCE_TYPES.MONGO;
 
 export default repository;

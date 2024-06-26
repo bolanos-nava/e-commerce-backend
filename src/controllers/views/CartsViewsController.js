@@ -11,10 +11,6 @@ export default class CartsViewsController {
         products: cart.products,
         title: 'Tienda | Carrito',
         stylesheet: '/css/index.css',
-        env: {
-          API_URL: env.API_URL,
-          PORT: env.PORT,
-        },
       };
 
       res.render('cart', context);

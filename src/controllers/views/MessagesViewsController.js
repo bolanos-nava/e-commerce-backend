@@ -8,10 +8,6 @@ export default class MessagesViewsController {
       messages: messages.map((m) => m.toObject()),
       title: 'Chat',
       stylesheet: '/css/index.css',
-      env: {
-        API_URL: env.API_URL,
-        PORT: env.PORT,
-      },
     };
 
     res.render('chat', context);

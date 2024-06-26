@@ -35,15 +35,6 @@ _sessionsRouter.post(
   },
 );
 
-_sessionsRouter.post(
-  '/',
-  passport.authenticate('login', {
-    failureRedirect: '/login?error=bad_credentials',
-  }),
-  controllers.sessions.loginSessions,
-);
-_sessionsRouter.delete('/', controllers.sessions.logoutSessions);
-
 /** GH entrypoint */
 _sessionsRouter.get(
   '/github/login',

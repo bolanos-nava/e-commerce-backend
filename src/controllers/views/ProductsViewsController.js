@@ -27,10 +27,6 @@ export default class ProductsViewsController {
       pagination: response.payload.pagination,
       title: 'Tienda | Inicio',
       stylesheet: '/css/index.css',
-      env: {
-        API_URL: env.API_URL,
-        PORT: env.PORT,
-      },
     };
 
     res.render('home', context);
@@ -49,10 +45,6 @@ export default class ProductsViewsController {
       pagination: response.payload.pagination,
       title: 'Tienda | Inicio',
       stylesheet: '/css/index.css',
-      env: {
-        API_URL: env.API_URL,
-        PORT: env.PORT,
-      },
     };
 
     res.render('realTimeProducts', context);
