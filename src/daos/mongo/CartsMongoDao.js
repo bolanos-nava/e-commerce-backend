@@ -3,17 +3,17 @@ import {
   ParameterError,
   ResourceNotFoundError,
   InvalidFieldValueError,
-} from '../customErrors/index.js';
+} from '../../customErrors/index.js';
 
 /**
- * @typedef {import('../types').ICart} ICart
- * @typedef {import('../types').ICartModel} ICartModel
- * @typedef {import('../types').CartProduct} CartProduct
- * @typedef {import('../types').IProduct} IProduct
- * @typedef {import('../types').IProductModel} IProductModel
+ * @typedef {import('../../types/index.js').ICart} ICart
+ * @typedef {import('../../types/index.js').ICartModel} ICartModel
+ * @typedef {import('../../types/index.js').CartProduct} CartProduct
+ * @typedef {import('../../types/index.js').IProduct} IProduct
+ * @typedef {import('../../types/index.js').IProductModel} IProductModel
  */
 
-export default class CartsService {
+export class CartsMongoDao {
   /** @type ICartModel */
   #Cart;
   /** @type IProductModel */
@@ -35,9 +35,8 @@ export default class CartsService {
    *
    * @returns Response after save
    */
-  async saveNewCart() {
-    const cart = new this.#Cart();
-    return cart.save();
+  async save() {
+    return new this.#Cart().save();
   }
 
   /**
@@ -46,12 +45,10 @@ export default class CartsService {
    * @param {ICart['_id']} cartId
    * @returns
    */
-  async getCart(cartId, { lean = false } = {}) {
+  async get(cartId, { lean = false } = {}) {
     await this.#removeUndefinedProducts(cartId);
 
-    const cartQuery = this.#Cart.findById(cartId);
-    if (lean) cartQuery.lean();
-    const cart = await cartQuery.populate({
+    const cart = await this.#Cart.findById(cartId).populate({
       path: 'products',
       populate: {
         path: 'product',
@@ -60,7 +57,7 @@ export default class CartsService {
     if (!cart) {
       throw new ResourceNotFoundError(`Cart with id ${cartId} not found`);
     }
-    return cartQuery;
+    return lean ? cart.toObject() : cart;
 
     /**
      * The problem with the chaining of Mongoose methods is that you can't do something like
@@ -71,7 +68,7 @@ export default class CartsService {
      * </code>
      * Because my custom method "Cart.findByIdAndThrow()" returns a Promise. On the contrary, the original "Cart.findById" returns a QueryHelper, which you can execute if you await the promise
      *
-     * I think monads would be unnecessary here and wouldn't actually solve the problem... Which is that my custom method "findByIdAndThrow()" executes the query internally to check if the resource exists. If it doesn't, throws. If it does, returns the resource. The problem is that for that method to work, I would have to return the query, but then, how would I execute it if I'm returning the actual query object? There's just no way
+     * I think monads would be unnecessary here and wouldn't actually solve the problem... Which is that my custom method "findByIdAndThrow()" executes the query internally to check if the resource exists. If it doesn't, throws. If it does, returns the resource. The problem is that for that method to work, I would have to return the query, but then, how would I execute it if I'm returning the actual query object? I think there's no way
      */
   }
 
@@ -83,7 +80,7 @@ export default class CartsService {
    * @param {number} quantity
    * @returns Information about the added/updated product
    */
-  async addOneProductToCart(cartId, productId, quantity) {
+  async addProductToCart(cartId, productId, quantity) {
     /* This endpoint assumes the cart exists */
 
     /* We don't assume the product exists in the database, it could have been deleted */
@@ -258,7 +255,7 @@ export default class CartsService {
    * @param {IProduct['_id']} productId
    * @returns Response from removing a product from a cart
    */
-  async removeOneProduct(cartId, productId) {
+  async removeProduct(cartId, productId) {
     return this.#Cart.removeOneProduct(cartId, productId);
   }
 

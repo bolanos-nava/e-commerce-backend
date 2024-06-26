@@ -1,18 +1,27 @@
-/* eslint-disable class-methods-use-this */
 import { env } from '../../configs/index.js';
-import services from '../../services/index.js';
+import repository from '../../services/repository.js';
 
 export default class ProductsViewsController {
   async renderProductsView(req, res, next) {
-    console.log(req.session);
-    console.log(req.cookies);
-    const { limit, page, sort, ...filter } = req.query;
-    const response = await services.products.getProducts(filter, {
+    console.log('session', req.session);
+    console.log('cookies', req.cookies);
+    console.log('query', req.query);
+    const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
+      req.query;
+    const filter = {
+      minPrice,
+      maxPrice,
+      categoryId,
+      minStock,
+    };
+    console.log('filter', filter);
+    const response = await repository.products.getAll(filter, {
       limit,
       page,
       sort,
       lean: true,
     });
+    console.log('resp', response);
     const context = {
       products: response.payload.products,
       pagination: response.payload.pagination,
@@ -29,7 +38,7 @@ export default class ProductsViewsController {
 
   async renderRealTimeProductsView(req, res, next) {
     const { limit, page, sort, ...filter } = req.query;
-    const response = await services.products.getProducts(filter, {
+    const response = await repository.products.getAll(filter, {
       limit,
       page,
       sort,

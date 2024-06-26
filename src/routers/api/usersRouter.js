@@ -1,10 +1,8 @@
 import { Router } from 'express';
 import passport from 'passport';
-import apiControllers from '../../controllers/api/index.js';
+import controllers from '../../controllers/api/index.js';
 
 const _usersRouter = Router();
-
-const { users } = apiControllers;
 
 _usersRouter.post(
   '/',
@@ -13,7 +11,7 @@ _usersRouter.post(
     next();
   },
   passport.authenticate('register'),
-  users.registerUser,
+  controllers.users.create,
 );
 
 export const usersRouter = {

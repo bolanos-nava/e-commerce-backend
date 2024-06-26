@@ -1,20 +1,18 @@
-import { UnauthorizedError } from '../../customErrors/UnauthorizedError.js';
-import services from '../../services/index.js';
-import { isValidPassword, JwtTokenFactory } from '../../utils/index.js';
 import BaseController from './BaseController.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
+ * @typedef {import('../../types').JwtTokenFactoryType} JwtTokenFactoryType
  */
 
 export default class SessionsController extends BaseController {
-  /** * @type {JwtTokenFactory} */
+  /** * @type {JwtTokenFactoryType} */
   #jwtTokenFactory;
 
   /**
    * Constructs a new sessions controller instance
    *
-   * @param {JwtTokenFactory} jwtTokenFactory
+   * @param {JwtTokenFactoryType} jwtTokenFactory
    */
   constructor(jwtTokenFactory) {
     super();
@@ -22,62 +20,13 @@ export default class SessionsController extends BaseController {
   }
 
   /**
-   * Redirects to homepage after logging in
+   * Generates JWT and sends it to the client
    *
    * @type {ExpressType['RequestHandler']}
    */
-  login = async (req, res) => {
-    res.redirect('/');
-  };
-
-  /**
-   * Callback after login with GitHub
-   *
-   * @type {ExpressType['RequestHandler']}
-   */
-  loginGitHub = async (req, res) => {
-    console.log(req.user);
-    req.session.user = req.user;
-    res.redirect('/');
-  };
-
-  /**
-   * Destroys a session
-   *
-   * @type {ExpressType['RequestHandler']}
-   */
-  logout = async (req, res, next) => {
-    req.session.destroy((error) => {
-      if (error) return next(error);
-      return res.status(204).end(); // no content
-    });
-  };
-
-  /**
-   * Logout, clear JWT cookie
-   *
-   * @type {ExpressType['RequestHandler']}
-   */
-  jwtLogout = async (req, res, next) => {
+  login = async (req, res, next) => {
     try {
-      res.clearCookie('jwt').status(204).send();
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * Login with JWT
-   *
-   * @type {ExpressType['RequestHandler']}
-   */
-  jwtLogin = async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
-      const user = await services.users.getUserByEmail(email);
-      if (!user || !isValidPassword(password, user.password)) {
-        throw new UnauthorizedError('Invalid credentials provided');
-      }
+      const { user } = req;
       const jwt = this.#jwtTokenFactory.generateToken({
         user: {
           _id: user.id,
@@ -88,18 +37,82 @@ export default class SessionsController extends BaseController {
         },
       });
       res
-        .cookie('jwt', jwt, {
+        .cookie('token', jwt, {
           maxAge: 1000 * 60 * 15, // base unit of maxAge is ms
           httpOnly: true, // so jwt can't be obtained with js from the client
         })
         .status(204)
         .send();
-      // res.send({
-      //   status: 'success',
-      //   payload: { jwt },
-      // });
     } catch (error) {
       next(error);
     }
+  };
+
+  /**
+   * Generates JWT after logging in with GitHub
+   *
+   * @type ExpressType['RequestHandler']
+   */
+  loginGitHub = async (req, res, next) => {
+    try {
+      // TODO: transform data from GitHub
+      const jwt = this.#jwtTokenFactory.generateToken({
+        user: req.user,
+      });
+      console.log("We're here");
+      res
+        .cookie('token', jwt, {
+          maxAge: 1000 * 60 * 15,
+          httpOnly: true,
+        })
+        .redirect('/?logged=true');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Logs out, clears the token from the client
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
+  logout = async (req, res, next) => {
+    try {
+      res.clearCookie('token').status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Redirects to homepage after logging in
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
+  loginSessions = async (req, res) => {
+    res.redirect('/');
+  };
+
+  /**
+   * Callback after login with GitHub
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
+  loginGitHubSessions = async (req, res) => {
+    console.log('user after logging in with GH', req.user);
+    req.session.user = req.user;
+    res.redirect('/');
+  };
+
+  /**
+   * Destroys a session
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
+  logoutSessions = async (req, res, next) => {
+    req.session.destroy((error) => {
+      if (error) return next(error);
+      return res.status(204).end(); // no content
+    });
   };
 }

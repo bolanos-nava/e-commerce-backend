@@ -1,11 +1,9 @@
-/* eslint-disable class-methods-use-this */
-
 /**
- * @typedef {import('../types').MessageType} MessageType
- * @typedef {import('../types').IMessageModel} IMessageModel
+ * @typedef {import('../../types').MessageType} MessageType
+ * @typedef {import('../../types').IMessageModel} IMessageModel
  */
 
-export default class MessagesService {
+export class MessagesMongoDao {
   /** @type IMessageModel */
   #Message;
 

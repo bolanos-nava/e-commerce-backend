@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
 import { messageValidator } from '../../schemas/zod/message.validator.js';
 

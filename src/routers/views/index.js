@@ -1,13 +1,13 @@
-import { cartsViewsRouter } from './carts.views.router.js';
-import { messagesViewsRouter } from './messages.views.router.js';
-import { productsViewsRouter } from './products.views.router.js';
-import { sessionViewsRouter } from './session.views.router.js';
+import { cartsViewsRouter } from './cartsViewsRouter.js';
+import { messagesViewsRouter } from './messagesViewsRouter.js';
+import { productsViewsRouter } from './productsViewsRouter.js';
+import { sessionsViewsRouter } from './sessionsViewsRouter.js';
 
 const viewsRouters = [
   cartsViewsRouter,
   productsViewsRouter,
   messagesViewsRouter,
-  sessionViewsRouter,
+  sessionsViewsRouter,
 ];
 
 export default viewsRouters;

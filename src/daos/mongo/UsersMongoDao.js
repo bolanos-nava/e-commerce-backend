@@ -1,12 +1,12 @@
 /**
- * @typedef {import('../types').UserType} UserType
- * @typedef {import('../types').IUser} IUser
- * @typedef {import('../types').IUserModel} IUserModel
- * @typedef {import('../types').MongoIdType} MongoIdType
+ * @typedef {import('../../types').UserType} UserType
+ * @typedef {import('../../types').IUser} IUser
+ * @typedef {import('../../types').IUserModel} IUserModel
+ * @typedef {import('../../types').MongoIdType} MongoIdType
  * @typedef {import('mongoose').FilterQuery<IUser>} FilterQueryUser
  */
 
-export default class UsersService {
+export class UsersMongoDao {
   /** @type IUserModel */
   #User;
 

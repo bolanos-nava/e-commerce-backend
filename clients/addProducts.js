@@ -1,6 +1,5 @@
 import env from '../src/configs/envLoader.js';
 
-/* eslint-disable no-param-reassign */
 const CATEGORIES = Object.freeze({
   CAT1: 'cat1',
   CAT2: 'cat2',

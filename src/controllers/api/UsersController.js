@@ -18,7 +18,7 @@ export default class UsersController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  registerUser = async (req, res, next) => {
+  create = async (req, res, next) => {
     res.status(201).send({ status: 'created' });
   };
 }

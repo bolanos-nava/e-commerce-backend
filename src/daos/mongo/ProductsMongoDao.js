@@ -1,14 +1,12 @@
-/* eslint-disable no-param-reassign */
-
 /**
  * @typedef {import('mongoose').FilterQuery<IProduct>} FilterQueryProduct
- * @typedef {import('../types').ProductType} ProductType
- * @typedef {import('../types').IProduct} IProduct
- * @typedef {import('../types').IProductModel} IProductModel
- * @typedef {import('../customErrors')} ResourceNotFoundError
+ * @typedef {import('../../types').ProductType} ProductType
+ * @typedef {import('../../types').IProduct} IProduct
+ * @typedef {import('../../types').IProductModel} IProductModel
+ * @typedef {import('../../customErrors')} ResourceNotFoundError
  */
 
-export default class ProductsService {
+export class ProductsMongoDao {
   /** @type IProductModel */
   #Product;
 
@@ -28,7 +26,15 @@ export default class ProductsService {
    * @param {number} limit Amount of products to return
    * @returns Products from database
    */
-  async getProducts(filter = {}, opts = {}) {
+  async getAll(filter = {}, opts = {}) {
+    // TODO: correct filters so you have min and max
+    const FILTER = {
+      minPrice: filter.minPrice,
+      maxPrice: filter.maxPrice,
+      categoryId: filter.categoryId,
+      minStock: filter.minStock,
+    };
+
     const SORT_OPTIONS = {
       ASC: { price: 1 },
       DESC: { price: -1 },
@@ -47,7 +53,7 @@ export default class ProductsService {
       ...opts,
     };
 
-    const paginationResponse = await this.#Product.paginate(filter, options);
+    const paginationResponse = await this.#Product.paginate({}, options);
 
     const products = paginationResponse.docs;
     delete paginationResponse.docs;
@@ -67,7 +73,7 @@ export default class ProductsService {
    * @param {ProductType} request Data of the product to add
    * @returns Response after save
    */
-  async saveProduct(request) {
+  async save(request) {
     const product = new this.#Product(request);
     return product.save();
   }
@@ -79,7 +85,7 @@ export default class ProductsService {
    * @throws ResourceNotFoundError
    * @returns Product from database
    */
-  async getProductById(productId) {
+  async getById(productId) {
     return this.#Product.findByIdAndThrow(productId);
   }
 
@@ -90,7 +96,7 @@ export default class ProductsService {
    * @param {Partial<ProductType>} request
    * @returns Response after saving
    */
-  async updateProductById(productId, request) {
+  async updateById(productId, request) {
     const product = await this.#Product.findByIdAndThrow(productId);
     const newProduct = Object.assign(product, request);
     return newProduct.save();
@@ -102,7 +108,7 @@ export default class ProductsService {
    * @param {IProduct['_id']} productId
    * @returns Response after deleting
    */
-  async deleteProductById(productId) {
+  async deleteById(productId) {
     const product = await this.#Product.findByIdAndThrow(productId);
     return product.deleteOne();
   }

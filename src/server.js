@@ -1,7 +1,4 @@
-/* eslint-disable no-console */
 import { Server } from 'socket.io';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
 
 import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
@@ -12,7 +9,6 @@ import {
   socketMiddleware,
   guardRoute,
 } from './middlewares/index.js';
-import testSessionsRouter from './testSessionsRouter.js';
 
 async function start() {
   /* --------- CONFIGURATIONS ---------- */
@@ -33,7 +29,6 @@ async function start() {
   /* --------- PASSPORT --------- */
   configuration.setupSessions();
   configuration.setupPassport();
- 
 
   /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);

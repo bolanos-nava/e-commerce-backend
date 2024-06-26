@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
 import { cartValidator } from '../../schemas/zod/cart.validator.js';
 
@@ -28,9 +26,9 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  createCart = async (req, res, next) => {
+  create = async (req, res, next) => {
     try {
-      const savedResponse = await this.#cartsService.saveNewCart();
+      const savedResponse = await this.#cartsService.save();
 
       res.status(201).json({
         status: 'created',
@@ -51,12 +49,12 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  showCart = async (req, res, next) => {
+  show = async (req, res, next) => {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
 
-      const cart = await this.#cartsService.getCart(cartId);
+      const cart = await this.#cartsService.get(cartId);
 
       res.json({
         status: 'success',
@@ -77,7 +75,7 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  removeAllProducts = async (req, res, next) => {
+  removeProducts = async (req, res, next) => {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -96,7 +94,7 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  addOneProductToCart = async (req, res, next) => {
+  addProductToCart = async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
@@ -107,7 +105,7 @@ export default class CartsController extends BaseController {
         quantity = 1;
       }
 
-      const addedResponse = await this.#cartsService.addOneProductToCart(
+      const addedResponse = await this.#cartsService.addProductToCart(
         cartId,
         productId,
         quantity,
@@ -192,12 +190,12 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  removeOneProduct = async (req, res, next) => {
+  removeProduct = async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
 
-      await this.#cartsService.removeOneProduct(cartId, productId);
+      await this.#cartsService.removeProduct(cartId, productId);
 
       // No content
       res.status(204).send();

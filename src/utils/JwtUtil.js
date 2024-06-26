@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
  * @typedef {import('jsonwebtoken').VerifyOptions} JWTVerifyOptions
  */
 
-export class JwtTokenFactory {
+export class JwtUtil {
   /**
    * JWT signing key
    *
@@ -22,7 +22,7 @@ export class JwtTokenFactory {
   #expiresIn;
 
   /**
-   * Constructs a new JwtTokenFactory injecting the secret key
+   * Constructs a new JwtUtil injecting the secret key
    *
    * @param {string} signingSecret - Secret key to sign the JWT
    * @param {string} expiresIn - Expiration time of the JWT

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import docs from '../controllers/api/docs/index.js';
 
 const swaggerPaths = {};

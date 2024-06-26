@@ -1,16 +1,19 @@
 /* eslint-disable no-param-reassign */
 
 const { pagination } = window;
+const params = new URLSearchParams(window.location.search);
 
 function attatchListenerToCartButton() {
   const btnCart = document.getElementById('btnCart');
   btnCart.addEventListener('click', async () => {
     let cartId = localStorage.getItem('cartId');
+    console.log('cartId', cartId);
     if (!cartId) {
       let cartCreationResponse = await fetch('/api/v1/carts', {
         method: 'POST',
       });
       cartCreationResponse = await cartCreationResponse.json();
+      console.log('cartCreationResponse', cartCreationResponse);
       cartId = cartCreationResponse.payload.cart._id;
       localStorage.setItem('cartId', cartId);
     }
@@ -34,7 +37,6 @@ function attatchListenerToLogoutButton() {
 }
 
 function changeQueryParams(key, value) {
-  const params = new URLSearchParams(window.location.search);
   params.set(key, value);
   window.location.search = params.toString();
 }
@@ -62,6 +64,14 @@ async function main() {
     console.log('no jwt');
   }
 
+  console.log('logged', params.get('logged'));
+  if (params.get('logged') === 'true') {
+    const url = new URL(window.location.href);
+    localStorage.setItem('logged', true);
+    url.searchParams.delete('logged');
+    window.history.replaceState(window.history.state, '', url.href);
+    console.log("We're here");
+  }
   attatchListenerToCartButton();
   attatchListenerToLogoutButton();
   hideLoginButtons();

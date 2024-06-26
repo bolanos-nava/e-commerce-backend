@@ -18,6 +18,7 @@ const env = {
   DB_URI: 'mongodb://localhost:27017/ecommerce',
   DB_NAME: 'ecommerce',
   JWT_PRIVATE_KEY: '',
+  PERSISTENCE: 'MONGO',
 };
 
 Object.keys(env).forEach((envKey) => {

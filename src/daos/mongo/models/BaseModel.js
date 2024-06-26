@@ -1,4 +1,4 @@
-import { ResourceNotFoundError } from '../../customErrors/index.js';
+import { ResourceNotFoundError } from '../../../customErrors/index.js';
 
 /**
  * @typedef {import('../../types').BaseModel} BaseModel
