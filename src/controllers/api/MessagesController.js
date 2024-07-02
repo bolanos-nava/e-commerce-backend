@@ -1,26 +1,32 @@
-/* eslint-disable consistent-return */
-/* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
 import { messageValidator } from '../../schemas/zod/message.validator.js';
-import services from '../../services/index.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').MongoIdType} MongoIdType
  * @typedef {import('../../types').ControllerRoute} ControllerRoute
+ * @typedef {import('../../types').ServicesType['messages']} MessagesServiceType
  */
 export default class MessagesController extends BaseController {
+  /** @type MessagesServiceType */
+  #messagesService;
+
+  constructor(messagesService) {
+    super();
+    this.#messagesService = messagesService;
+  }
+
   /**
    * Creates a new message
    *
    * @type {ExpressType['RequestHandlerWS']}
    */
-  async createMessage(req, res, next) {
+  async saveNewMessage(req, res, next) {
     try {
       const { message: request } = req.body;
       const validMessage = messageValidator.parse(request);
       const savedResponse =
-        await services.messages.createNewMessage(validMessage);
+        await this.#messagesService.createNewMessage(validMessage);
 
       req.socketServer.emit('new_message', savedResponse);
 

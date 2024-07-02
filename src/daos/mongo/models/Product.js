@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
 import BaseModel from './BaseModel.js';
-import { DuplicateResourceError } from '../../customErrors/DuplicateResourceError.js';
+import { DuplicateResourceError } from '../../../customErrors/DuplicateResourceError.js';
 
 /**
  * @typedef {import('../../types').IProductModel} IProductModel
@@ -62,6 +62,7 @@ productSchema.schema.post(
         ),
       );
     }
+    next();
   },
 );
 

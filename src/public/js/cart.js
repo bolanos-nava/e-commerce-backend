@@ -1,12 +1,11 @@
 import { DIRECTION_ENUM } from './utils/cartUtils.js';
 
-const { env } = window;
 const cartId = localStorage.getItem('cartId');
 
 async function sendDeleteRequest(productId) {
   try {
     const response = await fetch(
-      `${env.API_URL}:${env.PORT}/api/v1/carts/${cartId}/products/${productId}`,
+      `/api/v1/carts/${cartId}/products/${productId}`,
       { method: 'DELETE' },
     );
     return response.ok;
@@ -28,7 +27,7 @@ async function sendChangeQuantityRequest(
   }
   try {
     const response = await fetch(
-      `${env.API_URL}:${env.PORT}/api/v1/carts/${cartId}/products/${productId}`,
+      `/api/v1/carts/${cartId}/products/${productId}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

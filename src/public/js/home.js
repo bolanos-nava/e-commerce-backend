@@ -1,17 +1,19 @@
 /* eslint-disable no-param-reassign */
 
-const { env, pagination } = window;
+const { pagination } = window;
+const params = new URLSearchParams(window.location.search);
 
 function attatchListenerToCartButton() {
   const btnCart = document.getElementById('btnCart');
   btnCart.addEventListener('click', async () => {
     let cartId = localStorage.getItem('cartId');
+    console.log('cartId', cartId);
     if (!cartId) {
-      let cartCreationResponse = await fetch(
-        `${env.API_URL}:${env.PORT}/api/v1/carts`,
-        { method: 'POST' },
-      );
+      let cartCreationResponse = await fetch('/api/v1/carts', {
+        method: 'POST',
+      });
       cartCreationResponse = await cartCreationResponse.json();
+      console.log('cartCreationResponse', cartCreationResponse);
       cartId = cartCreationResponse.payload.cart._id;
       localStorage.setItem('cartId', cartId);
     }
@@ -20,14 +22,59 @@ function attatchListenerToCartButton() {
   });
 }
 
+function attatchListenerToLogoutButton() {
+  document.getElementById('btnLogout').addEventListener('click', async () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('logged');
+    // window.location.pathname = '/login';
+
+    const response = await fetch('/api/v1/sessions/jwt', { method: 'DELETE' });
+    if (response.ok) window.location.pathname = '/login';
+
+    // const response = await fetch('/api/v1/sessions', { method: 'DELETE' });
+    // if (response.ok) window.location.pathname = '/login';
+  });
+}
+
 function changeQueryParams(key, value) {
-  const params = new URLSearchParams(window.location.search);
   params.set(key, value);
   window.location.search = params.toString();
 }
 
+function hideLoginButtons() {
+  const btnLogin = document.getElementById('btnLogin');
+  const btnRegister = document.getElementById('btnRegister');
+  const btnLogout = document.getElementById('btnLogout');
+  if (localStorage.getItem('logged')) {
+    btnLogin.classList.add('d-none'); // hide login
+    btnRegister.classList.add('d-none'); // hide register
+    btnLogout.classList.remove('d-none'); // show logout
+  } else {
+    btnLogin.classList.remove('d-none'); // show login
+    btnRegister.classList.remove('d-none'); // show register
+    btnLogout.classList.add('d-none'); // hide logout
+  }
+}
+
 async function main() {
+  const resp = await fetch('/api/v1/sessions/current', { method: 'POST' });
+  try {
+    console.log('jwt', await resp.json());
+  } catch (error) {
+    console.log('no jwt');
+  }
+
+  console.log('logged', params.get('logged'));
+  if (params.get('logged') === 'true') {
+    const url = new URL(window.location.href);
+    localStorage.setItem('logged', true);
+    url.searchParams.delete('logged');
+    window.history.replaceState(window.history.state, '', url.href);
+    console.log("We're here");
+  }
   attatchListenerToCartButton();
+  attatchListenerToLogoutButton();
+  hideLoginButtons();
   const productsItems = document.querySelectorAll('.products__list .item');
 
   const btnPrevPage = document.querySelector('#btnPrevPage');
@@ -81,17 +128,16 @@ async function main() {
     btnAddToCart.addEventListener('click', async () => {
       let cartId = localStorage.getItem('cartId');
       if (!cartId) {
-        let cartCreationResponse = await fetch(
-          `${env.API_URL}:${env.PORT}/api/v1/carts`,
-          { method: 'POST' },
-        );
+        let cartCreationResponse = await fetch('/api/v1/carts', {
+          method: 'POST',
+        });
         cartCreationResponse = await cartCreationResponse.json();
         cartId = cartCreationResponse.payload.cart._id;
         localStorage.setItem('cartId', cartId);
       }
 
       const response = await fetch(
-        `${env.API_URL}:${env.PORT}/api/v1/carts/${cartId}/products/${productItem.dataset.id}`,
+        `/api/v1/carts/${cartId}/products/${productItem.dataset.id}`,
         {
           method: 'POST',
           headers: {

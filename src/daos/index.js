@@ -1,1 +1,1 @@
-export * from './models/index.js';
+export * from './mongo/models/index.js';

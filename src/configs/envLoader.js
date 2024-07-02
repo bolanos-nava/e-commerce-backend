@@ -10,16 +10,20 @@ dotenv.config({
       : `${path.resolve()}/.env.${NODE_ENV}`,
 });
 
+// default values
 const env = {
   NODE_ENV: 'development',
   API_URL: 'http://localhost',
   PORT: 8080,
   DB_URI: 'mongodb://localhost:27017/ecommerce',
+  DB_NAME: 'ecommerce',
+  JWT_PRIVATE_KEY: '',
+  PERSISTENCE: 'MONGO',
 };
 
 Object.keys(env).forEach((envKey) => {
-  const envFileValue = process.env[envKey];
-  if (envFileValue) env[envKey] = envFileValue;
+  const valueFromEnvFile = process.env[envKey];
+  if (valueFromEnvFile) env[envKey] = valueFromEnvFile;
 });
 
 export default env;

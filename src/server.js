@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Server } from 'socket.io';
 
 import { env } from './configs/index.js';
@@ -13,7 +12,7 @@ import {
 
 async function start() {
   /* --------- CONFIGURATIONS ---------- */
-  const configuration = new ServerConfiguration();
+  const configuration = ServerConfiguration.instance;
   await configuration.setupDb();
   configuration.setupMiddlewares();
   configuration.setupTemplateEngines();
@@ -27,7 +26,11 @@ async function start() {
   });
   const socketServer = new Server(httpServer);
 
-  /* --------- ROUTERS ---------- */
+  /* --------- PASSPORT --------- */
+  configuration.setupSessions();
+  configuration.setupPassport();
+
+  /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);
   server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
 

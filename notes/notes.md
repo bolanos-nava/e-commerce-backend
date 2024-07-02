@@ -44,3 +44,13 @@ Architecture:
 - To add a product to the cart there will be two ways to do it:
   1. From the product detail view or from the list of products the frontend sends a request to the backend that calls the action `CrtsController#addProduct`, because the frontend doesn't know if the product it is attempting to add already exists in the cart or not. The `#addProduct` action has the logic to add the product or only increase its quantity.
   2. From the cart view, the frontend will send a request to the `CartsController#updateQuantity` action to only change the quantity. There will be two ways of sending the quantity, absolute or incremental. Incremental means to increase or decrease quantity (one by one) and absolute means to send the absolute quantity to put in the product.
+
+## Futher notes
+
+[ ] Add pagination to products of cart
+[ ] Add codes to errors
+[ ] Standardize responses
+[ ] Add categories collection
+[ ] Add SweetAlert to show popup when a product is added to cart
+[ ] Encode cartId in base64 so a user doesn't know how to access to a cart different than the one saved in local storage
+[ ] Associate cart with a user

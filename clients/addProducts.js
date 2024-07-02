@@ -1,6 +1,5 @@
-import env from '../src/configs/envLoader';
+import env from '../src/configs/envLoader.js';
 
-/* eslint-disable no-param-reassign */
 const CATEGORIES = Object.freeze({
   CAT1: 'cat1',
   CAT2: 'cat2',
@@ -63,6 +62,30 @@ const products = [
     stock: 10,
     code: '',
   },
+  {
+    title: '',
+    categoryId: CATEGORIES.CAT2,
+    description: '',
+    price: 10,
+    stock: 1000,
+    code: '',
+  },
+  {
+    title: '',
+    categoryId: CATEGORIES.CAT1,
+    description: '',
+    price: 60,
+    stock: 2,
+    code: '',
+  },
+  {
+    title: '',
+    categoryId: CATEGORIES.CAT1,
+    description: '',
+    price: 6000,
+    stock: 5,
+    code: '',
+  },
 ];
 
 (async () => {
@@ -73,11 +96,8 @@ const products = [
     product.description = `This is product ${idx + 1}`;
     product.code = `prod${idx + 1}`;
 
-    const response = await fetch(`${env.API_URL}/api/v1/products`, {
+    const response = await fetch(`${env.API_URL}:${env.PORT}/api/v1/products`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ product }),
     });
     try {

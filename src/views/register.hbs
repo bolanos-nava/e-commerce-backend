@@ -1,0 +1,39 @@
+<main class="container">
+  <h1>Registro de usuario</h1>
+
+  <div id="errorAlert" class="alert alert-danger d-none">Error:
+    <span id="errorAlertSpan"></span></div>
+
+  <form action="/api/v1/users" method="post" id="registerForm">
+    <label for="firstName" class="form-label">Primer nombre</label>
+    <input type="text" name="firstName" id="firstName" class="form-control" />
+
+    <label for="lastName" class="form-label">Apellido</label>
+    <input type="text" name="lastName" id="lastName" class="form-control" />
+
+    <label for="email" class="form-label">Email</label>
+    <input type="email" name="email" id="email" class="form-control" required />
+
+    <label for="password" class="form-label">Contraseña</label>
+    <input
+      type="password"
+      name="password"
+      id="password"
+      class="form-control"
+      required
+    />
+
+    {{! TODO: add password confirmation and validate equality }}
+    {{! <label for="passwordConfirmation" class="form-label">Repetir contraseña</label>
+    <input
+      type="passwordConfirmation"
+      name="passwordConfirmation"
+      id="passwordConfirmation"
+      class="form-control"
+    /> }}
+
+    <input type="submit" value="Registrarse" />
+  </form>
+</main>
+
+<script src="/js/register.js"></script>

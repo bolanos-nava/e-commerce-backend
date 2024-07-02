@@ -1,23 +1,34 @@
-/* eslint-disable consistent-return */
-/* eslint-disable class-methods-use-this */
 import BaseController from './BaseController.js';
-import services from '../../services/index.js';
 import { cartValidator } from '../../schemas/zod/cart.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').MongoIdType} MongoIdType
  * @typedef {import('../../types').ControllerRoute} ControllerRoute
+ * @typedef {import('../../types').ServicesType['carts']} CartsServiceType
  */
 export default class CartsController extends BaseController {
+  /** @type CartsServiceType */
+  #cartsService;
+
+  /**
+   * Constructs a new carts controller
+   *
+   * @param {CartsServiceType} cartsService - Carts service instance
+   */
+  constructor(cartsService) {
+    super();
+    this.#cartsService = cartsService;
+  }
+
   /**
    * Creates a new cart
    *
    * @type {ExpressType['RequestHandler']}
    */
-  createCart = async (req, res, next) => {
+  create = async (req, res, next) => {
     try {
-      const savedResponse = await services.carts.createNewCart();
+      const savedResponse = await this.#cartsService.save();
 
       res.status(201).json({
         status: 'created',
@@ -38,12 +49,12 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  showCart = async (req, res, next) => {
+  show = async (req, res, next) => {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
 
-      const cart = await services.carts.getCart(cartId);
+      const cart = await this.#cartsService.get(cartId);
 
       res.json({
         status: 'success',
@@ -64,12 +75,12 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  removeAllProducts = async (req, res, next) => {
+  removeProducts = async (req, res, next) => {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
 
-      await services.carts.removeAllProducts(cartId);
+      await this.#cartsService.removeAllProducts(cartId);
 
       // No content
       res.status(204).send();
@@ -83,7 +94,7 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  addOneProductToCart = async (req, res, next) => {
+  addProductToCart = async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
@@ -94,7 +105,7 @@ export default class CartsController extends BaseController {
         quantity = 1;
       }
 
-      const addedResponse = await services.carts.addOneProductToCart(
+      const addedResponse = await this.#cartsService.addProductToCart(
         cartId,
         productId,
         quantity,
@@ -126,7 +137,7 @@ export default class CartsController extends BaseController {
 
       const { products } = req.body;
 
-      const addedResponse = await services.carts.addProductsToCart(
+      const addedResponse = await this.#cartsService.addProductsToCart(
         cartId,
         products,
       );
@@ -157,7 +168,7 @@ export default class CartsController extends BaseController {
         quantity = 1;
       }
 
-      const updatedResponse = await services.carts.updateProductQuantity(
+      const updatedResponse = await this.#cartsService.updateProductQuantity(
         cartId,
         productId,
         quantity,
@@ -179,12 +190,12 @@ export default class CartsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  removeOneProduct = async (req, res, next) => {
+  removeProduct = async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
 
-      await services.carts.removeOneProduct(cartId, productId);
+      await this.#cartsService.removeProduct(cartId, productId);
 
       // No content
       res.status(204).send();

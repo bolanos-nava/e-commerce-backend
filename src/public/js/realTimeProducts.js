@@ -29,7 +29,6 @@ function addProductToFrontend(data) {
   });
 }
 
-const { env } = window;
 const productForm = document.getElementById('product-form');
 productForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -44,7 +43,7 @@ productForm.addEventListener('submit', async (event) => {
   });
 
   try {
-    const response = await fetch(`${env.API_URL}:${env.PORT}/api/v1/products`, {
+    const response = await fetch('/api/v1/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

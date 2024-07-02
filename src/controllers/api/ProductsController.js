@@ -1,25 +1,41 @@
-/* eslint-disable class-methods-use-this */
-import services from '../../services/index.js';
 import BaseController from './BaseController.js';
 
-import { ParameterError } from '../../customErrors/ParameterError.js';
 import { productValidator } from '../../schemas/zod/product.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
- * @typedef {import('../../types').ProductType} ProductType
- * @typedef {import('../../types').ControllerRoute} ControllerRoute
+ * @typedef {import('../../types').ServicesType['products']} ProductsServiceType
  */
 
 export default class ProductsController extends BaseController {
+  /** @type ProductsServiceType */
+  #productsService;
+
+  /**
+   * Constructs a new products controller
+   *
+   * @param {ProductsServiceType} productsService - Products service instance
+   */
+  constructor(productsService) {
+    super();
+    this.#productsService = productsService;
+  }
+
   /**
    * Returns list of products
    * @type {ExpressType['RequestHandler']}
    */
-  listProducts = async (req, res, next) => {
+  list = async (req, res, next) => {
     try {
-      const { limit, page, sort, ...filter } = req.query;
-      const response = await services.products.getProducts(filter, {
+      const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
+        req.query;
+      const filter = {
+        minPrice,
+        maxPrice,
+        categoryId,
+        minStock,
+      };
+      const response = await this.#productsService.getAll(filter, {
         limit,
         page,
         sort,
@@ -35,11 +51,11 @@ export default class ProductsController extends BaseController {
    * Creates a new product
    * @type {ExpressType['RequestHandlerWS']}
    */
-  createProduct = async (req, res, next) => {
+  create = async (req, res, next) => {
     try {
       const { product: request } = req.body;
       const validRequest = productValidator.parse(request);
-      const savedResponse = await services.products.saveProduct(validRequest);
+      const savedResponse = await this.#productsService.save(validRequest);
 
       req.socketServer.emit('new_product', savedResponse);
 
@@ -57,12 +73,12 @@ export default class ProductsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  showProduct = async (req, res, next) => {
+  show = async (req, res, next) => {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
 
-      const product = await services.products.getProductById(productId);
+      const product = await this.#productsService.getById(productId);
 
       res.json({
         status: 'success',
@@ -77,14 +93,14 @@ export default class ProductsController extends BaseController {
    * Updates a single product
    * @type {ExpressType['RequestHandler']}
    */
-  updateProduct = async (req, res, next) => {
+  update = async (req, res, next) => {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
       const { product: request } = req.body;
       const newData = productValidator.partial().parse(request);
 
-      const updatedResponse = await services.products.updateProductById(
+      const updatedResponse = await this.#productsService.updateById(
         productId,
         newData,
       );
@@ -102,11 +118,11 @@ export default class ProductsController extends BaseController {
    * Deletes a single product
    * @type {ExpressType['RequestHandler']}
    */
-  deleteProduct = async (req, res, next) => {
+  delete = async (req, res, next) => {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
-      await services.products.deleteProductById(productId);
+      await this.#productsService.deleteById(productId);
 
       res.status(204).send();
     } catch (error) {

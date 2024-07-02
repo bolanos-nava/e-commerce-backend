@@ -1,18 +1,13 @@
-/* eslint-disable class-methods-use-this */
 import { env } from '../../configs/index.js';
-import services from '../../services/index.js';
+import repository from '../../services/repository.js';
 
 export default class MessagesViewsController {
   renderChatView = async (req, res, next) => {
-    const messages = await services.messages.getMessages();
+    const messages = await repository.messages.getMessages();
     const context = {
       messages: messages.map((m) => m.toObject()),
       title: 'Chat',
       stylesheet: '/css/index.css',
-      env: {
-        API_URL: env.API_URL,
-        PORT: env.PORT,
-      },
     };
 
     res.render('chat', context);

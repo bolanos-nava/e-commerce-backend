@@ -29,6 +29,7 @@ export function errorMiddleware(error, req, res, next) {
   console.error(error.stack);
   res.status(error.statusCode || 500).json({
     status: 'error',
+    code: error.name || 'Error',
     message: message || 'Internal server error',
   });
 }
