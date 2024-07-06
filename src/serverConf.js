@@ -115,25 +115,6 @@ export default class ServerConfiguration {
   }
 
   /**
-   * OMIT IF NOT USING SESSIONS
-   * Sets up sessions with MongoDB as store
-   */
-  setupSessions() {
-    const { DB_URI } = env;
-    this.server.use(
-      session({
-        store: MongoStore.create({
-          mongoUrl: DB_URI,
-          ttl: 60 * 15, // sessions last for 15 minutes
-        }),
-        secret: 'password', // TODO: write more secure password
-        resave: true,
-        saveUninitialized: true,
-      }),
-    );
-  }
-
-  /**
    * Sets up passport configurations
    */
   setupPassport() {
@@ -143,23 +124,5 @@ export default class ServerConfiguration {
     passportStrategies();
     // Initializes passport
     this.server.use(passport.initialize());
-
-    // this.server.use(passport.session()); // TODO: see how to change sessions in the case of logging in with GitHub
-  }
-
-  /**
-   * TEST: in-memory sessions
-   */
-  testMemorySessions() {
-    const { COOKIE_SECRET } = env;
-    this.server.use(
-      session({
-        secret: COOKIE_SECRET,
-        resave: true,
-        saveUninitialized: true,
-      }),
-    );
-    this.server.use(cookieParser(COOKIE_SECRET));
-    this.server.use('/test', testSessionsRouter);
   }
 }

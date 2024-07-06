@@ -1,11 +1,24 @@
-import { env } from '../../configs/index.js';
-import repository from '../../services/repository.js';
+import BaseViewsController from './BaseViewsController.js';
 
-export default class ProductsViewsController {
-  async renderProductsView(req, res, next) {
-    console.log('session', req.session);
-    console.log('cookies', req.cookies);
-    console.log('query', req.query);
+/**
+ * @typedef {import('../../types').MongoDaosType['products']} ProductsDao
+ */
+
+export default class ProductsViewsController extends BaseViewsController {
+  /** @type ProductsDao */
+  #productsService;
+
+  /**
+   * Constructs a new controller for products views
+   *
+   * @param {ProductsDao} productsService
+   */
+  constructor(productsService) {
+    super();
+    this.#productsService = productsService;
+  }
+
+  renderProductsView = async (req, res, next) => {
     const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
       req.query;
     const filter = {
@@ -14,8 +27,8 @@ export default class ProductsViewsController {
       categoryId,
       minStock,
     };
-    console.log('filter', filter);
-    const response = await repository.products.getAll(filter, {
+
+    const response = await this.#productsService.getAll(filter, {
       limit,
       page,
       sort,
@@ -23,30 +36,30 @@ export default class ProductsViewsController {
     });
     console.log('resp', response);
     const context = {
-      products: response.payload.products,
-      pagination: response.payload.pagination,
+      products: response.products,
+      pagination: response.pagination,
       title: 'Tienda | Inicio',
       stylesheet: '/css/index.css',
     };
 
     res.render('home', context);
-  }
+  };
 
-  async renderRealTimeProductsView(req, res, next) {
+  renderRealTimeProductsView = async (req, res, next) => {
     const { limit, page, sort, ...filter } = req.query;
-    const response = await repository.products.getAll(filter, {
+    const response = await this.#productsService.getAll(filter, {
       limit,
       page,
       sort,
       lean: true,
     });
     const context = {
-      products: response.payload.products,
-      pagination: response.payload.pagination,
+      products: response.products,
+      pagination: response.pagination,
       title: 'Tienda | Inicio',
       stylesheet: '/css/index.css',
     };
 
     res.render('realTimeProducts', context);
-  }
+  };
 }

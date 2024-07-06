@@ -7,7 +7,6 @@ function attatchListenerToCartButton() {
   const btnCart = document.getElementById('btnCart');
   btnCart.addEventListener('click', async () => {
     let cartId = localStorage.getItem('cartId');
-    console.log('cartId', cartId);
     if (!cartId) {
       let cartCreationResponse = await fetch('/api/v1/carts', {
         method: 'POST',
@@ -26,13 +25,9 @@ function attatchListenerToLogoutButton() {
   document.getElementById('btnLogout').addEventListener('click', async () => {
     localStorage.removeItem('token');
     localStorage.removeItem('logged');
-    // window.location.pathname = '/login';
 
     const response = await fetch('/api/v1/sessions/jwt', { method: 'DELETE' });
     if (response.ok) window.location.pathname = '/login';
-
-    // const response = await fetch('/api/v1/sessions', { method: 'DELETE' });
-    // if (response.ok) window.location.pathname = '/login';
   });
 }
 
@@ -64,14 +59,13 @@ async function main() {
     console.log('no jwt');
   }
 
-  console.log('logged', params.get('logged'));
   if (params.get('logged') === 'true') {
     const url = new URL(window.location.href);
     localStorage.setItem('logged', true);
     url.searchParams.delete('logged');
     window.history.replaceState(window.history.state, '', url.href);
-    console.log("We're here");
   }
+
   attatchListenerToCartButton();
   attatchListenerToLogoutButton();
   hideLoginButtons();

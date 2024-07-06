@@ -40,7 +40,6 @@ const userSchema = {
   }),
 };
 
-// TODO: find out why this fails
 userSchema.schema.plugin(paginate);
 
 userSchema.schema.post(

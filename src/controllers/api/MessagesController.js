@@ -5,7 +5,7 @@ import { messageValidator } from '../../schemas/zod/message.validator.js';
  * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').MongoIdType} MongoIdType
  * @typedef {import('../../types').ControllerRoute} ControllerRoute
- * @typedef {import('../../types').ServicesType['messages']} MessagesServiceType
+ * @typedef {import('../../types').MongoDaosType['messages']} MessagesServiceType
  */
 export default class MessagesController extends BaseController {
   /** @type MessagesServiceType */

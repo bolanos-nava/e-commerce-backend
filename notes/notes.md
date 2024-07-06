@@ -5,9 +5,8 @@
 - [ ] When adding product, forbid to add a quantity bigger than the stock of the product (endpoint POST /:cartId/products/:productId)
 - [X] The cart shouldn't update when a product is deleted. Would be an expensive operation.
 - Show its own products. Two nested responsibilities:
-  - [ ] Check if some of the added quantities are more than the available stock. The cart, then, updates the exceeding quantities to be equal to the available stock.
   - [x] If some product can't be populated it means that it was deleted from the database and it can be deleted from the cart as well.
-  - [x] If some product has status "false", it shouldn't be deleted from the cart, just marked as "unavailable" in the frontend.
+  - [ ] If some product has status "false", it shouldn't be deleted from the cart, just marked as "unavailable" in the frontend (the throws error in backend but doesn't show error on frontend yet.)
 
 **Product responsibilities**:
 
@@ -30,7 +29,9 @@ In this kind of architecture, we are defining that the category has the responsi
 Architecture:
 
 - Mongoose models: They interact directly with the database but can also store business logic in custom static and instance methods.
-- Services: contain logic to access the models. The use of this layer is to have an abstraction between the controllers and the models and be able to reuse some of the logic defined here in different controllers, if needed.
+- DAO: contain logic to access the models. The use of this layer is to have an abstraction between the controllers and the models and be able to reuse some of the logic defined here in different controllers, if needed.
+- DAOFactory: the DAOFactory selects a set of DAOs (e.g. FS DAOs, Mongo DAOs, in-memory DAOs, etc) based on an environment variable.
+- Services: the services call the methods of the DAOs that the DAOFactory returned. It is a further abstraction to have a focus point for the DAO methods. The use of this is, for example, calling logic that has to be reused among different DAOs.
 - Controllers: They receive the requests, call the services and return the response to the client.
 - Routers: they just take care of defining the paths and the controller action to call.
 
@@ -45,6 +46,11 @@ Architecture:
   1. From the product detail view or from the list of products the frontend sends a request to the backend that calls the action `CrtsController#addProduct`, because the frontend doesn't know if the product it is attempting to add already exists in the cart or not. The `#addProduct` action has the logic to add the product or only increase its quantity.
   2. From the cart view, the frontend will send a request to the `CartsController#updateQuantity` action to only change the quantity. There will be two ways of sending the quantity, absolute or incremental. Incremental means to increase or decrease quantity (one by one) and absolute means to send the absolute quantity to put in the product.
 
+**Show cart**:
+
+- [ ] When user enters the cart view and some product has more added quantity than its available stock, show a message that tells the user to update the product.
+- [ ] Block "Go to checkout" button until the user has updated the cart products' quantities.
+
 ## Futher notes
 
 [ ] Add pagination to products of cart
@@ -54,3 +60,15 @@ Architecture:
 [ ] Add SweetAlert to show popup when a product is added to cart
 [ ] Encode cartId in base64 so a user doesn't know how to access to a cart different than the one saved in local storage
 [ ] Associate cart with a user
+
+## Carts
+
+A cart will have a "userId" field, and a user will have a "cartId" field. When an anonymous user (i.e. the one that hasn't logged-in to the site) adds products to cart, the cartId will be stored in LocalStorage and won't have a userId yet. When the user logs in, the user is assigned as the userId of the cart, and the cart is assigned as the cartId of the user. 
+
+Let's say that a user already has a cart, but the user accesses the site without logging in. The user adds products to the anonymous cart and then logs in. In that case, the products of the anonymous cart should be added to the products of the user's cart with the addProductsToCart.
+
+## Checkout
+
+The checkout should show the cart again. The only reliable way of making the backend safe towards inconsistencies (i.e. creating a ticket with a product that has more quantity than available) is by checking the quantity at the time of checkout, when the user clicks on "Finish purchase". This action will call a "createTicket()" endpoint (POST /tickets) and will check if the quantity of every product being attempted to be added doesn't exceed the available stock. 
+
+The products with quantities that exceed the stock will stay in the cart, will not be added to the ticket. In the case that there are products that couldn't be added to the ticket, the server should send a response that says that not all products were added to the cart.

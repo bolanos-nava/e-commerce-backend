@@ -5,7 +5,7 @@ import { cartValidator } from '../../schemas/zod/cart.validator.js';
  * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').MongoIdType} MongoIdType
  * @typedef {import('../../types').ControllerRoute} ControllerRoute
- * @typedef {import('../../types').ServicesType['carts']} CartsServiceType
+ * @typedef {import('../../types').DaosType['carts']} CartsServiceType
  */
 export default class CartsController extends BaseController {
   /** @type CartsServiceType */
@@ -111,11 +111,8 @@ export default class CartsController extends BaseController {
         quantity,
       );
 
-      let responseToSend = res;
-      if (addedResponse.type === 'push') {
-        responseToSend = responseToSend.status(201);
-      }
-      responseToSend.json({
+      if (addedResponse.type === 'push') res.status(201);
+      res.json({
         status: 'updated',
         payload: { cart: addedResponse.cart },
       });
@@ -135,11 +132,9 @@ export default class CartsController extends BaseController {
       const { cartId } = req.params;
       this.validateIds({ cartId });
 
-      const { products } = req.body;
-
       const addedResponse = await this.#cartsService.addProductsToCart(
         cartId,
-        products,
+        req.body.products,
       );
 
       res.json({

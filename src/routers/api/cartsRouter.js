@@ -9,7 +9,7 @@ _cartsRouter.get('/:cartId', controllers.carts.show);
 _cartsRouter.put('/:cartId', controllers.carts.addProductsToCart);
 _cartsRouter.delete('/:cartId', controllers.carts.removeProducts);
 
-// _cartsRouter.delete('/:cartId/products', controllers.carts.removeAllProducts);
+// _cartsRouter.delete('/:cartId/products', controllers.carts.removeProducts);
 // _cartsRouter.post('/:cartId/products', controllers.carts.addProductsToCart);
 
 _cartsRouter.post(

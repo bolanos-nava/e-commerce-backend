@@ -8,13 +8,38 @@ import {
   ErrorRequestHandler,
 } from 'express';
 import { Server } from 'socket.io';
-import services from '../services';
 import { JwtUtil } from '../utils';
+import {
+  CartsMongoDao,
+  MessagesMongoDao,
+  ProductsMongoDao,
+  UsersMongoDao,
+} from '../daos/mongo';
 
 export type UUIDType = `${string}-${string}-${string}-${string}`;
 
-export type ServicesType = typeof services;
-export type JwtTokenFactoryType = typeof JwtUtil;
+export type MongoDaosType = {
+  products: ProductsMongoDao;
+  carts: CartsMongoDao;
+  messages: MessagesMongoDao;
+  users: UsersMongoDao;
+};
+
+export type ProductsFilterType = {
+  minPrice?: number;
+  maxPrice?: number;
+  categoryId?: string;
+  minStock?: number;
+};
+
+export type ListOptions = {
+  limit?: number;
+  page?: number;
+  sort?: 'ASC' | 'DESC';
+  lean?: boolean;
+};
+
+export type JwtTokenFactoryType = JwtUtil;
 
 export type ObjectType<T = any> = {
   [key: string]: T;
@@ -37,8 +62,8 @@ export type ExpressType = {
 };
 
 export type RepositoryType = {
-  products: ServicesType['products'];
-  carts: ServicesType['carts'];
-  messages: ServicesType['messages'];
-  users: ServicesType['users'];
+  products: MongoDaosType['products'];
+  carts: MongoDaosType['carts'];
+  messages: MongoDaosType['messages'];
+  users: MongoDaosType['users'];
 };

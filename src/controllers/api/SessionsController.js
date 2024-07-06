@@ -6,7 +6,7 @@ import BaseController from './BaseController.js';
  */
 
 export default class SessionsController extends BaseController {
-  /** * @type {JwtTokenFactoryType} */
+  /** @type JwtTokenFactoryType */
   #jwtTokenFactory;
 
   /**
@@ -55,7 +55,7 @@ export default class SessionsController extends BaseController {
    */
   loginGitHub = async (req, res, next) => {
     try {
-      // TODO: transform data from GitHub
+      // TODO: transform data from GitHub (use DTO)
       const jwt = this.#jwtTokenFactory.generateToken({
         user: req.user,
       });

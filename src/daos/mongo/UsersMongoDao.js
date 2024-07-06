@@ -20,43 +20,17 @@ export class UsersMongoDao {
   }
 
   /**
-   * Fetches user by email
+   * Returns a user from the database
    *
-   * @param {String} email - Email of user
-   * @param {{throws?: boolean}} options - Options. throws: Throws exception if user not found
+   * @param {FilterQueryUser} filter -
+   * @param {{throws?: boolean}} options - Options.
+   * - throws: Throws exception if user not found
    * @returns User from database
    */
-  async getUserByEmail(email, { throws = false } = {}) {
-    return throws
-      ? this.#User.findOneAndThrow(
-          { email },
-          { errorMessage: `User with email ${email} not found` },
-        )
-      : this.#User.findByEmail(email);
-  }
-
-  /**
-   * Fetches user by some field
-   *
-   * @param {FilterQueryUser} filter - Query object
-   * @param {{throws?: boolean}} options - Options object
-   * @returns
-   */
-  async getUserBy(filter, { throws = false } = {}) {
+  async get(filter, { throws = false } = {}) {
     return throws
       ? this.#User.findOneAndThrow(filter, { errorMessage: 'User not found' })
       : this.#User.findOne(filter);
-  }
-
-  /**
-   * Fetches user by id
-   *
-   * @param {MongoIdType} id - User id
-   * @param {{throws?: boolean}} options - Options object
-   * @returns
-   */
-  async getUserById(id, { throws = false } = {}) {
-    return throws ? this.#User.findByIdAndThrow(id) : this.#User.findById(id);
   }
 
   /**
@@ -65,7 +39,7 @@ export class UsersMongoDao {
    * @param {UserType} request
    * @returns New user object
    */
-  async saveNewUser(request) {
+  async save(request) {
     return new this.#User(request).save();
   }
 }

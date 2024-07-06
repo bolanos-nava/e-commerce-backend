@@ -6,14 +6,15 @@ import SessionsController from './SessionsController.js';
 
 // Dependencies to inject
 import { JwtUtil } from '../../utils/index.js';
-import repository from '../../services/repository.js';
+import { daos } from '../../daos/index.js';
 import { env } from '../../configs/index.js';
+import services from '../../services/index.js';
 
 const apiControllers = {
-  products: new ProductsController(repository.products),
-  carts: new CartsController(repository.carts),
-  messages: new MessagesController(repository.messages),
-  users: new UsersController(repository.users),
+  products: new ProductsController(services.products),
+  carts: new CartsController(daos.carts),
+  messages: new MessagesController(daos.messages),
+  users: new UsersController(daos.users),
   sessions: new SessionsController(new JwtUtil(env.JWT_PRIVATE_KEY, '15m')),
 };
 

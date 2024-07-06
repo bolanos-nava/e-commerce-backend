@@ -46,8 +46,6 @@ export class CartsMongoDao {
    * @returns
    */
   async get(cartId, { lean = false } = {}) {
-    await this.#removeUndefinedProducts(cartId);
-
     const cart = await this.#Cart.findById(cartId).populate({
       path: 'products',
       populate: {
@@ -275,7 +273,7 @@ export class CartsMongoDao {
    * @param {ICart['_id']} cartId
    * @returns Result of updating the cart
    */
-  async #removeUndefinedProducts(cartId) {
+  async removeUndefinedProducts(cartId) {
     const undefinedProductsAggregation = await this.#Cart.aggregate([
       {
         // Selects the cart with id == cartId
