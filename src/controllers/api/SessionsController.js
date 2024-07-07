@@ -1,3 +1,4 @@
+import UserDto from '../../entities/UserDto.js';
 import BaseController from './BaseController.js';
 
 /**
@@ -26,15 +27,8 @@ export default class SessionsController extends BaseController {
    */
   login = async (req, res, next) => {
     try {
-      const { user } = req;
       const jwt = this.#jwtTokenFactory.generateToken({
-        user: {
-          _id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-        },
+        user: new UserDto(req.user),
       });
       res
         .cookie('token', jwt, {
@@ -55,9 +49,8 @@ export default class SessionsController extends BaseController {
    */
   loginGitHub = async (req, res, next) => {
     try {
-      // TODO: transform data from GitHub (use DTO)
       const jwt = this.#jwtTokenFactory.generateToken({
-        user: req.user,
+        user: new UserDto(req.user),
       });
       console.log("We're here");
       res

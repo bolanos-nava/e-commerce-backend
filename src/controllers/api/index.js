@@ -12,7 +12,7 @@ import services from '../../services/index.js';
 
 const apiControllers = {
   products: new ProductsController(services.products),
-  carts: new CartsController(daos.carts),
+  carts: new CartsController(services.carts),
   messages: new MessagesController(daos.messages),
   users: new UsersController(daos.users),
   sessions: new SessionsController(new JwtUtil(env.JWT_PRIVATE_KEY, '15m')),

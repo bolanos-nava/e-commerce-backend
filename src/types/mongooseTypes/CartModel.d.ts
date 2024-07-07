@@ -27,7 +27,7 @@ export interface ICartModel extends BaseModel<ICart> {
   findProductInCart(
     cartId: ICart['id'],
     productId: IProduct['_id'],
-  ): Promise<ICart>;
+  ): Promise<CartProduct>;
 
   /**
    * Removes a product from a cart

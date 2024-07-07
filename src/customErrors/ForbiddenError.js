@@ -1,7 +1,7 @@
-export class ForbiddenError extends Error {
+import { CustomError } from './CustomError.js';
+
+export class ForbiddenError extends CustomError {
   constructor(message) {
-    super(message);
-    this.name = 'ForbiddenError';
-    this.statusCode = 403;
+    super(message || 'Forbidden', 'ForbiddenError', 403);
   }
 }

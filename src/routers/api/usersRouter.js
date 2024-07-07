@@ -2,9 +2,9 @@ import { Router } from 'express';
 import passport from 'passport';
 import controllers from '../../controllers/api/index.js';
 
-const _usersRouter = Router();
+const router = Router();
 
-_usersRouter.post(
+router.post(
   '/',
   (req, res, next) => {
     req.body = req.body.user;
@@ -16,5 +16,5 @@ _usersRouter.post(
 
 export const usersRouter = {
   basePath: '/users',
-  router: _usersRouter,
+  router,
 };

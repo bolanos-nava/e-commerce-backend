@@ -2,30 +2,33 @@ import { Schema, model } from 'mongoose';
 import BaseModel from './BaseModel.js';
 
 /**
- * @typedef {import('../../types').ICartModel} ICartModel
+ * @typedef {import('../../../types').ICartModel} ICartModel
  */
 
 const cartSchema = {
   name: 'Cart',
-  schema: new Schema({
-    products: {
-      type: [
-        {
-          product: {
-            type: Schema.Types.ObjectId,
-            ref: 'Product',
-            required: true,
+  schema: new Schema(
+    {
+      products: {
+        type: [
+          {
+            product: {
+              type: Schema.Types.ObjectId,
+              ref: 'Product',
+              required: true,
+            },
+            quantity: {
+              type: Number,
+              required: true,
+              default: 1,
+              min: [1, 'Quantity should be greater than 1'],
+            },
           },
-          quantity: {
-            type: Number,
-            required: true,
-            default: 1,
-            min: [1, 'Quantity should be greater than 1'],
-          },
-        },
-      ],
+        ],
+      },
     },
-  }),
+    { timestamps: true },
+  ),
 };
 
 class CartModel extends BaseModel {

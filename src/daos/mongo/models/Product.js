@@ -4,51 +4,54 @@ import BaseModel from './BaseModel.js';
 import { DuplicateResourceError } from '../../../customErrors/DuplicateResourceError.js';
 
 /**
- * @typedef {import('../../types').IProductModel} IProductModel
+ * @typedef {import('../../../types').IProductModel} IProductModel
  */
 
 const productSchema = {
   name: 'Product',
-  schema: new Schema({
-    title: {
-      type: String,
-      required: true,
-      minLength: 1,
-      index: true,
+  schema: new Schema(
+    {
+      title: {
+        type: String,
+        required: true,
+        minLength: 1,
+        index: true,
+      },
+      categoryId: {
+        // type: Schema.ObjectId,
+        type: String,
+        // ref: 'Category',
+        required: true,
+        index: true,
+      },
+      description: {
+        type: String,
+        required: true,
+        minLength: 1,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+      stock: {
+        type: Number,
+        required: true,
+        index: true,
+      },
+      code: {
+        type: String,
+        required: true,
+        minLength: 1,
+        unique: true, // generates unique index
+      },
+      status: {
+        type: Boolean,
+        default: true,
+      },
+      thumbnails: [String],
     },
-    categoryId: {
-      // type: Schema.ObjectId,
-      type: String,
-      // ref: 'Category',
-      required: true,
-      index: true,
-    },
-    description: {
-      type: String,
-      required: true,
-      minLength: 1,
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    stock: {
-      type: Number,
-      required: true,
-      index: true,
-    },
-    code: {
-      type: String,
-      required: true,
-      minLength: 1,
-      unique: true, // generates unique index
-    },
-    status: {
-      type: Boolean,
-      default: true,
-    },
-    thumbnails: [String],
-  }),
+    { timestamps: true },
+  ),
 };
 productSchema.schema.plugin(paginate);
 

@@ -3,17 +3,17 @@ import { productValidator } from '../../schemas/zod/product.validator.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
- * @typedef {import('../../types').MongoDaosType['products']} ProductsDao
+ * @typedef {import('../../types').ServicesType['products']} ProductsServiceType
  */
 
 export default class ProductsController extends BaseController {
-  /** @type ProductsDao */
+  /** @type ProductsServiceType */
   #productsService;
 
   /**
    * Constructs a new products controller
    *
-   * @param {ProductsDao} productsService - Products service instance
+   * @param {ProductsServiceType} productsService - Products service instance
    */
   constructor(productsService) {
     super();

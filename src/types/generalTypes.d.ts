@@ -15,6 +15,7 @@ import {
   ProductsMongoDao,
   UsersMongoDao,
 } from '../daos/mongo';
+import services from '../services';
 
 export type UUIDType = `${string}-${string}-${string}-${string}`;
 
@@ -24,6 +25,8 @@ export type MongoDaosType = {
   messages: MessagesMongoDao;
   users: UsersMongoDao;
 };
+
+export type ServicesType = typeof services;
 
 export type ProductsFilterType = {
   minPrice?: number;

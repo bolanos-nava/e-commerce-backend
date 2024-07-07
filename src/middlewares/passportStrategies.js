@@ -4,7 +4,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import GitHubStrategy from 'passport-github2';
 import { env } from '../configs/index.js';
 import services from '../services/index.js';
-import { ctos } from '../entities/index.js';
+import { dtos } from '../entities/index.js';
 import { userValidator } from '../schemas/zod/index.js';
 import { encryptPassword, isValidPassword } from '../utils/index.js';
 import {
@@ -93,7 +93,7 @@ export function passportStrategies() {
         try {
           const user = await services.users.getUserByEmail(profile._json.email);
           if (user) {
-            return done(null, new ctos.UserCto(user));
+            return done(null, new dtos.UserDto(user));
           }
 
           const newUser = userValidator
@@ -105,7 +105,7 @@ export function passportStrategies() {
             });
           const savedResponse = await services.users.saveNewUser(newUser);
 
-          return done(null, new ctos.UserCto(savedResponse));
+          return done(null, new dtos.UserDto(savedResponse));
         } catch (error) {
           return done(error);
         }

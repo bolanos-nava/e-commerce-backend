@@ -1,7 +1,7 @@
-export class DuplicateResourceError extends Error {
-  constructor(message, statusCode = 409) {
-    super(message);
-    this.name = 'DuplicateResourceError';
-    this.statusCode = statusCode;
+import { CustomError } from './CustomError.js';
+
+export class DuplicateResourceError extends CustomError {
+  constructor(message) {
+    super(message, 'DuplicateResourceError', 409);
   }
 }

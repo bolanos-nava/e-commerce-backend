@@ -1,7 +1,7 @@
-export class UnauthorizedError extends Error {
+import { CustomError } from './CustomError.js';
+
+export class UnauthorizedError extends CustomError {
   constructor(message) {
-    super(message || 'Unauthorized');
-    this.name = 'UnauthorizedError';
-    this.statusCode = 401;
+    super(message || 'Unauthorized', 'UnauthorizedError', 401);
   }
 }

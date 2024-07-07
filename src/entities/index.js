@@ -1,5 +1,5 @@
-import UserCto from './UserCto';
+import UserDto from './UserDto.js';
 
-export const ctos = {
-  UserCto,
+export const dtos = {
+  UserDto,
 };

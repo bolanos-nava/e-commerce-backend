@@ -4,40 +4,43 @@ import BaseModel from './BaseModel.js';
 import { DuplicateResourceError } from '../../../customErrors/DuplicateResourceError.js';
 
 /**
- * @typedef {import('../../types').IUserModel} IUserModel
+ * @typedef {import('../../../types').IUserModel} IUserModel
  */
 
 // TODO: re-add validations
 const userSchema = {
   name: 'User',
-  schema: new Schema({
-    firstName: {
-      type: String,
-      required: true,
-      // minLength: 3,
+  schema: new Schema(
+    {
+      firstName: {
+        type: String,
+        required: true,
+        // minLength: 3,
+      },
+      lastName: {
+        type: String,
+        default: '',
+      },
+      email: {
+        type: String,
+        required: true,
+        // minLength: 5,
+        unique: true, // generates unique index
+      },
+      password: {
+        type: String,
+        default: '',
+        // minLength: 8,
+        // maxLength: 16,
+      },
+      role: {
+        type: String,
+        enum: ['admin', 'user'],
+        default: 'user',
+      },
     },
-    lastName: {
-      type: String,
-      default: '',
-    },
-    email: {
-      type: String,
-      required: true,
-      // minLength: 5,
-      unique: true, // generates unique index
-    },
-    password: {
-      type: String,
-      default: '',
-      // minLength: 8,
-      // maxLength: 16,
-    },
-    role: {
-      type: String,
-      enum: ['admin', 'user'],
-      default: 'user',
-    },
-  }),
+    { timestamps: true },
+  ),
 };
 
 userSchema.schema.plugin(paginate);

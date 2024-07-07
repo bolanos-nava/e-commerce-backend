@@ -76,7 +76,7 @@ export class CartsMongoDao {
    * @param {ICart['_id']} cartId
    * @param {IProduct['_id']} productId
    * @param {number} quantity
-   * @returns Information about the added/updated product
+   * @returns Quantity of the added product
    */
   async addProductToCart(cartId, productId, quantity) {
     /* This endpoint assumes the cart exists */
@@ -103,14 +103,7 @@ export class CartsMongoDao {
         { runValidators: true, upsert: true },
       );
 
-      return {
-        type: 'push',
-        cart: {
-          _id: cartId,
-          product: productId,
-          quantity,
-        },
-      };
+      return quantity;
     }
 
     const newQuantity = productInCart.quantity + quantity;
@@ -124,14 +117,7 @@ export class CartsMongoDao {
       { $inc: { 'products.$.quantity': quantity } },
     );
 
-    return {
-      type: 'inc',
-      cart: {
-        _id: cartId,
-        product: productId,
-        quantity: newQuantity,
-      },
-    };
+    return newQuantity;
   }
 
   /**
@@ -144,7 +130,7 @@ export class CartsMongoDao {
    *
    * @param {ICart['_id']} cartId
    * @param {CartProduct[]} products
-   * @returns Result of updating the products in the cart
+   * @returns Array with the new and updated products
    */
   async addProductsToCart(cartId, products) {
     /* This endpoint assumes all products that we want to push exist in the database */
@@ -183,7 +169,8 @@ export class CartsMongoDao {
       );
     }
 
-    const updatedCart = await this.#Cart.aggregate([
+    /** @type ICart[] */
+    const [updatedCart] = await this.#Cart.aggregate([
       { $match: { _id: new Types.ObjectId(cartId) } },
       {
         $addFields: {
@@ -203,7 +190,7 @@ export class CartsMongoDao {
       },
     ]);
 
-    return updatedCart[0];
+    return updatedCart.products;
   }
 
   /**
@@ -222,9 +209,7 @@ export class CartsMongoDao {
     const productInCart = await this.#Cart.findProductInCart(
       cartId,
       productId,
-      {
-        populate: true,
-      },
+      { populate: true },
     );
     if (!productInCart) {
       throw new ResourceNotFoundError("Product doesn't exist in cart");
@@ -238,12 +223,6 @@ export class CartsMongoDao {
       { _id: cartId, 'products.product': productId },
       { 'products.$.quantity': quantity },
     );
-
-    return {
-      _id: cartId,
-      product: productId,
-      quantity,
-    };
   }
 
   /**
