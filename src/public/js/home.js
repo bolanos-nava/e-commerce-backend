@@ -4,29 +4,33 @@ const { pagination } = window;
 const params = new URLSearchParams(window.location.search);
 
 function attatchListenerToCartButton() {
-  const btnCart = document.getElementById('btnCart');
-  btnCart.addEventListener('click', async () => {
-    let cartId = localStorage.getItem('cartId');
+  document.getElementById('btnCart').addEventListener('click', async () => {
+    let cartId = JSON.parse(localStorage.getItem('user'))?.cart;
+
     if (!cartId) {
-      let cartCreationResponse = await fetch('/api/v1/carts', {
-        method: 'POST',
-      });
-      cartCreationResponse = await cartCreationResponse.json();
-      console.log('cartCreationResponse', cartCreationResponse);
-      cartId = cartCreationResponse.payload.cart._id;
-      localStorage.setItem('cartId', cartId);
+      try {
+        const response = await (
+          await fetch('/api/v1/carts', {
+            method: 'POST',
+          })
+        ).json();
+        cartId = response.payload.cart._id;
+        localStorage.setItem('user', JSON.stringify({ cart: cartId }));
+      } catch (error) {
+        console.error(error);
+      }
     }
 
-    window.location.href = `/cart/${cartId}`;
+    if (cartId) window.location.href = `/cart/${cartId}`;
   });
 }
 
 function attatchListenerToLogoutButton() {
   document.getElementById('btnLogout').addEventListener('click', async () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('logged');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isLogged');
 
-    const response = await fetch('/api/v1/sessions/jwt', { method: 'DELETE' });
+    const response = await fetch('/api/v1/sessions', { method: 'DELETE' });
     if (response.ok) window.location.pathname = '/login';
   });
 }
@@ -40,7 +44,7 @@ function hideLoginButtons() {
   const btnLogin = document.getElementById('btnLogin');
   const btnRegister = document.getElementById('btnRegister');
   const btnLogout = document.getElementById('btnLogout');
-  if (localStorage.getItem('logged')) {
+  if (localStorage.getItem('isLogged')) {
     btnLogin.classList.add('d-none'); // hide login
     btnRegister.classList.add('d-none'); // hide register
     btnLogout.classList.remove('d-none'); // show logout
@@ -52,39 +56,40 @@ function hideLoginButtons() {
 }
 
 async function main() {
-  const resp = await fetch('/api/v1/sessions/current', { method: 'POST' });
-  try {
-    console.log('jwt', await resp.json());
-  } catch (error) {
-    console.log('no jwt');
-  }
-
   if (params.get('logged') === 'true') {
-    const url = new URL(window.location.href);
-    localStorage.setItem('logged', true);
-    url.searchParams.delete('logged');
-    window.history.replaceState(window.history.state, '', url.href);
+    try {
+      const sessionData = await (
+        await fetch('/api/v1/sessions/current')
+      ).json();
+      const sessionUser = sessionData.payload.user;
+      localStorage.setItem('user', JSON.stringify(sessionUser));
+      localStorage.setItem('isLogged', true);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('logged');
+      window.history.replaceState(window.history.state, '', url.href);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   attatchListenerToCartButton();
   attatchListenerToLogoutButton();
   hideLoginButtons();
-  const productsItems = document.querySelectorAll('.products__list .item');
-
-  const btnPrevPage = document.querySelector('#btnPrevPage');
-  const btnNextPage = document.querySelector('#btnNextPage');
 
   if (pagination.hasPrevPage) {
+    const btnPrevPage = document.querySelector('#btnPrevPage');
     btnPrevPage.addEventListener('click', () => {
       changeQueryParams('page', pagination.prevPage);
     });
   }
   if (pagination.hasNextPage) {
+    const btnNextPage = document.querySelector('#btnNextPage');
     btnNextPage.addEventListener('click', () => {
       changeQueryParams('page', pagination.nextPage);
     });
   }
 
+  const productsItems = document.querySelectorAll('.products__list .item');
   productsItems.forEach((productItem) => {
     const btnMinus = productItem.querySelector('.btn-minus-qty');
     const btnPlus = productItem.querySelector('.btn-plus-qty');
@@ -120,27 +125,29 @@ async function main() {
     });
 
     btnAddToCart.addEventListener('click', async () => {
-      let cartId = localStorage.getItem('cartId');
+      let cartId = JSON.parse(localStorage.getItem('user'))?.cart;
       if (!cartId) {
-        let cartCreationResponse = await fetch('/api/v1/carts', {
-          method: 'POST',
-        });
-        cartCreationResponse = await cartCreationResponse.json();
-        cartId = cartCreationResponse.payload.cart._id;
-        localStorage.setItem('cartId', cartId);
+        try {
+          cartId = (
+            await (
+              await fetch('/api/v1/carts', {
+                method: 'POST',
+              })
+            ).json()
+          ).payload.cart._id;
+          localStorage.setItem('user', JSON.stringify({ cart: cartId }));
+        } catch (error) {
+          console.log(error);
+        }
       }
 
-      const response = await fetch(
-        `/api/v1/carts/${cartId}/products/${productItem.dataset.id}`,
-        {
+      if (cartId) {
+        fetch(`/api/v1/carts/${cartId}/products/${productItem.dataset.id}`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ quantity: quantityDisplay.textContent }),
-        },
-      );
-      const jsonResponse = await response.json();
+        });
+      }
     });
   });
 }

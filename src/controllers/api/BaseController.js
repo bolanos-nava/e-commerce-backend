@@ -10,13 +10,13 @@ import { ParameterError } from '../../customErrors/index.js';
  */
 export default class BaseController {
   /**
-   * Method to validate if some ids are of the right type
+   * Method to validate the ids received in the request object
    *
-   * @param  {...MongoIdType} ids
+   * @param  {...{[key: string]: MongoIdType}} ids
    */
   validateIds(...ids) {
     ids.forEach((id) => {
-      const [key, value] = Object.entries(id)[0];
+      const [[key, value]] = Object.entries(id);
       if (!value || typeof value === 'undefined' || value.length !== 24) {
         throw new ParameterError(`${key} is an invalid id`);
       }

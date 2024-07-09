@@ -4,3 +4,4 @@ export * from './CartModel';
 export * from './ProductModel';
 export * from './MessageModel';
 export * from './UserModel';
+export * from './TicketModel';

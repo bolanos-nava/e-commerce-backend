@@ -11,6 +11,10 @@ const ERRORS_MAPPING = {
     urlParam: 'bad_form',
     message: 'Información inválida',
   },
+  UnauthorizedError: {
+    urlParam: 'missing_credentials',
+    message: 'Credenciales faltantes',
+  },
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -49,12 +53,16 @@ registerForm.addEventListener('submit', async (event) => {
     const jsonResponse = await response.json();
     if (response.ok) {
       // redirect if registration is successful
+      registerForm.reset();
       window.location = '/login';
       return;
     }
     if (jsonResponse.status === 'error') {
       // show error message if server responded with error
-      params.set('error', ERRORS_MAPPING[jsonResponse.code].urlParam);
+      params.set(
+        'error',
+        ERRORS_MAPPING[jsonResponse.code]?.urlParam || 'error',
+      );
       window.location.search = params.toString();
     }
   } catch (error) {

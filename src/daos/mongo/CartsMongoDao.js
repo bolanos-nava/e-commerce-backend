@@ -6,11 +6,12 @@ import {
 } from '../../customErrors/index.js';
 
 /**
- * @typedef {import('../../types/index.js').ICart} ICart
- * @typedef {import('../../types/index.js').ICartModel} ICartModel
- * @typedef {import('../../types/index.js').CartProduct} CartProduct
- * @typedef {import('../../types/index.js').IProduct} IProduct
- * @typedef {import('../../types/index.js').IProductModel} IProductModel
+ * @typedef {import('../../types').ICart} ICart
+ * @typedef {import('../../types').ICartModel} ICartModel
+ * @typedef {import('../../types').CartProduct} CartProduct
+ * @typedef {import('../../types').IProduct} IProduct
+ * @typedef {import('../../types').IProductModel} IProductModel
+ * @typedef {import('../../types').ICartPopulated} ICartPopulated
  */
 
 export class CartsMongoDao {
@@ -40,18 +41,35 @@ export class CartsMongoDao {
   }
 
   /**
-   * Returns a cart with populated products
+   * Deletes a cart from the database
    *
    * @param {ICart['_id']} cartId
    * @returns
    */
-  async get(cartId, { lean = false } = {}) {
-    const cart = await this.#Cart.findById(cartId).populate({
-      path: 'products',
-      populate: {
-        path: 'product',
-      },
-    });
+  async delete(cartId) {
+    console.log('a ver', await this.#Cart.findOne({ _id: undefined }));
+    console.log('a ver2 ', await this.#Cart.findById(undefined));
+    const cart = await this.#Cart.findByIdAndThrow(cartId);
+    return cart.deleteOne();
+  }
+
+  /**
+   * Returns a cart with populated products
+   *
+   * @param {ICart['_id']} cartId
+   * @returns {Promise<ICartPopulated | ICart>} Populated cart object
+   */
+  async get(cartId, { lean = false, populated = true } = {}) {
+    const cartQuery = this.#Cart.findById(cartId);
+    if (populated) {
+      cartQuery.populate({
+        path: 'products',
+        populate: { path: 'product' },
+      });
+    }
+
+    /** @type ICartPopulated | ICart */
+    const cart = await cartQuery;
     if (!cart) {
       throw new ResourceNotFoundError(`Cart with id ${cartId} not found`);
     }

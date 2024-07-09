@@ -1,5 +1,10 @@
 import { ZodError } from 'zod';
-import { ResourceNotFoundError } from '../customErrors/index.js';
+import passport from 'passport';
+import {
+  CustomError,
+  ResourceNotFoundError,
+  UnauthorizedError,
+} from '../customErrors/index.js';
 
 /**
  * @typedef {import('../types').ExpressType} ExpressType
@@ -32,6 +37,42 @@ export function errorMiddleware(error, req, res, next) {
     code: error.name || 'Error',
     message: message || 'Internal server error',
   });
+}
+
+export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
+  return (req, res, next) =>
+    passport.authenticate(
+      strategy,
+      { session: false, ...(passportOpts || {}) },
+      (error, user, info) => {
+        if (error) return next(error);
+        if (!user) {
+          let message = 'Missing credentials';
+          if (info.message && typeof info.message === 'string') {
+            message = info.message;
+          } else if (info.toString() !== '[object Object]') {
+            message = info.toString();
+          } else if (strategy === 'jwt') message = 'No JWT present';
+          return next(new UnauthorizedError(message));
+        }
+        req.user = user;
+        next();
+      },
+    )(req, res, next);
+}
+
+export function authorize(...roles) {
+  return [
+    passportStrategyErrorWrapper('jwt'),
+    (req, _, next) => {
+      const { role } = req.user;
+      if (roles.includes(role)) return next();
+
+      return next(
+        new UnauthorizedError('You are not allowed to perform this action'),
+      );
+    },
+  ];
 }
 
 /**

@@ -14,7 +14,6 @@ import {
 } from '../customErrors/index.js';
 
 function cookieJwtExtractor(req) {
-  console.log('token in cookie extractor', req?.cookies?.token);
   const token = req?.cookies?.token || null;
   if (!token) {
     throw new UnauthorizedError('No token present');
@@ -31,7 +30,6 @@ export function passportStrategies() {
         secretOrKey: env.JWT_PRIVATE_KEY,
       },
       async (jwtPayload, done) => {
-        console.log('jwt payload', jwtPayload);
         try {
           return done(null, jwtPayload);
         } catch (error) {
@@ -45,17 +43,17 @@ export function passportStrategies() {
     'register',
     new LocalStrategy(
       { passReqToCallback: true, usernameField: 'email' },
-      async (req, username, password, done) => {
+      async (req, email, password, done) => {
         try {
-          const dbUser = await services.users.getUserByEmail(username);
+          const dbUser = await services.users.getByEmail(email);
           if (dbUser) {
             return done(new DuplicateResourceError('User already exists'));
           }
 
           const reqUser = userValidator.parse(req.body);
           reqUser.password = encryptPassword(password);
-          const savedResponse = await services.users.saveNewUser(reqUser);
-          return done(null, savedResponse);
+          const savedResponse = await services.users.save(reqUser);
+          return done(null, new dtos.UserDto(savedResponse));
         } catch (error) {
           return done(error);
         }
@@ -69,11 +67,11 @@ export function passportStrategies() {
       { usernameField: 'email' },
       async (username, password, done) => {
         try {
-          const user = await services.users.getUserByEmail(username);
+          const user = await services.users.getByEmail(username);
           if (!user || !isValidPassword(password, user.password)) {
             return done(null, false);
           }
-          return done(null, user);
+          return done(null, new dtos.UserDto(user));
         } catch (error) {
           return done(error);
         }
@@ -89,9 +87,9 @@ export function passportStrategies() {
         clientSecret: '27ca6825a2c98166ef9f8eef1a56ba64e90fa15c',
         callbackURL: '/api/v1/sessions/github',
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (_, __, profile, done) => {
         try {
-          const user = await services.users.getUserByEmail(profile._json.email);
+          const user = await services.users.getByEmail(profile._json.email);
           if (user) {
             return done(null, new dtos.UserDto(user));
           }
@@ -103,7 +101,7 @@ export function passportStrategies() {
               firstName: profile._json.name,
               email: profile._json.email,
             });
-          const savedResponse = await services.users.saveNewUser(newUser);
+          const savedResponse = await services.users.save(newUser);
 
           return done(null, new dtos.UserDto(savedResponse));
         } catch (error) {
@@ -119,7 +117,7 @@ export function passportStrategies() {
 
   passport.deserializeUser(async (email, done) => {
     try {
-      const user = await services.users.getUserByEmail(email);
+      const user = await services.users.getByEmail(email);
       return done(
         null,
         user && {

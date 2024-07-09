@@ -9,12 +9,14 @@ import { z } from 'zod';
  * @typedef {import('../types').MongoIdType} MongoIdType
  */
 
+// TODO: add method to increase or decrease stock
+
 export default class ProductsService {
   /** @type ProductsDao */
   #productsDao;
 
   /**
-   * Constructs a new products service with a DAO
+   * Constructs a new products service with injected DAO of products
    *
    * @param {ProductsDao} productsDao
    */
@@ -79,7 +81,7 @@ export default class ProductsService {
    * Saves new product
    *
    * @param {ProductType} product - New product
-   * @returns
+   * @returns New product
    */
   async save(product) {
     return this.#productsDao.save(product);

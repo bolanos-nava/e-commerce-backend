@@ -25,14 +25,17 @@ export default class DaoFactory {
           MessagesMongoDao,
           Product,
           ProductsMongoDao,
+          Ticket,
+          TicketsMongoDao,
           User,
           UsersMongoDao,
         } = await import('./mongo/index.js');
         return {
-          products: new ProductsMongoDao(Product),
           carts: new CartsMongoDao(Cart, Product),
           messages: new MessagesMongoDao(Message),
-          users: new UsersMongoDao(User),
+          products: new ProductsMongoDao(Product),
+          tickets: new TicketsMongoDao(Ticket, Cart),
+          users: new UsersMongoDao(User, Cart),
         };
       }
     }

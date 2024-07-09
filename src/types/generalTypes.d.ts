@@ -13,6 +13,7 @@ import {
   CartsMongoDao,
   MessagesMongoDao,
   ProductsMongoDao,
+  TicketsMongoDao,
   UsersMongoDao,
 } from '../daos/mongo';
 import services from '../services';
@@ -20,9 +21,10 @@ import services from '../services';
 export type UUIDType = `${string}-${string}-${string}-${string}`;
 
 export type MongoDaosType = {
-  products: ProductsMongoDao;
   carts: CartsMongoDao;
   messages: MessagesMongoDao;
+  products: ProductsMongoDao;
+  tickets: TicketsMongoDao;
   users: UsersMongoDao;
 };
 

@@ -34,7 +34,6 @@ export default class ProductsViewsController extends BaseViewsController {
       sort,
       lean: true,
     });
-    console.log('resp', response);
     const context = {
       products: response.products,
       pagination: response.pagination,

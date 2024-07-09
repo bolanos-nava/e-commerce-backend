@@ -5,12 +5,12 @@ export default class UsersService {
     this.#usersDao = usersDao;
   }
 
-  async getUserByEmail(email, { throws = false } = {}) {
+  async getByEmail(email, { throws = false } = {}) {
     return this.#usersDao.get({ email }, { throws });
   }
 
-  async getUserById(id, { throws = false } = {}) {
-    return this.#usersDao.get({ id }, { throws });
+  async getById(id, { throws = false } = {}) {
+    return this.#usersDao.get({ _id: id }, { throws });
   }
 
   async get(filter, { throws = false } = {}) {

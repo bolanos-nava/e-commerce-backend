@@ -3,6 +3,7 @@
  * @typedef {DaosType['carts']} CartsDao
  * @typedef {import('../types').MongoIdType} MongoIdType
  * @typedef {import('../types').CartProduct} CartProduct
+ * @typedef {import('../types').ICartPopulated} ICartPopulated
  */
 
 export default class CartsService {
@@ -58,6 +59,48 @@ export default class CartsService {
   }
 
   /**
+   * Deletes a cart from the database
+   *
+   * @param {MongoIdType} cartId - Id of cart to delete
+   * @returns Object containing the id of the deleted cart
+   */
+  async delete(cartId) {
+    await this.#cartsDao.delete(cartId);
+
+    return cartId;
+  }
+
+  /**
+   * Method to filter products from a cart, based on their availability
+   *
+   * @param {MongoIdType} cartId
+   * @returns Object containing the products separated by the ones available to add to the ticket and the unavailable ones
+   */
+  async filterProducts(cartId) {
+    /** @type ICartPopulated */
+    const cart = await this.get(cartId);
+
+    // TODO: add check of status (i.e. only products with status === true are available)
+    /** @type CartProduct[] */
+    const availableProducts = [];
+    /** @type CartProduct[] */
+    const unavailableProducts = [];
+    cart.products.forEach((p) => {
+      const prodObj = { product: p.product.id, quantity: p.quantity };
+      if (p.quantity <= p.product.stock) availableProducts.push(prodObj);
+      else unavailableProducts.push(prodObj);
+    });
+
+    return {
+      ...cart,
+      products: {
+        available: availableProducts,
+        unavailable: unavailableProducts,
+      },
+    };
+  }
+
+  /**
    * Returns a cart with its nested products
    *
    * @param {MongoIdType} cartId - Id of the cart
@@ -65,12 +108,13 @@ export default class CartsService {
    * - lean: to return the cart as a POJO
    * @returns Cart
    */
-  async get(cartId, { lean = false } = {}) {
+  async get(cartId, { lean = false, populated = true } = {}) {
     await this.#cartsDao.removeUndefinedProducts(cartId);
-    const cart = await this.#cartsDao.get(cartId, { lean });
+    const cart = await this.#cartsDao.get(cartId, { lean, populated });
     return {
       _id: cartId,
       products: cart.products,
+      user: cart.user,
     };
   }
 
@@ -98,7 +142,7 @@ export default class CartsService {
    * @returns Object containing the new cart
    */
   async save() {
-    const cart = this.#cartsDao.save();
+    const cart = await this.#cartsDao.save();
     return {
       _id: cart.id,
       products: [],

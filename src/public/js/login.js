@@ -21,7 +21,10 @@ loginForm.addEventListener('submit', async (event) => {
 
   const loginData = Object.fromEntries(new FormData(loginForm));
 
-  const response = await fetch('/api/v1/sessions/jwt', {
+  let path = '/api/v1/sessions';
+  const cartId = JSON.parse(localStorage.getItem('user'))?.cart;
+  if (cartId) path += `?cart=${cartId}`;
+  const response = await fetch(path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(loginData),
@@ -29,7 +32,7 @@ loginForm.addEventListener('submit', async (event) => {
   try {
     const jsonResponse = await response.json();
     if (jsonResponse?.payload?.jwt) {
-      localStorage.setItem('token', jsonResponse.payload.jwt); // gets jwt in the response and stores it in local storage
+      localStorage.setItem('user', jsonResponse.payload.jwt); // gets jwt in the response and stores it in local storage
     }
     if (jsonResponse.status === 'error') {
       params.set('error', 'bad_credentials');
@@ -38,9 +41,6 @@ loginForm.addEventListener('submit', async (event) => {
   } catch (error) {
     console.error(error);
   } finally {
-    if (response.ok) {
-      localStorage.setItem('logged', true); // if getting jwt through cookies, saves a "logged" variable in local storage
-      window.location = '/';
-    }
+    if (response.ok) window.location = '/?logged=true';
   }
 });

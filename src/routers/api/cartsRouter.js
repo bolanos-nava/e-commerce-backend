@@ -1,31 +1,39 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
+import {
+  authorize,
+  passportStrategyErrorWrapper,
+} from '../../middlewares/index.js';
 
-const _cartsRouter = Router();
+const router = Router();
 
-_cartsRouter.post('/', controllers.carts.create);
+router
+  .route('/') // path
+  .post(controllers.carts.create);
 
-_cartsRouter.get('/:cartId', controllers.carts.show);
-_cartsRouter.put('/:cartId', controllers.carts.addProductsToCart);
-_cartsRouter.delete('/:cartId', controllers.carts.removeProducts);
+router
+  .route('/:cartId') // path
+  .get(controllers.carts.show);
 
-// _cartsRouter.delete('/:cartId/products', controllers.carts.removeProducts);
-// _cartsRouter.post('/:cartId/products', controllers.carts.addProductsToCart);
+router
+  .route('/:cartId/products') // path
+  .post(authorize('user'), controllers.carts.addProductsToCart) // POST because NOT idempotent
+  .delete(controllers.carts.removeProducts);
 
-_cartsRouter.post(
-  '/:cartId/products/:productId',
-  controllers.carts.addProductToCart,
-);
-_cartsRouter.put(
-  '/:cartId/products/:productId',
-  controllers.carts.updateProductQuantity,
-);
-_cartsRouter.delete(
-  '/:cartId/products/:productId',
-  controllers.carts.removeProduct,
-);
+router
+  .route('/:cartId/tickets') // path
+  .post(passportStrategyErrorWrapper('jwt'), controllers.carts.createTicket);
+
+router
+  .route('/:cartId/products/:productId') // path
+  .post(authorize('user'), controllers.carts.addProductToCart)
+  .put(controllers.carts.updateProductQuantity) // PUT because idempotent
+  .delete(controllers.carts.removeProduct);
 
 export const cartsRouter = {
   basePath: '/carts',
-  router: _cartsRouter,
+  router,
 };
+
+// _cartsRouter.put('/:cartId', controllers.carts.addProductsToCart);
+// _cartsRouter.delete('/:cartId', controllers.carts.removeProducts);

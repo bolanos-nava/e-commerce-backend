@@ -1,14 +1,19 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
+import { authorize } from '../../middlewares/index.js';
 
 const router = Router();
 
-router.get('/', controllers.products.list);
-router.post('/', controllers.products.create);
+router
+  .route('/')
+  .get(controllers.products.list)
+  .post(authorize('admin'), controllers.products.create);
 
-router.get('/:productId', controllers.products.show);
-router.put('/:productId', controllers.products.update);
-router.delete('/:productId', controllers.products.delete);
+router
+  .route('/:productId')
+  .get(controllers.products.show)
+  .put(authorize('admin'), controllers.products.update)
+  .delete(authorize('admin'), controllers.products.delete);
 
 export const productsRouter = {
   basePath: '/products',
