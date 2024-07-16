@@ -1,5 +1,4 @@
 import BaseController from './BaseController.js';
-
 import { productValidator } from '../../schemas/zod/product.validator.js';
 
 /**
@@ -22,6 +21,43 @@ export default class ProductsController extends BaseController {
   }
 
   /**
+   * Creates a new product
+   * @type {ExpressType['RequestHandlerWS']}
+   */
+  create = async (req, res, next) => {
+    try {
+      const { product: request } = req.body;
+      const validProduct = productValidator.parse(request);
+      const savedResponse = await this.#productsService.save(validProduct);
+
+      req.socketServer.emit('new_product', savedResponse);
+
+      res.status(201).json({
+        status: 'created',
+        payload: savedResponse,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Deletes a single product
+   * @type {ExpressType['RequestHandler']}
+   */
+  delete = async (req, res, next) => {
+    try {
+      const { productId } = req.params;
+      this.validateIds({ productId });
+      await this.#productsService.delete(productId);
+
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
    * Returns list of products
    * @type {ExpressType['RequestHandler']}
    */
@@ -29,39 +65,23 @@ export default class ProductsController extends BaseController {
     try {
       const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
         req.query;
-      const filter = {
-        minPrice,
-        maxPrice,
-        categoryId,
-        minStock,
-      };
-      const response = await this.#productsService.getAll(filter, {
-        limit,
-        page,
-        sort,
-      });
+      const response = await this.#productsService.getAll(
+        {
+          minPrice,
+          maxPrice,
+          categoryId,
+          minStock,
+        },
+        {
+          limit,
+          page,
+          sort,
+        },
+      );
 
-      res.json(response);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * Creates a new product
-   * @type {ExpressType['RequestHandlerWS']}
-   */
-  create = async (req, res, next) => {
-    try {
-      const { product: request } = req.body;
-      const validRequest = productValidator.parse(request);
-      const savedResponse = await this.#productsService.save(validRequest);
-
-      req.socketServer.emit('new_product', savedResponse);
-
-      res.status(201).json({
-        status: 'created',
-        payload: savedResponse,
+      res.json({
+        status: 'success',
+        payload: response,
       });
     } catch (error) {
       next(error);
@@ -78,7 +98,7 @@ export default class ProductsController extends BaseController {
       const { productId } = req.params;
       this.validateIds({ productId });
 
-      const product = await this.#productsService.getById(productId);
+      const product = await this.#productsService.get(productId);
 
       res.json({
         status: 'success',
@@ -97,10 +117,9 @@ export default class ProductsController extends BaseController {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
-      const { product: request } = req.body;
-      const newData = productValidator.partial().parse(request);
+      const newData = productValidator.partial().parse(req.body.product);
 
-      const updatedResponse = await this.#productsService.updateById(
+      const updatedResponse = await this.#productsService.update(
         productId,
         newData,
       );
@@ -109,22 +128,6 @@ export default class ProductsController extends BaseController {
         status: 'updated',
         payload: updatedResponse,
       });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * Deletes a single product
-   * @type {ExpressType['RequestHandler']}
-   */
-  delete = async (req, res, next) => {
-    try {
-      const { productId } = req.params;
-      this.validateIds({ productId });
-      await this.#productsService.deleteById(productId);
-
-      res.status(204).send();
     } catch (error) {
       next(error);
     }

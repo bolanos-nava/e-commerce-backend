@@ -3,7 +3,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import GitHubStrategy from 'passport-github2';
 import { env } from '../configs/index.js';
-import repository from '../services/repository.js';
+import services from '../services/index.js';
+import { dtos } from '../entities/index.js';
 import { userValidator } from '../schemas/zod/index.js';
 import { encryptPassword, isValidPassword } from '../utils/index.js';
 import {
@@ -13,7 +14,6 @@ import {
 } from '../customErrors/index.js';
 
 function cookieJwtExtractor(req) {
-  console.log('token in cookie extractor', req?.cookies?.token);
   const token = req?.cookies?.token || null;
   if (!token) {
     throw new UnauthorizedError('No token present');
@@ -30,9 +30,8 @@ export function passportStrategies() {
         secretOrKey: env.JWT_PRIVATE_KEY,
       },
       async (jwtPayload, done) => {
-        console.log('jwt payload', jwtPayload);
         try {
-          return done(null, jwtPayload);
+          return done(null, new dtos.UserDto(jwtPayload.user));
         } catch (error) {
           return done(error);
         }
@@ -44,17 +43,17 @@ export function passportStrategies() {
     'register',
     new LocalStrategy(
       { passReqToCallback: true, usernameField: 'email' },
-      async (req, username, password, done) => {
+      async (req, email, password, done) => {
         try {
-          const dbUser = await repository.users.getUserByEmail(username);
+          const dbUser = await services.users.getByEmail(email);
           if (dbUser) {
             return done(new DuplicateResourceError('User already exists'));
           }
 
           const reqUser = userValidator.parse(req.body);
           reqUser.password = encryptPassword(password);
-          const savedResponse = await repository.users.saveNewUser(reqUser);
-          return done(null, savedResponse);
+          const savedResponse = await services.users.save(reqUser);
+          return done(null, new dtos.UserDto(savedResponse));
         } catch (error) {
           return done(error);
         }
@@ -68,11 +67,11 @@ export function passportStrategies() {
       { usernameField: 'email' },
       async (username, password, done) => {
         try {
-          const user = await repository.users.getUserByEmail(username);
+          const user = await services.users.getByEmail(username);
           if (!user || !isValidPassword(password, user.password)) {
             return done(null, false);
           }
-          return done(null, user);
+          return done(null, new dtos.UserDto(user));
         } catch (error) {
           return done(error);
         }
@@ -86,23 +85,13 @@ export function passportStrategies() {
       {
         clientID: 'Iv23liHfrzmE7rV1Bwuj',
         clientSecret: '27ca6825a2c98166ef9f8eef1a56ba64e90fa15c',
-        callbackURL: 'http://localhost:8080/api/v1/sessions/github',
+        callbackURL: '/api/v1/sessions/github',
       },
-      async (accessToken, refreshToken, profile, done) => {
-        console.log('profile', profile);
+      async (_, __, profile, done) => {
         try {
-          const user = await repository.users.getUserByEmail(
-            profile._json.email,
-          );
-          const briefedUser = (u) => ({
-            id: u.id,
-            firstName: u.firstName,
-            lastName: u.lastName,
-            email: u.email,
-            role: u.role,
-          });
+          const user = await services.users.getByEmail(profile._json.email);
           if (user) {
-            return done(null, briefedUser(user));
+            return done(null, new dtos.UserDto(user));
           }
 
           const newUser = userValidator
@@ -112,9 +101,9 @@ export function passportStrategies() {
               firstName: profile._json.name,
               email: profile._json.email,
             });
-          const savedResponse = await repository.users.saveNewUser(newUser);
+          const savedResponse = await services.users.save(newUser);
 
-          return done(null, briefedUser(savedResponse));
+          return done(null, new dtos.UserDto(savedResponse));
         } catch (error) {
           return done(error);
         }
@@ -128,7 +117,7 @@ export function passportStrategies() {
 
   passport.deserializeUser(async (email, done) => {
     try {
-      const user = await repository.users.getUserByEmail(email);
+      const user = await services.users.getByEmail(email);
       return done(
         null,
         user && {
@@ -140,7 +129,6 @@ export function passportStrategies() {
         },
       );
     } catch (error) {
-      // TODO: when a user is deleted
       done(new InternalServerError(error));
     }
   });

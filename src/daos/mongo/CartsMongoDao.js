@@ -6,11 +6,12 @@ import {
 } from '../../customErrors/index.js';
 
 /**
- * @typedef {import('../../types/index.js').ICart} ICart
- * @typedef {import('../../types/index.js').ICartModel} ICartModel
- * @typedef {import('../../types/index.js').CartProduct} CartProduct
- * @typedef {import('../../types/index.js').IProduct} IProduct
- * @typedef {import('../../types/index.js').IProductModel} IProductModel
+ * @typedef {import('../../types').ICart} ICart
+ * @typedef {import('../../types').ICartModel} ICartModel
+ * @typedef {import('../../types').CartProduct} CartProduct
+ * @typedef {import('../../types').IProduct} IProduct
+ * @typedef {import('../../types').IProductModel} IProductModel
+ * @typedef {import('../../types').ICartPopulated} ICartPopulated
  */
 
 export class CartsMongoDao {
@@ -20,7 +21,7 @@ export class CartsMongoDao {
   #Product;
 
   /**
-   * Constructs new carts service
+   * Constructs new carts Mongoose DAO
    *
    * @param {ICartModel} Cart - Cart model
    * @param {IProductModel} Product - Product model
@@ -31,54 +32,12 @@ export class CartsMongoDao {
   }
 
   /**
-   * Saves a cart to the database
-   *
-   * @returns Response after save
-   */
-  async save() {
-    return new this.#Cart().save();
-  }
-
-  /**
-   * Returns a cart with populated products
-   *
-   * @param {ICart['_id']} cartId
-   * @returns
-   */
-  async get(cartId, { lean = false } = {}) {
-    await this.#removeUndefinedProducts(cartId);
-
-    const cart = await this.#Cart.findById(cartId).populate({
-      path: 'products',
-      populate: {
-        path: 'product',
-      },
-    });
-    if (!cart) {
-      throw new ResourceNotFoundError(`Cart with id ${cartId} not found`);
-    }
-    return lean ? cart.toObject() : cart;
-
-    /**
-     * The problem with the chaining of Mongoose methods is that you can't do something like
-     * <code>
-     *    const method = Cart.findByIdAndThrow(cartId)
-     *    const a = method.lean()
-     *    const b = await method.populate()
-     * </code>
-     * Because my custom method "Cart.findByIdAndThrow()" returns a Promise. On the contrary, the original "Cart.findById" returns a QueryHelper, which you can execute if you await the promise
-     *
-     * I think monads would be unnecessary here and wouldn't actually solve the problem... Which is that my custom method "findByIdAndThrow()" executes the query internally to check if the resource exists. If it doesn't, throws. If it does, returns the resource. The problem is that for that method to work, I would have to return the query, but then, how would I execute it if I'm returning the actual query object? I think there's no way
-     */
-  }
-
-  /**
    * Adds a product to the cart in the case it doesn't exist. If it exists, increases its quantity
    *
    * @param {ICart['_id']} cartId
    * @param {IProduct['_id']} productId
    * @param {number} quantity
-   * @returns Information about the added/updated product
+   * @returns Quantity of the added product
    */
   async addProductToCart(cartId, productId, quantity) {
     /* This endpoint assumes the cart exists */
@@ -105,14 +64,7 @@ export class CartsMongoDao {
         { runValidators: true, upsert: true },
       );
 
-      return {
-        type: 'push',
-        cart: {
-          _id: cartId,
-          product: productId,
-          quantity,
-        },
-      };
+      return quantity;
     }
 
     const newQuantity = productInCart.quantity + quantity;
@@ -126,14 +78,7 @@ export class CartsMongoDao {
       { $inc: { 'products.$.quantity': quantity } },
     );
 
-    return {
-      type: 'inc',
-      cart: {
-        _id: cartId,
-        product: productId,
-        quantity: newQuantity,
-      },
-    };
+    return newQuantity;
   }
 
   /**
@@ -146,7 +91,7 @@ export class CartsMongoDao {
    *
    * @param {ICart['_id']} cartId
    * @param {CartProduct[]} products
-   * @returns Result of updating the products in the cart
+   * @returns Array with the new and updated products
    */
   async addProductsToCart(cartId, products) {
     /* This endpoint assumes all products that we want to push exist in the database */
@@ -185,7 +130,8 @@ export class CartsMongoDao {
       );
     }
 
-    const updatedCart = await this.#Cart.aggregate([
+    /** @type ICart[] */
+    const [updatedCart] = await this.#Cart.aggregate([
       { $match: { _id: new Types.ObjectId(cartId) } },
       {
         $addFields: {
@@ -205,47 +151,63 @@ export class CartsMongoDao {
       },
     ]);
 
-    return updatedCart[0];
+    return updatedCart.products;
   }
 
   /**
-   * Idempotent function to change the quantity of a product
-   * in a cart. It is idempotent because it updates
-   * the quantity absolutely, not incrementally.
+   * Deletes a cart from the database
    *
    * @param {ICart['_id']} cartId
-   * @param {IProduct['_id']} productId
-   * @param {number} quantity
    * @returns
    */
-  async updateProductQuantity(cartId, productId, quantity) {
-    /* Endpoint assumes the cart exists */
+  async delete(cartId) {
+    const cart = await this.#Cart.findByIdAndThrow(cartId);
+    return cart.deleteOne();
+  }
 
-    const productInCart = await this.#Cart.findProductInCart(
-      cartId,
-      productId,
-      {
-        populate: true,
-      },
-    );
-    if (!productInCart) {
-      throw new ResourceNotFoundError("Product doesn't exist in cart");
+  /**
+   * Returns a cart with populated products
+   *
+   * @param {ICart['_id']} cartId
+   * @returns {Promise<ICartPopulated | ICart>} Populated cart object
+   */
+  async get(cartId, { lean = false, populated = true } = {}) {
+    const cartQuery = this.#Cart.findById(cartId);
+    if (populated) {
+      cartQuery.populate({
+        path: 'products',
+        populate: { path: 'product' },
+      });
     }
-    const increasingQuantity = quantity > productInCart.quantity;
-    if (increasingQuantity && quantity > productInCart.product.stock) {
-      throw new ParameterError('Quantity is greater than the available stock');
+
+    /** @type ICartPopulated | ICart */
+    const cart = await cartQuery;
+    if (!cart) {
+      throw new ResourceNotFoundError(`Cart with id ${cartId} not found`);
     }
+    return lean ? cart.toObject() : cart;
 
-    await this.#Cart.updateOne(
-      { _id: cartId, 'products.product': productId },
-      { 'products.$.quantity': quantity },
-    );
+    /**
+     * The problem with the chaining of Mongoose methods is that you can't do something like
+     * <code>
+     *    const method = Cart.findByIdAndThrow(cartId)
+     *    const a = method.lean()
+     *    const b = await method.populate()
+     * </code>
+     * Because my custom method "Cart.findByIdAndThrow()" returns a Promise. On the contrary, the original "Cart.findById" returns a QueryHelper, which you can execute if you await the promise
+     *
+     * I think monads would be unnecessary here and wouldn't actually solve the problem... Which is that my custom method "findByIdAndThrow()" executes the query internally to check if the resource exists. If it doesn't, throws. If it does, returns the resource. The problem is that for that method to work, I would have to return the query, but then, how would I execute it if I'm returning the actual query object? I think there's no way
+     */
+  }
 
-    return {
-      _id: cartId,
-      product: productId,
-      quantity,
-    };
+  /**
+   * Removes all products from a cart
+   *
+   * @param {ICart['_id']} cartId
+   * @returns Response of removing all products from a cart
+   */
+  async removeAllProducts(cartId) {
+    return this.#Cart.removeAllProducts(cartId);
   }
 
   /**
@@ -260,22 +222,12 @@ export class CartsMongoDao {
   }
 
   /**
-   * Removes all products from a cart
-   *
-   * @param {ICart['_id']} cartId
-   * @returns Response of removing all products from a cart
-   */
-  async removeAllProducts(cartId) {
-    return this.#Cart.removeAllProducts(cartId);
-  }
-
-  /**
    * Helper method to remove products from cart which no longer exist on the products collection
    *
    * @param {ICart['_id']} cartId
    * @returns Result of updating the cart
    */
-  async #removeUndefinedProducts(cartId) {
+  async removeUndefinedProducts(cartId) {
     const undefinedProductsAggregation = await this.#Cart.aggregate([
       {
         // Selects the cart with id == cartId
@@ -354,5 +306,46 @@ export class CartsMongoDao {
     }
 
     return null;
+  }
+
+  /**
+   * Saves a cart to the database
+   *
+   * @returns Response after save
+   */
+  async save() {
+    return new this.#Cart().save();
+  }
+
+  /**
+   * Idempotent function to change the quantity of a product
+   * in a cart. It is idempotent because it updates
+   * the quantity absolutely, not incrementally.
+   *
+   * @param {ICart['_id']} cartId
+   * @param {IProduct['_id']} productId
+   * @param {number} quantity
+   * @returns
+   */
+  async updateProductQuantity(cartId, productId, quantity) {
+    /* Endpoint assumes the cart exists */
+
+    const productInCart = await this.#Cart.findProductInCart(
+      cartId,
+      productId,
+      { populate: true },
+    );
+    if (!productInCart) {
+      throw new ResourceNotFoundError("Product doesn't exist in cart");
+    }
+    const increasingQuantity = quantity > productInCart.quantity;
+    if (increasingQuantity && quantity > productInCart.product.stock) {
+      throw new ParameterError('Quantity is greater than the available stock');
+    }
+
+    await this.#Cart.updateOne(
+      { _id: cartId, 'products.product': productId },
+      { 'products.$.quantity': quantity },
+    );
   }
 }

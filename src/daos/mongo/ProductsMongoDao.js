@@ -4,7 +4,11 @@
  * @typedef {import('../../types').IProduct} IProduct
  * @typedef {import('../../types').IProductModel} IProductModel
  * @typedef {import('../../customErrors')} ResourceNotFoundError
+ * @typedef {import('../../types').ProductsFilterType} ProductsFilterType
+ * @typedef {import('../../types').ListOptions} ListOptions
  */
+
+import { z } from 'zod';
 
 export class ProductsMongoDao {
   /** @type IProductModel */
@@ -20,50 +24,72 @@ export class ProductsMongoDao {
   }
 
   /**
-   * Return list of products
+   * Computes filters for Mongoose pagination
    *
-   * @param {FilterQueryProduct} filter Filter object
-   * @param {number} limit Amount of products to return
-   * @returns Products from database
+   * @param {ProductsFilterType} filter
+   * @returns {{categoryId?: string; price?: {$gte?: number; $lte?: number}; stock: {$gte: number};}} Filters for Mongoose
    */
-  async getAll(filter = {}, opts = {}) {
-    // TODO: correct filters so you have min and max
-    const FILTER = {
-      minPrice: filter.minPrice,
-      maxPrice: filter.maxPrice,
-      categoryId: filter.categoryId,
-      minStock: filter.minStock,
+  #computeFilters(filter) {
+    // eslint-disable-next-line no-param-reassign
+    filter = {
+      minPrice: z
+        .number()
+        .nonnegative()
+        .optional()
+        .default(0)
+        .parse(filter.minPrice),
+      maxPrice: z.number().nonnegative().optional().parse(filter.maxPrice),
+      categoryId: z.string().optional().parse(filter.categoryId),
+      minStock: z
+        .number()
+        .nonnegative()
+        .optional()
+        .default(0)
+        .parse(filter.minStock),
     };
 
+    const filterObject = {};
+    if (filter.categoryId) filterObject.categoryId = filter.categoryId;
+    if (filter.minPrice || filter.maxPrice) {
+      filterObject.price = {
+        ...(filter.minPrice ? { $gte: filter.minPrice } : {}),
+        ...(filter.maxPrice ? { $lte: filter.maxPrice } : {}),
+      };
+    }
+    if (filter.minStock) filterObject.stock = { $gte: filter.minStock };
+
+    return filterObject;
+  }
+
+  /**
+   * Return list of products
+   *
+   * @param {FilterQueryProduct} filters Filter object
+   * @param {ListOptions} options Amount of products to return
+   * @returns Products from database
+   */
+  async getAll(filters = {}, options = {}) {
     const SORT_OPTIONS = {
       ASC: { price: 1 },
       DESC: { price: -1 },
     };
 
-    if (opts.sort) opts.sort = SORT_OPTIONS[opts.sort.toUpperCase()];
+    if (options.sort) {
+      // eslint-disable-next-line no-param-reassign
+      options.sort = SORT_OPTIONS[options.sort.toUpperCase()];
+    }
 
-    Object.entries(opts).forEach(([optionName, optionValue]) => {
-      if (typeof optionValue === 'undefined') delete opts[optionName];
-    });
+    const paginationResponse = await this.#Product.paginate(
+      this.#computeFilters(filters),
+      { lean: false, ...options },
+    );
 
-    const options = {
-      limit: 10,
-      page: 1,
-      lean: false,
-      ...opts,
-    };
-
-    const paginationResponse = await this.#Product.paginate({}, options);
-
-    const products = paginationResponse.docs;
+    const { docs: products } = paginationResponse;
     delete paginationResponse.docs;
 
     return {
-      status: 'success',
-      payload: {
-        products,
-        pagination: paginationResponse,
-      },
+      products,
+      pagination: paginationResponse,
     };
   }
 
@@ -85,7 +111,7 @@ export class ProductsMongoDao {
    * @throws ResourceNotFoundError
    * @returns Product from database
    */
-  async getById(productId) {
+  async get(productId) {
     return this.#Product.findByIdAndThrow(productId);
   }
 
@@ -93,12 +119,12 @@ export class ProductsMongoDao {
    * Updates a product from the database
    *
    * @param {IProduct['_id']} productId
-   * @param {Partial<ProductType>} request
+   * @param {Partial<ProductType>} newData
    * @returns Response after saving
    */
-  async updateById(productId, request) {
+  async update(productId, newData) {
     const product = await this.#Product.findByIdAndThrow(productId);
-    const newProduct = Object.assign(product, request);
+    const newProduct = Object.assign(product, newData);
     return newProduct.save();
   }
 
@@ -108,7 +134,7 @@ export class ProductsMongoDao {
    * @param {IProduct['_id']} productId
    * @returns Response after deleting
    */
-  async deleteById(productId) {
+  async delete(productId) {
     const product = await this.#Product.findByIdAndThrow(productId);
     return product.deleteOne();
   }

@@ -1,6 +1,6 @@
 import { DIRECTION_ENUM } from './utils/cartUtils.js';
 
-const cartId = localStorage.getItem('cartId');
+const cartId = JSON.parse(localStorage.getItem('user'))?.cart;
 
 async function sendDeleteRequest(productId) {
   try {
@@ -44,6 +44,27 @@ async function sendChangeQuantityRequest(
 
 function main() {
   const productsItems = document.querySelectorAll('.products__list .item');
+  const btnCheckout = document.getElementById('btnCheckout');
+
+  if (!localStorage.getItem('isLogged')) {
+    // TODO: show warning message that checkout can only be done when logged in
+    btnCheckout.setAttribute('disabled', true);
+  } else {
+    btnCheckout.addEventListener('click', async () => {
+      try {
+        const response = await fetch(`/api/v1/carts/${cartId}/tickets`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (response.status === 201) {
+          window.location = '/';
+        }
+        const respJson = await response.json();
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }
 
   productsItems.forEach((productItem) => {
     const { id: productId, stock } = productItem.dataset;

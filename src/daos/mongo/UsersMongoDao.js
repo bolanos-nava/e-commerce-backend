@@ -2,6 +2,7 @@
  * @typedef {import('../../types').UserType} UserType
  * @typedef {import('../../types').IUser} IUser
  * @typedef {import('../../types').IUserModel} IUserModel
+ * @typedef {import('../../types').ICartModel} ICartModel
  * @typedef {import('../../types').MongoIdType} MongoIdType
  * @typedef {import('mongoose').FilterQuery<IUser>} FilterQueryUser
  */
@@ -9,54 +10,32 @@
 export class UsersMongoDao {
   /** @type IUserModel */
   #User;
+  /** @type ICartModel */
+  #Cart;
 
   /**
    * Constructs a new users service
    *
    * @param {IUserModel} User - User model
+   * @param {ICartModel} Cart - Cart model
    */
-  constructor(User) {
+  constructor(User, Cart) {
     this.#User = User;
+    this.#Cart = Cart;
   }
 
   /**
-   * Fetches user by email
+   * Returns a user from the database
    *
-   * @param {String} email - Email of user
-   * @param {{throws?: boolean}} options - Options. throws: Throws exception if user not found
+   * @param {FilterQueryUser} filter -
+   * @param {{throws?: boolean}} options - Options.
+   * - throws: Throws exception if user not found
    * @returns User from database
    */
-  async getUserByEmail(email, { throws = false } = {}) {
-    return throws
-      ? this.#User.findOneAndThrow(
-          { email },
-          { errorMessage: `User with email ${email} not found` },
-        )
-      : this.#User.findByEmail(email);
-  }
-
-  /**
-   * Fetches user by some field
-   *
-   * @param {FilterQueryUser} filter - Query object
-   * @param {{throws?: boolean}} options - Options object
-   * @returns
-   */
-  async getUserBy(filter, { throws = false } = {}) {
+  async get(filter, { throws = false } = {}) {
     return throws
       ? this.#User.findOneAndThrow(filter, { errorMessage: 'User not found' })
       : this.#User.findOne(filter);
-  }
-
-  /**
-   * Fetches user by id
-   *
-   * @param {MongoIdType} id - User id
-   * @param {{throws?: boolean}} options - Options object
-   * @returns
-   */
-  async getUserById(id, { throws = false } = {}) {
-    return throws ? this.#User.findByIdAndThrow(id) : this.#User.findById(id);
   }
 
   /**
@@ -65,7 +44,12 @@ export class UsersMongoDao {
    * @param {UserType} request
    * @returns New user object
    */
-  async saveNewUser(request) {
-    return new this.#User(request).save();
+  async save(request) {
+    // TODO: implement transactions
+    const user = new this.#User(request);
+    const cart = new this.#Cart({ user: user.id });
+    user.cart = cart._id;
+    await cart.save();
+    return user.save();
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import env from '../src/configs/envLoader.js';
 
 const CATEGORIES = Object.freeze({

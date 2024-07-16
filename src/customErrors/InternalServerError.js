@@ -1,7 +1,7 @@
-export class InternalServerError extends Error {
+import { CustomError } from './CustomError.js';
+
+export class InternalServerError extends CustomError {
   constructor(message) {
-    super(message);
-    this.name = 'InternalServerError';
-    this.statusCode = 500;
+    super(message || 'Unexpected error', 'InternalServerError', 500);
   }
 }

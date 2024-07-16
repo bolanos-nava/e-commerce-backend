@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
+import { authorize } from '../../middlewares/index.js';
 
-const _messagesRouter = Router();
+const router = Router();
 
-_messagesRouter.post('/', controllers.messages.saveNewMessage);
+router.post('/', authorize('user'), controllers.messages.create);
 
 export const messagesRouter = {
   basePath: '/messages',
-  router: _messagesRouter,
+  router,
 };

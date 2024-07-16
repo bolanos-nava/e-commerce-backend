@@ -8,7 +8,7 @@ export class MessagesMongoDao {
   #Message;
 
   /**
-   * Constructs a new messages service
+   * Constructs new messages Mongoose DAO
    *
    * @param {IMessageModel} Message - Message model
    */
@@ -17,22 +17,21 @@ export class MessagesMongoDao {
   }
 
   /**
-   * Saves a new message to the database
-   *
-   * @param {MessageType} body - Body object
-   * @returns Response after saving message
-   */
-  async createNewMessage(body) {
-    const message = new this.#Message(body);
-    return message.save();
-  }
-
-  /**
    * Returns the list of messages
    *
    * @returns List of messages
    */
-  async getMessages() {
-    return this.#Message.find();
+  async getAll({ lean = false } = {}) {
+    return this.#Message.find({}, {}, { lean });
+  }
+
+  /**
+   * Saves a message to the database
+   *
+   * @param {MessageType} body - Body object
+   * @returns Response after saving message
+   */
+  async save(body) {
+    return new this.#Message(body).save();
   }
 }

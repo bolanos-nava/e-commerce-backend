@@ -24,10 +24,10 @@ async function start() {
     // eslint-disable-next-line no-console
     console.log(`Server listening on port ${PORT}`);
   });
+
   const socketServer = new Server(httpServer);
 
   /* --------- PASSPORT --------- */
-  configuration.setupSessions();
   configuration.setupPassport();
 
   /* --------------- ROUTERS ----------- */

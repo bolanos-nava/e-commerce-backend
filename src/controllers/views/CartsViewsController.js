@@ -1,12 +1,28 @@
-import env from '../../configs/envLoader.js';
-import repository from '../../services/repository.js';
+import BaseViewsController from './BaseViewsController.js';
 
-export default class CartsViewsController {
-  async renderCartDetailView(req, res, next) {
+/**
+ * @typedef {import('../../types').ServicesType['carts']} CartsService
+ */
+
+export default class CartsViewsController extends BaseViewsController {
+  /** @type CartsService */
+  #cartsService;
+
+  /**
+   * Constructs a new controller for cart views
+   *
+   * @param {CartsService} cartsService
+   */
+  constructor(cartsService) {
+    super();
+    this.#cartsService = cartsService;
+  }
+
+  renderCartDetailView = async (req, res, next) => {
     try {
       const { cartId } = req.params;
 
-      const cart = await repository.carts.get(cartId, { lean: true });
+      const cart = await this.#cartsService.get(cartId, { lean: true });
       const context = {
         products: cart.products,
         title: 'Tienda | Carrito',
@@ -17,5 +33,5 @@ export default class CartsViewsController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

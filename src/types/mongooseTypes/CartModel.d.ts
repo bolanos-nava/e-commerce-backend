@@ -2,6 +2,7 @@ import { Document, Types, UpdateWriteOpResult } from 'mongoose';
 import { BaseModel } from './BaseModel';
 import { MongoIdType } from './mongooseTypes';
 import { IProduct } from './ProductModel';
+import { IUser } from '../../daos/mongo';
 
 export type CartProduct = {
   product: IProduct['_id'];
@@ -10,10 +11,15 @@ export type CartProduct = {
 
 export type CartType = {
   products: CartProduct[];
+  user: IUser['_id'];
 };
 
 interface ICart extends Document<CartType>, CartType {
   _id: MongoIdType;
+}
+
+interface ICartPopulated extends ICart {
+  products: (CartProduct & { product: IProduct })[];
 }
 
 export interface ICartModel extends BaseModel<ICart> {
@@ -27,7 +33,7 @@ export interface ICartModel extends BaseModel<ICart> {
   findProductInCart(
     cartId: ICart['id'],
     productId: IProduct['_id'],
-  ): Promise<ICart>;
+  ): Promise<CartProduct>;
 
   /**
    * Removes a product from a cart

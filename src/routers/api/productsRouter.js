@@ -1,16 +1,21 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
+import { authorize } from '../../middlewares/index.js';
 
-const _productsRouter = Router();
+const router = Router();
 
-_productsRouter.get('/', controllers.products.list);
-_productsRouter.post('/', controllers.products.create);
+router
+  .route('/')
+  .get(controllers.products.list)
+  .post(authorize('admin'), controllers.products.create);
 
-_productsRouter.get('/:productId', controllers.products.show);
-_productsRouter.put('/:productId', controllers.products.update);
-_productsRouter.delete('/:productId', controllers.products.delete);
+router
+  .route('/:productId')
+  .get(controllers.products.show)
+  .put(authorize('admin'), controllers.products.update)
+  .delete(authorize('admin'), controllers.products.delete);
 
 export const productsRouter = {
   basePath: '/products',
-  router: _productsRouter,
+  router,
 };

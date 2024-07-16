@@ -1,7 +1,7 @@
-export class InvalidFieldValueError extends Error {
-  constructor(message, statusCode) {
-    super(message);
-    this.name = 'InvalidFieldValue';
-    this.statusCode = statusCode || 400;
+import { CustomError } from './CustomError.js';
+
+export class InvalidFieldValueError extends CustomError {
+  constructor(message, statusCode = 400) {
+    super(message, 'InvalidFieldValue', statusCode);
   }
 }

@@ -21,21 +21,20 @@ export default class MessagesController extends BaseController {
    *
    * @type {ExpressType['RequestHandlerWS']}
    */
-  async saveNewMessage(req, res, next) {
+  create = async (req, res, next) => {
     try {
       const { message: request } = req.body;
       const validMessage = messageValidator.parse(request);
-      const savedResponse =
-        await this.#messagesService.createNewMessage(validMessage);
+      const newMessage = await this.#messagesService.save(validMessage);
 
-      req.socketServer.emit('new_message', savedResponse);
+      req.socketServer.emit('new_message', newMessage);
 
       res.status(201).json({
-        status: 'success',
-        payload: savedResponse,
+        status: 'created',
+        payload: { message: newMessage },
       });
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
