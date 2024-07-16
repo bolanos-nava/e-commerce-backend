@@ -1,17 +1,17 @@
 import BaseViewsController from './BaseViewsController.js';
 
 /**
- * @typedef {import('../../types').MongoDaosType['carts']} CartsDao
+ * @typedef {import('../../types').ServicesType['carts']} CartsService
  */
 
 export default class CartsViewsController extends BaseViewsController {
-  /** @type CartsDao */
+  /** @type CartsService */
   #cartsService;
 
   /**
    * Constructs a new controller for cart views
    *
-   * @param {CartsDao} cartsService
+   * @param {CartsService} cartsService
    */
   constructor(cartsService) {
     super();

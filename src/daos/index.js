@@ -4,4 +4,5 @@ import DaoFactory from './DaoFactory.js';
 
 const daos = await new DaoFactory(env.PERSISTENCE).getDaos();
 
-export { DaoFactory, daos };
+export { DaoFactory };
+export default daos;

@@ -10,6 +10,7 @@ import { z } from 'zod';
  */
 
 // TODO: add method to increase or decrease stock
+// TODO: refactor to be equal to CartsService
 
 export default class ProductsService {
   /** @type ProductsDao */

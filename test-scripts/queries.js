@@ -1,4 +1,5 @@
-/* eslint-disable no-undef */
+/* eslint-disable */
+
 const db = connect('mongodb://localhost:27017/estore');
 
 const query = db.carts.find(

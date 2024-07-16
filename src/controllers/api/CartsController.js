@@ -1,9 +1,6 @@
 import BaseController from './BaseController.js';
 import { cartValidator } from '../../schemas/zod/cart.validator.js';
-import {
-  InvalidArgumentError,
-  InvalidFieldValueError,
-} from '../../customErrors/index.js';
+import { InvalidFieldValueError } from '../../customErrors/index.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -98,7 +95,7 @@ export default class CartsController extends BaseController {
    *
    * @type ExpressType['RequestHandler']
    */
-  create = async (req, res, next) => {
+  create = async (_, res, next) => {
     try {
       const cart = await this.#cartsService.save();
 

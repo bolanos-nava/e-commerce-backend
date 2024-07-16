@@ -17,10 +17,10 @@ export default class MessagesViewsController extends BaseViewsController {
     this.#messagesService = messagesService;
   }
 
-  renderChatView = async (req, res, next) => {
-    const messages = await this.#messagesService.getMessages();
+  renderChatView = async (_, res, __) => {
+    const messages = await this.#messagesService.getAll({ lean: true });
     const context = {
-      messages: messages.map((m) => m.toObject()),
+      messages,
       title: 'Chat',
       stylesheet: '/css/index.css',
     };

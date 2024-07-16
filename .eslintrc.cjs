@@ -26,7 +26,13 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
     'import/extensions': 'off',
-    'no-unused-vars': 'warn',
+    'no-unused-vars': [
+      'warn',
+      {
+        args: 'all',
+        argsIgnorePattern: '^_',
+      },
+    ],
     'no-unused-expressions': 'warn',
     'prettier/prettier': 'off',
     'padded-blocks': 'off',

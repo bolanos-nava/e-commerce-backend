@@ -60,7 +60,6 @@ function main() {
           window.location = '/';
         }
         const respJson = await response.json();
-        console.log('response json ticket', respJson);
       } catch (error) {
         console.error(error);
       }

@@ -22,11 +22,11 @@ router
 
 router
   .route('/:cartId/tickets') // path
-  .post(passportStrategyErrorWrapper('jwt'), controllers.carts.createTicket);
+  .post(authorize('user'), controllers.carts.createTicket);
 
 router
   .route('/:cartId/products/:productId') // path
-  .post(authorize('user'), controllers.carts.addProductToCart)
+  .post(authorize('user', 'anon'), controllers.carts.addProductToCart)
   .put(controllers.carts.updateProductQuantity) // PUT because idempotent
   .delete(controllers.carts.removeProduct);
 

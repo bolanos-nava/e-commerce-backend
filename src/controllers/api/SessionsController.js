@@ -32,7 +32,7 @@ export default class SessionsController extends BaseController {
    */
   currentSession = async (req, res, next) => {
     try {
-      res.json({ status: 'success', payload: { user: req.user.user } });
+      res.json({ status: 'success', payload: { user: req.user } });
     } catch (error) {
       next(error);
     }
@@ -45,15 +45,13 @@ export default class SessionsController extends BaseController {
    */
   login = async (req, res, next) => {
     try {
-      const { cart: anonymousCartId } = req.query;
-      const { cart: userCartId } = req.user;
+      const anonymousCartId = req?.query?.cart;
+      const userCartId = req?.user?.cart;
 
       if (anonymousCartId) {
         const { products: prodsOfAnonCart } = await this.#cartsService.get(
           anonymousCartId,
-          {
-            populated: false,
-          },
+          { populated: false },
         );
         await this.#cartsService.addProductsToCart(userCartId, prodsOfAnonCart);
         await this.#cartsService.delete(anonymousCartId);

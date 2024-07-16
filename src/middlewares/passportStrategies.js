@@ -31,7 +31,7 @@ export function passportStrategies() {
       },
       async (jwtPayload, done) => {
         try {
-          return done(null, jwtPayload);
+          return done(null, new dtos.UserDto(jwtPayload.user));
         } catch (error) {
           return done(error);
         }

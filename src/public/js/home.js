@@ -56,7 +56,10 @@ function hideLoginButtons() {
 }
 
 async function main() {
-  if (params.get('logged') === 'true') {
+  if (
+    params.get('logged') === 'true' ||
+    (localStorage.getItem('isLogged') && !localStorage.getItem('user'))
+  ) {
     try {
       const sessionData = await (
         await fetch('/api/v1/sessions/current')

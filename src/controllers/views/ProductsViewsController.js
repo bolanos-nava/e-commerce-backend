@@ -1,24 +1,24 @@
 import BaseViewsController from './BaseViewsController.js';
 
 /**
- * @typedef {import('../../types').MongoDaosType['products']} ProductsDao
+ * @typedef {import('../../types').ServicesType['products']} ProductsService
  */
 
 export default class ProductsViewsController extends BaseViewsController {
-  /** @type ProductsDao */
+  /** @type ProductsService */
   #productsService;
 
   /**
    * Constructs a new controller for products views
    *
-   * @param {ProductsDao} productsService
+   * @param {ProductsService} productsService
    */
   constructor(productsService) {
     super();
     this.#productsService = productsService;
   }
 
-  renderProductsView = async (req, res, next) => {
+  renderProductsView = async (req, res, _) => {
     const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
       req.query;
     const filter = {
@@ -44,7 +44,7 @@ export default class ProductsViewsController extends BaseViewsController {
     res.render('home', context);
   };
 
-  renderRealTimeProductsView = async (req, res, next) => {
+  renderRealTimeProductsView = async (req, res, _) => {
     const { limit, page, sort, ...filter } = req.query;
     const response = await this.#productsService.getAll(filter, {
       limit,

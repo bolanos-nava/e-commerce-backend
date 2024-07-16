@@ -10,7 +10,7 @@ export default class UsersController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  create = async (req, res, next) => {
+  create = async (_, res, __) => {
     res.status(201).json({ status: 'created' });
   };
 }

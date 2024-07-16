@@ -4,7 +4,7 @@ import { authorize } from '../../middlewares/index.js';
 
 const router = Router();
 
-router.post('/', authorize('user'), controllers.messages.saveNewMessage);
+router.post('/', authorize('user'), controllers.messages.create);
 
 export const messagesRouter = {
   basePath: '/messages',

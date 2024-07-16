@@ -1,15 +1,12 @@
 /* eslint-disable no-console */
 import path from 'node:path';
 import express from 'express';
-import session from 'express-session';
 import hbs from 'express-handlebars';
 import mongoose from 'mongoose';
-import MongoStore from 'connect-mongo';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import { passportStrategies } from './middlewares/index.js';
 import { env } from './configs/index.js';
-import testSessionsRouter from './testSessionsRouter.js';
 
 /**
  * @typedef {import('./types').ExpressType['Express']} ExpressInstance
