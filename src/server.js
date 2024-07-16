@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
 
-import { viewsRouter, apiRouter } from './routers/index.js';
+import { viewsRouter, apiRouter, mockRouter } from './routers/index.js';
 import {
   errorMiddleware,
   socketMiddleware,
@@ -33,6 +33,7 @@ async function start() {
   /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);
   server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
+  server.use('/mock', mockRouter);
 
   /* --------- ERROR HANDLING MIDDLEWARES ---------- */
   server.use(guardRoute);
