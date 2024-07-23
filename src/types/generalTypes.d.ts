@@ -17,6 +17,7 @@ import {
   UsersMongoDao,
 } from '../daos/mongo';
 import services from '../services';
+import { logger } from '../configs';
 
 export type UUIDType = `${string}-${string}-${string}-${string}`;
 
@@ -52,7 +53,8 @@ export type ObjectType<T = any> = {
 
 export type WSServer = Server;
 
-type RequestWS = Request & { socketServer: WSServer };
+type RequestLogger = Request & { logger: typeof logger };
+type RequestWS = RequestLogger & { socketServer: WSServer };
 
 export type ExpressType = {
   Express: ExpressJS;
@@ -61,7 +63,12 @@ export type ExpressType = {
   Response: Response;
   NextFunction: NextFunction;
   Router: Router;
-  RequestHandler: RequestHandler;
+  // RequestHandler: RequestHandler;
+  RequestHandler: (
+    req: RequestLogger,
+    res: Response,
+    next: NextFunction,
+  ) => void;
   RequestHandlerWS: (req: RequestWS, res: Response, next: NextFunction) => void;
   ErrorRequestHandler: ErrorRequestHandler;
 };

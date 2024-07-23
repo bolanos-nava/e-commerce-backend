@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { faker } from '@faker-js/faker';
-import { Product } from '../daos/mongo/index.js';
+import { Product } from '../../daos/mongo/index.js';
 
 export const mockRouter = Router();
 

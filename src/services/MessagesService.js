@@ -24,7 +24,6 @@ export default class MessagesService {
    */
   async getAll({ lean = false } = {}) {
     const messages = await this.#messagesDao.getAll({ lean });
-    console.log(messages);
     return messages;
   }
 
