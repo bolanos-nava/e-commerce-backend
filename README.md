@@ -10,22 +10,24 @@ Ejemplo para despliegue local (archivo `.env`):
 
 ```plaintext
 # .env
-PORT=8080
-DB_URI=mongodb://localhost:27017/<nombre db>
+NODE_ENV=dev
+SERVER_PORT=8080
+DB_HOST=mongodb://localhost
+DB_PORT=27017
+DB_NAME=ecommerce
 JWT_PRIVATE_KEY=string_secreta
-COOKIE_SECRET=string_secreta
 PERSISTENCE=MONGO
 ```
 
 Ejemplo para despliegue en MongoDB Atlas (archivo `.env.cloud`):
 
 ```plaintext
-# .env.cloud
-PORT=8080
+# .env.atlas
+NODE_ENV=dev
+SERVER_PORT=8080
 DB_URI=<atlas connection string>
 DB_NAME=ecommerce
 JWT_PRIVATE_KEY=string_secreta
-COOKIE_SECRET=string_secreta
 PERSISTENCE=MONGO
 ```
 
@@ -36,7 +38,7 @@ PERSISTENCE=MONGO
 1. Correr `npm i` para instalar dependencias.
 2. Crear archivo `.env`
 3. Correr `npm run dev` para iniciar el servidor y servir localmente la base de datos. 
-4. Abrir http://localhost:8080 para ver el frontend, o bien enviar pedidos a la API con un cliente, como puede ser Postman.
+4. Abrir http://localhost:8080 para ver el frontend, o bien enviar pedidos con un cliente headless como Postman.
 
 ### MongoDB Atlas
 
@@ -63,7 +65,7 @@ Rutas de frontend:
 
 ### Backend
 
-Se cuenta con dos endpoints de backend en las siguientes rutas:
+Se cuenta con dos endpoints en las siguientes rutas:
 
 - Productos: [/api/v1/products](http://localhost:8080/api/v1/products)
 - Carritos: [/api/v1/carts](http://localhost:8080/api/v1/carts).
@@ -74,4 +76,4 @@ Se utiliza MongoDB, que puede servirse localmente o por medio de un clúster de 
 
 ## Pruebas
 
-Se incluyen archivos de cliente HTTP en los archivos `*.client.http`. Para usarlos, basta con instalar en VSCode la extensión[REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) y el archivo se actualizará con botones que permiten enviar los pedidos.
+Se incluyen archivos de cliente HTTP en los archivos `*.client.http`. Para usarlos, basta con instalar en VSCode la extensión [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) y el archivo se actualizará con botones que permiten enviar los pedidos.

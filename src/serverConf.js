@@ -91,34 +91,32 @@ export default class ServerConfiguration {
    * Sets up MongoDB
    */
   async setupDb() {
-    const { NODE_ENV, DB_URI, DB_NAME } = env;
+    const { DB_URI, DB_NAME } = env;
     const db = mongoose.connection;
     let attempts = 0;
-    db.on('open', () =>
+    db.on('open', () => {
+      attempts = 0;
       logger.info(
-        `Connected successfully to MongoDB${NODE_ENV === 'dev' ? ` on URI ${DB_URI}` : ' Atlas cluster'}`,
-      ),
-    );
-    db.on('error', async () => {
-      logger.error('Failed to connect to database');
-      mongoose.disconnect();
+        DB_URI.includes('localhost')
+          ? `Connected to MongoDB on ${DB_URI}`
+          : `Connected to MongoDB on Atlas cluster`,
+      );
     });
-    db.on('disconnected', async () => {
-      mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {
-        attempts++;
-        logger.fatal(
-          `Couldn't connect to database. Retrying... Attempt number: ${attempts}`,
-        );
-      });
+    db.on('disconnected', () => {
+      attempts++;
+      logger.error(
+        `Disconnected from database. Trying to reconnect in 20 seconds... Attempt number: ${attempts}`,
+      );
+      setTimeout(() => {
+        mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {});
+      }, 20000);
+    });
+    db.on('error', () => {
+      logger.error('MongoDB error');
     });
 
     logger.info('Connecting to database...');
-    mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {
-      attempts++;
-      logger.fatal(
-        `Couldn't connect to database. Retrying... Attempt number: ${attempts}`,
-      );
-    });
+    mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {});
   }
 
   /**
