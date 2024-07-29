@@ -1,0 +1,31 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: multinode
+nodes:
+- role: control-plane
+  # Kubernetes has a tool to bootstrap a cluster with the minimal configuration needed to work, it is called "kubeadm". This KIND option "kubeadmConfigPatches" is used to pass configuration to the "kubeadm init" command. In this case, we are passing custom configuration to the Kubelet, which is the primary node agent that runs on each node. This agent registers the node with the K8s apiserver. In this case, we are adding a custom label to the node called "ingress-ready" with the value of true; the kubelet will register this node, the control plane, with that label
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  # Extra port mappings is an option to designate port mappings for the Docker container created for this node (in the end, every node you create with KIND is a container)
+  extraPortMappings:
+  # This exposes port 80 of the control plane container to port 80 of the host machine
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  # This exposes port 443 of the control plane container to port 443 of the host machine
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+- role: worker
+  labels:
+    tier: database
+- role: worker
+  labels:
+    tier: server
+networking:
+  # apiServerAddress: '192.168.100.10'
+  apiServerPort: 50000

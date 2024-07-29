@@ -18,31 +18,35 @@ export default class ProductsViewsController extends BaseViewsController {
     this.#productsService = productsService;
   }
 
-  renderProductsView = async (req, res, _) => {
-    req.requestLogger.http('Rendering products view');
-    const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
-      req.query;
-    const filter = {
-      minPrice,
-      maxPrice,
-      categoryId,
-      minStock,
-    };
+  renderProductsView = async (req, res, next) => {
+    try {
+      req.requestLogger.http('Rendering products view');
+      const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
+        req.query;
+      const filter = {
+        minPrice,
+        maxPrice,
+        categoryId,
+        minStock,
+      };
 
-    const response = await this.#productsService.getAll(filter, {
-      limit,
-      page,
-      sort,
-      lean: true,
-    });
-    const context = {
-      products: response.products,
-      pagination: response.pagination,
-      title: 'Tienda | Inicio',
-      stylesheet: '/css/index.css',
-    };
+      const response = await this.#productsService.getAll(filter, {
+        limit,
+        page,
+        sort,
+        lean: true,
+      });
+      const context = {
+        products: response.products,
+        pagination: response.pagination,
+        title: 'Tienda | Inicio',
+        stylesheet: '/static/css/index.css',
+      };
 
-    res.render('home', context);
+      res.render('home', context);
+    } catch (error) {
+      next(error);
+    }
   };
 
   renderRealTimeProductsView = async (req, res, _) => {
@@ -58,7 +62,7 @@ export default class ProductsViewsController extends BaseViewsController {
       products: response.products,
       pagination: response.pagination,
       title: 'Tienda | Inicio',
-      stylesheet: '/css/index.css',
+      stylesheet: '/static/css/index.css',
     };
 
     res.render('realTimeProducts', context);

@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mongodb-config
+immutable: false
+data:
+  mongodb.conf: |
+    storage:
+      dbPath: /data/db
+    replication:
+      replSetName: rs0

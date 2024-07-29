@@ -22,7 +22,7 @@ export default class MessagesViewsController extends BaseViewsController {
     const context = {
       messages,
       title: 'Chat',
-      stylesheet: '/css/index.css',
+      stylesheet: '/static/css/index.css',
     };
 
     res.render('chat', context);

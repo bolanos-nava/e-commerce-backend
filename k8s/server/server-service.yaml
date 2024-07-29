@@ -1,0 +1,48 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: express-server
+  labels:
+    app: express-server
+    svc: express-server-service
+spec:
+  nodeSelector:
+    tier: server
+  containers:
+  - name: express-server
+    image: bolanosnava/express-server:latest
+    ports:
+    - containerPort: 8080 # we are defining port 8080 as the one that is exposed
+    # command to keep container alive while idle
+    # command:
+    # - sh
+    # - -c
+    # - tail -f /dev/null
+
+    # We are loading envs from the secret we created, called server-env. This secret should be created from the .env file of whoever wants to deploy this cluster, so as to keep the .env file from being embedded into the Docker image
+    envFrom:
+    - secretRef:
+        name: server-env
+    env:
+    - name: MONGO_DEPLOYMENT
+      value: REPLICA_SET
+    - name: DB_REPLICA_SET
+      value: rs0
+    resources:
+      requests:
+        cpu: "1"
+        memory: "2Gi"
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-server-service
+spec:
+  selector:
+    app: express-server
+  ports:
+  - port: 8080
+    targetPort: 8080

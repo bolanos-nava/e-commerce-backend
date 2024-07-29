@@ -31,7 +31,11 @@ export function errorMiddleware(error, req, res, __) {
   }
 
   // eslint-disable-next-line no-console
-  req.logger.error(error.stack);
+  req.logger.error({
+    message,
+    code: error.name,
+    stack: error.stack,
+  });
   res.status(error.statusCode || 500).json({
     status: 'error',
     code: error.name || 'Error',

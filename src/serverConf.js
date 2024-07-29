@@ -62,8 +62,12 @@ export default class ServerConfiguration {
     this.server.use(express.json());
     // Use encoded URL
     this.server.use(express.urlencoded({ extended: true }));
+
     // Serves static files to the client
-    this.server.use(express.static(ServerConfiguration.PATHS.PUBLIC));
+    this.server.use(
+      '/static',
+      express.static(ServerConfiguration.PATHS.PUBLIC),
+    );
   }
 
   /**
@@ -91,15 +95,15 @@ export default class ServerConfiguration {
    * Sets up MongoDB
    */
   async setupDb() {
-    const { DB_URI, DB_NAME } = env;
+    const { DB_URI, DB_NAME: dbName } = env;
     const db = mongoose.connection;
     let attempts = 0;
     db.on('open', () => {
       attempts = 0;
       logger.info(
-        DB_URI.includes('localhost')
-          ? `Connected to MongoDB on ${DB_URI}`
-          : `Connected to MongoDB on Atlas cluster`,
+        DB_URI.includes('mongodb+srv')
+          ? `Connected to database ${dbName} on Atlas cluster`
+          : `Connected to database ${dbName} on ${DB_URI}`,
       );
     });
     db.on('disconnected', () => {
@@ -108,7 +112,7 @@ export default class ServerConfiguration {
         `Disconnected from database. Trying to reconnect in 20 seconds... Attempt number: ${attempts}`,
       );
       setTimeout(() => {
-        mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {});
+        mongoose.connect(DB_URI, { dbName }).catch(() => {});
       }, 20000);
     });
     db.on('error', () => {
@@ -116,7 +120,7 @@ export default class ServerConfiguration {
     });
 
     logger.info('Connecting to database...');
-    mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {});
+    mongoose.connect(DB_URI, { dbName }).catch(() => {});
   }
 
   /**

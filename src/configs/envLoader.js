@@ -14,6 +14,18 @@ const envPath = (() => {
 // Loads vars in .env into process.env
 dotenv.config({ path: envPath });
 
+if (MONGO_DEPLOYMENT === 'REPLICA_SET') {
+  const { default: resolveDns } = await import('./discoverReplicaSet.js');
+  try {
+    const replicaSetAddress = await resolveDns();
+    process.env.DB_URI = `mongodb://${replicaSetAddress}/${process.env.DB_NAME}?replicaSet=${process.env.DB_REPLICA_SET}`;
+  } catch (error) {
+    console.error(`Error discovering replica set: ${error.message}`);
+    // logger.fatal(`Error discovering replica set: ${error.message}`);
+    process.exit(1);
+  }
+}
+
 const DB_URI =
   process.env.DB_URI ??
   `${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;

@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongodb/mongodb-community-server:5.0.11-ubuntu2004
+    container_name: mongo-docker
+    restart: always
+    ports:
+      - "${DB_PORT}:27017"
+    volumes:
+      - mongodata:/data/db
+
+  server:
+    image: server
+    container_name: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: mongodb://mongo # this is necessary because docker-compose creates a default network so the server container and the Mongo container can communicate internally. This network resolves the DNS "mongo" to the mongo container, which is the name of the service in this docker-compose.yaml
+      MONGO_DEPLOYMENT: local
+    restart: always
+    init: true
+    ports:
+      - "${SERVER_PORT}:8080"
+volumes:
+  mongodata:

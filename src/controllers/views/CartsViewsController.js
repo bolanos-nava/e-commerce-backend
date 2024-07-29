@@ -27,7 +27,7 @@ export default class CartsViewsController extends BaseViewsController {
       const context = {
         products: cart.products,
         title: 'Tienda | Carrito',
-        stylesheet: '/css/index.css',
+        stylesheet: '/static/css/index.css',
       };
 
       res.render('cart', context);

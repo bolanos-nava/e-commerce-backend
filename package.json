@@ -15,6 +15,7 @@
     "clean": "rm -rf node_modules",
     "lint": "eslint . --ext js,ts --report-unused-disable-directives --max-warnings 0"
   },
+  "homepage": "/server",
   "keywords": [],
   "author": "",
   "license": "ISC",
