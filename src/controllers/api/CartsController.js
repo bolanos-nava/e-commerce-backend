@@ -40,6 +40,7 @@ export default class CartsController extends BaseController {
    * @type ExpressType['RequestHandler']
    */
   addProductToCart = async (req, res, next) => {
+    req.requestLogger.http('Adding product to cart');
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
@@ -72,6 +73,7 @@ export default class CartsController extends BaseController {
    * @type ExpressType['RequestHandler']
    */
   addProductsToCart = async (req, res, next) => {
+    req.requestLogger.http(`Adding products to cart`);
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -95,7 +97,8 @@ export default class CartsController extends BaseController {
    *
    * @type ExpressType['RequestHandler']
    */
-  create = async (_, res, next) => {
+  create = async (req, res, next) => {
+    req.requestLogger.http('Creating new cart');
     try {
       const cart = await this.#cartsService.save();
 
@@ -114,6 +117,7 @@ export default class CartsController extends BaseController {
    * @type ExpressType['RequestHandler']
    */
   createTicket = async (req, res, next) => {
+    req.requestLogger.http('Creating ticket for cart');
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -165,6 +169,7 @@ export default class CartsController extends BaseController {
    * @type ExpressType['RequestHandler']
    */
   removeProduct = async (req, res, next) => {
+    req.requestLogger.http('Removing product from cart');
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
@@ -203,6 +208,7 @@ export default class CartsController extends BaseController {
    * @type ExpressType['RequestHandler']
    */
   show = async (req, res, next) => {
+    req.requestLogger.http('Showing cart');
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -224,6 +230,7 @@ export default class CartsController extends BaseController {
    * @type ExpressType['RequestHandler']
    */
   updateProductQuantity = async (req, res, next) => {
+    req.requestLogger.http('Updating product quantity in cart');
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });

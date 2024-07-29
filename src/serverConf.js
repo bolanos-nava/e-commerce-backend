@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import path from 'node:path';
 import express from 'express';
 import hbs from 'express-handlebars';
@@ -6,7 +5,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import { passportStrategies } from './middlewares/index.js';
-import { env } from './configs/index.js';
+import { env, logger } from './configs/index.js';
 
 /**
  * @typedef {import('./types').ExpressType['Express']} ExpressInstance
@@ -54,7 +53,7 @@ export default class ServerConfiguration {
    */
   setupMiddlewares() {
     // Headers
-    this.server.use((req, res, next) => {
+    this.server.use((_, res, next) => {
       res.removeHeader('x-powered-by');
       res.setHeader('Access-Control-Allow-Origin', '*');
       next();
@@ -92,23 +91,32 @@ export default class ServerConfiguration {
    * Sets up MongoDB
    */
   async setupDb() {
-    const { NODE_ENV, DB_URI, DB_NAME } = env;
-    mongoose.connection.on('open', () =>
-      console.log(
-        `Connected successfully to MongoDB${NODE_ENV === 'dev' ? ` on URI ${DB_URI}` : ' Atlas cluster'}`,
-      ),
-    );
-    mongoose.connection.on('error', () =>
-      console.error('Failed to connect to database'),
-    );
-    mongoose.connection.on('disconnected', () =>
-      console.error('Disconnected from database'),
-    );
-    try {
-      await mongoose.connect(DB_URI, { dbName: DB_NAME });
-    } catch (error) {
-      console.error('Failed to connect to database');
-    }
+    const { DB_URI, DB_NAME } = env;
+    const db = mongoose.connection;
+    let attempts = 0;
+    db.on('open', () => {
+      attempts = 0;
+      logger.info(
+        DB_URI.includes('localhost')
+          ? `Connected to MongoDB on ${DB_URI}`
+          : `Connected to MongoDB on Atlas cluster`,
+      );
+    });
+    db.on('disconnected', () => {
+      attempts++;
+      logger.error(
+        `Disconnected from database. Trying to reconnect in 20 seconds... Attempt number: ${attempts}`,
+      );
+      setTimeout(() => {
+        mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {});
+      }, 20000);
+    });
+    db.on('error', () => {
+      logger.error('MongoDB error');
+    });
+
+    logger.info('Connecting to database...');
+    mongoose.connect(DB_URI, { dbName: DB_NAME }).catch(() => {});
   }
 
   /**
@@ -121,5 +129,22 @@ export default class ServerConfiguration {
     passportStrategies();
     // Initializes passport
     this.server.use(passport.initialize());
+  }
+
+  /**
+   * Adds logger to the request object
+   *
+   * @returns {typeof logger} Logger object
+   */
+  setupLogger() {
+    this.server.use((req, _, next) => {
+      req.logger = logger;
+      req.requestLogger = logger.child({
+        method: req.method,
+        path: req.path,
+      });
+      next();
+    });
+    return logger;
   }
 }

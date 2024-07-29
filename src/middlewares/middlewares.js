@@ -15,7 +15,7 @@ import {
  * Middleware to catch all errors
  * @type {ExpressType['ErrorRequestHandler']}
  */
-export function errorMiddleware(error, _, res, __) {
+export function errorMiddleware(error, req, res, __) {
   let { message } = error;
 
   if (error.type === 'json') {
@@ -31,7 +31,7 @@ export function errorMiddleware(error, _, res, __) {
   }
 
   // eslint-disable-next-line no-console
-  console.error(error.stack);
+  req.logger.error(error.stack);
   res.status(error.statusCode || 500).json({
     status: 'error',
     code: error.name || 'Error',

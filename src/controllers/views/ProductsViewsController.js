@@ -19,6 +19,7 @@ export default class ProductsViewsController extends BaseViewsController {
   }
 
   renderProductsView = async (req, res, _) => {
+    req.requestLogger.http('Rendering products view');
     const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
       req.query;
     const filter = {
@@ -45,6 +46,7 @@ export default class ProductsViewsController extends BaseViewsController {
   };
 
   renderRealTimeProductsView = async (req, res, _) => {
+    req.requestLogger.http('Rendering real-time products view');
     const { limit, page, sort, ...filter } = req.query;
     const response = await this.#productsService.getAll(filter, {
       limit,

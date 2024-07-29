@@ -25,6 +25,7 @@ export default class ProductsController extends BaseController {
    * @type {ExpressType['RequestHandlerWS']}
    */
   create = async (req, res, next) => {
+    req.requestLogger.http('Creating new product');
     try {
       const { product: request } = req.body;
       const validProduct = productValidator.parse(request);
@@ -46,6 +47,7 @@ export default class ProductsController extends BaseController {
    * @type {ExpressType['RequestHandler']}
    */
   delete = async (req, res, next) => {
+    req.requestLogger.http('Deleting product');
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
@@ -62,6 +64,7 @@ export default class ProductsController extends BaseController {
    * @type {ExpressType['RequestHandler']}
    */
   list = async (req, res, next) => {
+    req.requestLogger.http('Listing products');
     try {
       const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
         req.query;
@@ -83,6 +86,7 @@ export default class ProductsController extends BaseController {
         status: 'success',
         payload: response,
       });
+      req.logger.http('GET /products end');
     } catch (error) {
       next(error);
     }
@@ -94,9 +98,11 @@ export default class ProductsController extends BaseController {
    * @type {ExpressType['RequestHandler']}
    */
   show = async (req, res, next) => {
+    req.requestLogger.http('Getting product');
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
+      req.logger.http(`GET /products/${productId}`);
 
       const product = await this.#productsService.get(productId);
 
@@ -104,6 +110,7 @@ export default class ProductsController extends BaseController {
         status: 'success',
         payload: product,
       });
+      req.logger.http('GET /products/:productId end');
     } catch (error) {
       next(error);
     }
@@ -114,6 +121,7 @@ export default class ProductsController extends BaseController {
    * @type {ExpressType['RequestHandler']}
    */
   update = async (req, res, next) => {
+    req.requestLogger.http('Updating product');
     try {
       const { productId } = req.params;
       this.validateIds({ productId });

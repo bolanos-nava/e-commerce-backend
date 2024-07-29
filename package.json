@@ -7,11 +7,12 @@
   "scripts": {
     "server": "node ./src/server.js",
     "server:watch": "node --trace-warnings --watch-path=./src ./src/server.js",
-    "dev": "NODE_ENV=dev npm run server",
-    "dev:watch": "NODE_ENV=dev npm run server:watch",
-    "cloud": "NODE_ENV=cloud npm run server",
-    "cloud:watch": "NODE_ENV=cloud npm run server:watch",
-    "clean": "rimraf node_modules",
+    "local": "MONGO_DEPLOYMENT=local npm run server",
+    "local:watch": "MONGO_DEPLOYMENT=local npm run server:watch",
+    "atlas": "MONGO_DEPLOYMENT=atlas npm run server",
+    "atlas:watch": "MONGO_DEPLOYMENT=atlas npm run server:watch",
+    "clean:logs": "rm -rf *.log",
+    "clean": "rm -rf node_modules",
     "lint": "eslint . --ext js,ts --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [],
@@ -43,6 +44,7 @@
     "socket.io": "^4.7.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "winston": "^3.13.1",
     "zod": "^3.23.8"
   }
 }

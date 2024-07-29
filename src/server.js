@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
 
-import { viewsRouter, apiRouter } from './routers/index.js';
+import { viewsRouter, apiRouter, testRouter } from './routers/index.js';
 import {
   errorMiddleware,
   socketMiddleware,
@@ -13,16 +13,16 @@ import {
 async function start() {
   /* --------- CONFIGURATIONS ---------- */
   const configuration = ServerConfiguration.instance;
-  await configuration.setupDb();
+  const logger = configuration.setupLogger();
+  configuration.setupDb();
   configuration.setupMiddlewares();
   configuration.setupTemplateEngines();
 
   /* --------- SERVERS: HTTP AND WEBSOCKET ---------- */
-  const { PORT } = env;
+  const { SERVER_PORT } = env;
   const { server } = configuration;
-  const httpServer = server.listen(PORT, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Server listening on port ${PORT}`);
+  const httpServer = server.listen(SERVER_PORT, () => {
+    logger.info(`Server listening on port ${SERVER_PORT}`);
   });
 
   const socketServer = new Server(httpServer);
@@ -33,6 +33,7 @@ async function start() {
   /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);
   server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
+  server.use('/test', testRouter);
 
   /* --------- ERROR HANDLING MIDDLEWARES ---------- */
   server.use(guardRoute);
