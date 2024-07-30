@@ -12,7 +12,7 @@ spec:
   - name: express-server
     image: bolanosnava/express-server:latest
     ports:
-    - containerPort: 8080 # we are defining port 8080 as the one that is exposed
+    - containerPort: 8080 # we are defining port 8080 as the one that will be exposed
     # command to keep container alive while idle
     # command:
     # - sh
@@ -23,11 +23,6 @@ spec:
     envFrom:
     - secretRef:
         name: server-env
-    env:
-    - name: MONGO_DEPLOYMENT
-      value: REPLICA_SET
-    - name: DB_REPLICA_SET
-      value: rs0
     resources:
       requests:
         cpu: "1"
@@ -35,14 +30,3 @@ spec:
       limits:
         cpu: "2"
         memory: "4Gi"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: express-server-service
-spec:
-  selector:
-    app: express-server
-  ports:
-  - port: 8080
-    targetPort: 8080

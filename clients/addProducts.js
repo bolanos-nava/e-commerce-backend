@@ -97,10 +97,13 @@ const products = [
     product.description = `This is product ${idx + 1}`;
     product.code = `prod${idx + 1}`;
 
-    const response = await fetch(`${env.API_URL}:${env.PORT}/api/v1/products`, {
-      method: 'POST',
-      body: JSON.stringify({ product }),
-    });
+    const response = await fetch(
+      `${env.API_URL}:${env.SERVER_PORT}/api/v1/products`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ product }),
+      },
+    );
     try {
       console.log(await response.json());
     } catch (error) {

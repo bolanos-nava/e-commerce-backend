@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: express-server-lb
+spec:
+  selector:
+    app: express-server
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: LoadBalancer
+  externalTrafficPolicy: Local

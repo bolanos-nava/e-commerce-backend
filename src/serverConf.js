@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { hostname } from 'node:os';
 import express from 'express';
 import hbs from 'express-handlebars';
 import mongoose from 'mongoose';
@@ -95,7 +96,12 @@ export default class ServerConfiguration {
    * Sets up MongoDB
    */
   async setupDb() {
-    const { DB_URI, DB_NAME: dbName } = env;
+    const { MONGO_DEPLOYMENT, DB_URI, DB_NAME: dbName } = env;
+    if (MONGO_DEPLOYMENT === 'atlas' && typeof DB_URI === 'undefined') {
+      logger.fatal('DB_URI is not defined in the environment variables');
+      process.exit(1);
+    }
+
     const db = mongoose.connection;
     let attempts = 0;
     db.on('open', () => {
@@ -146,6 +152,7 @@ export default class ServerConfiguration {
       req.requestLogger = logger.child({
         method: req.method,
         path: req.path,
+        host: hostname(),
       });
       next();
     });

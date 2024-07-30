@@ -19,7 +19,6 @@ export default class CartsViewsController extends BaseViewsController {
   }
 
   renderCartDetailView = async (req, res, next) => {
-    req.requestLogger.http('Rendering cart detail view');
     try {
       const { cartId } = req.params;
 

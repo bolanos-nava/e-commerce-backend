@@ -4,7 +4,7 @@ const socket = io();
 function addProductToFrontend(data) {
   const productsList = document.getElementById('productsList');
   const product = productsList
-    .getElementsByClassName('product')[0]
+    .getElementsByClassName('item')[0]
     .cloneNode(true);
 
   const productTitle = product.getElementsByClassName('product__title')[0];

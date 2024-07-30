@@ -2,50 +2,94 @@
 
 Repositorio para alojar el proyecto final del curso de backend. El código fuente se encuentra en la subcarpeta `/src`
 
-## Variables de ambiente
+## Correr aplicación
 
-Se incluye el archivo `.env.schema` que contiene las variables de ambiente que se deben tener en los archivo `.env` o `.env.cloud`.
+### Despliegue local
 
-Ejemplo para despliegue local (archivo `.env`):
+Primeramente se deben configurar las variables de ambiente:
+
+|     Variable     |             ¿Requerida?              |    Valor default    |                                       Descripción                                       |
+| :--------------: | :----------------------------------: | :-----------------: | :-------------------------------------------------------------------------------------: |
+|     NODE_ENV     |                  NO                  |     dev \| prod     |                           Valor para el ambiente del poryecto                           |
+|   SERVER_PORT    |                  NO                  |        8080         |                   Valor del puerto en el que se servirá la aplicación                   |
+| MONGO_DEPLOYMENT |                  NO                  |   local \| atlas    |            Si se quiere usar MongoDB local o un clúster de Atlas en la nube             |
+|      DB_URI      | SI (para despliegue con Mongo Atlas) |                     | String de conexión para Mongo Atlas. Solo requerido en caso de `MONGO_DEPLOYMENT=atlas` |
+|     DB_HOST      |                  NO                  | mongodb://localhost |                                Host de la base de datos                                 |
+|     DB_PORT      |                  NO                  |        27017        |                        Puerto para conectarse a la base de datos                        |
+|     DB_NAME      |                  NO                  |      ecommerce      |                               Nombre de la base de datos                                |
+| JWT_PRIVATE_KEY  |                  SI                  |                     |                             Llave privada par firmar el JWT                             |
+
+
+Ejemplo mínimo para despliegue local con Mongo local:
 
 ```plaintext
 # .env
-NODE_ENV=dev
 SERVER_PORT=8080
-DB_HOST=mongodb://localhost
-DB_PORT=27017
-DB_NAME=ecommerce
-JWT_PRIVATE_KEY=string_secreta
-PERSISTENCE=MONGO
+JWT_PRIVATE_KEY=<string_secreta>
 ```
 
-Ejemplo para despliegue en MongoDB Atlas (archivo `.env.cloud`):
+Ejemplo mínimo para despliegue local usando Mongo Atlas:
 
 ```plaintext
 # .env.atlas
-NODE_ENV=dev
 SERVER_PORT=8080
 DB_URI=<atlas connection string>
-DB_NAME=ecommerce
-JWT_PRIVATE_KEY=string_secreta
-PERSISTENCE=MONGO
+JWT_PRIVATE_KEY=<string_secreta>
 ```
 
-## Iniciar aplicación
+Pasos para correr localmente:
 
-### MongoDB local
+1. `npm i` para instalar dependencias
+2. `npm run local` si queremos utilizar el archivo `.env`
+3. `npm run atlas` si queremos utilizar el archivo `.env.atlas`
 
-1. Correr `npm i` para instalar dependencias.
-2. Crear archivo `.env`
-3. Correr `npm run dev` para iniciar el servidor y servir localmente la base de datos. 
-4. Abrir http://localhost:8080 para ver el frontend, o bien enviar pedidos con un cliente headless como Postman.
+Alternativamente, podemos añadir `:watch` al final de los comandos anteriores para activar el hot reload.
 
-### MongoDB Atlas
+### Despliegue en contenedores (Docker y Kubernetes)
 
-1. Correr `npm i` para instalar dependencias.
-2. Crear archivo `.env.cloud`
-3. Correr `npm run cloud` para iniciar el servidor y conectarse a MongoDB Atlas.
-4. Abrir http://localhost:8080 para visualizar el frontend, o bien enviar pedidos con un cliente headless como Postman.
+|      Variable       |               ¿Requerida?                |  Valor default  |                                                     Descripción                                                     |
+| :-----------------: | :--------------------------------------: | :-------------: | :-----------------------------------------------------------------------------------------------------------------: |
+|      NODE_ENV       |                    NO                    |       dev       |                                         Valor para el ambiente del proyecto                                         |
+|     SERVER_PORT     |                    NO                    |      8080       |                       Puerto donde se servirá la aplicación de Express dentro del contenedor                        |
+|      HOST_PORT      |                    NO                    |      8080       |                           Puerto que el servicio de Express expondrá a la máquina huésped                           |
+|       DB_URI        |                    NO                    |                 |                                        String de conexión para MongoDB Atlas                                        |
+|       DB_HOST       |                    NO                    | mongodb://mongo | Host al que se conectará la base de datos. Debe resolverse al nombre del servicio definido en `docker-compose.yaml` |
+|       DB_PORT       |                    NO                    |      27017      |                                  Puerto de la base de datos dentro del contenedor                                   |
+|    HOST_DB_PORT     |                    NO                    |      27017      |                      Puerto que el servicio de la base de datos expondrá a la máquina huésped                       |
+|       DB_NAME       |                    NO                    |    ecommerce    |                                             Nombre de la base de datos                                              |
+| DB_REPLICA_SET_NAME | SÍ (en caso de estar usando replica set) |                 |                    Nombre del replica set, usada en caso de desplegar un replica set de MongoDB                     |
+|   JWT_PRIVATE_KEY   |                    SI                    |                 |                                          Llave privada para firmar el JWT                                           |
+
+#### Correr aplicación Docker
+
+Para Docker, crear archivo `.env.docker`. Este archivo se usará dentro del `docker-compose.yaml` para levantar los servicios. Ejemplo mínimo de `.env.docker`:
+
+```plaintext
+# .env.docker
+DB_HOST=mongodb://mongo
+JWT_PRIVATE_KEY=<string_secreta>
+```
+
+Finalmente, correr `docker compose --env-file=.env.docker up`.
+
+#### Kubernetes
+
+El despliegue en Kubernetes despliega un replica set de MongoDB en la forma de un StatefulSet de Kubernetes, por defecto.
+
+Ejemplo mínimo de archivo `.env.k8s`:
+
+```plaintext
+DB_REPLICA_SET_NAME=rs0
+JWT_PRIVATE_KEY=<string_secreta>
+```
+
+Ahora se debe crear un secreto genérico de nombre `env-server` a partir del archivo `.env.k8s` con el siguiente comando:
+
+```shell
+kubectl create secret generic env-server --from-env-file=.env.k8s
+```
+
+Después ya se pueden comenzar a crear los recursos de Kubernetes de la carpeta `k8s`
 
 ## Rutas
 
@@ -72,7 +116,7 @@ Se cuenta con dos endpoints en las siguientes rutas:
 
 ### Base de datos
 
-Se utiliza MongoDB, que puede servirse localmente o por medio de un clúster de base de datos en MongoDB Atlas.
+Se utiliza MongoDB, que puede servirse localmente o por medio de un clúster de base de datos en MongoDB Atlas. También se puede desplegar un replica set de MongoDB como un statefulset en un clúster de Kubernetes
 
 ## Pruebas
 

@@ -1,10 +1,19 @@
 import { Router } from 'express';
 import controllers from '../../controllers/views/index.js';
+import { logHttp } from '../../middlewares/index.js';
 
 export const sessionsViewsRouter = Router();
 
-sessionsViewsRouter.get(
-  '/register',
-  controllers.sessionViews.renderRegisterView,
-);
-sessionsViewsRouter.get('/login', controllers.sessionViews.renderLoginView);
+sessionsViewsRouter
+  .route('/register')
+  .get(
+    logHttp('Rendering register view'),
+    controllers.sessionViews.renderRegisterView,
+  );
+
+sessionsViewsRouter
+  .route('/login')
+  .get(
+    logHttp('Rendering login view'),
+    controllers.sessionViews.renderLoginView,
+  );

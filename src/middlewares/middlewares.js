@@ -43,6 +43,13 @@ export function errorMiddleware(error, req, res, __) {
   });
 }
 
+export function logHttp(message) {
+  return (req, _, next) => {
+    req.requestLogger.http(message);
+    next();
+  };
+}
+
 export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
   return (req, res, next) => {
     if (req.isAnonymous) return next();

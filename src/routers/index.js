@@ -1,3 +1,3 @@
-export * from './views.router.js';
-export * from './api.router.js';
+export * from './viewsRouter.js';
+export * from './apiRouter.js';
 export * from './testRouters/test.routers.js';

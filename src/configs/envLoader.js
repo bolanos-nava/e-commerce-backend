@@ -1,24 +1,39 @@
 import path from 'node:path';
-import dotenv from 'dotenv';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
+import os from 'node:os';
 
 const { MONGO_DEPLOYMENT } = process.env;
+const MONGO_DEPLOYMENTS = {
+  LOCAL: 'local',
+  ATLAS: 'atlas',
+};
 
-const envPath = (() => {
-  const baseEnv = path.join(path.resolve(), '.env');
-  if (!MONGO_DEPLOYMENT || MONGO_DEPLOYMENT === 'local') return baseEnv;
+console.log('were in this pod:', os.hostname());
 
-  const filePath = `${baseEnv}.${MONGO_DEPLOYMENT}`;
-  return existsSync(filePath) ? filePath : baseEnv;
-})();
-// Loads vars in .env into process.env
-dotenv.config({ path: envPath });
+const envFileExists = readdirSync(path.resolve()).some((filename) =>
+  filename.startsWith('.env'),
+);
 
-if (MONGO_DEPLOYMENT === 'REPLICA_SET') {
+// In case there .env files, run this. When won't there be .env files? When deploying on a Docker container or on a Kubernetes cluster because in those cases env variables are passed directly
+if (envFileExists) {
+  const { default: dotenv } = await import('dotenv');
+  const envPath = (() => {
+    const baseEnv = path.join(path.resolve(), '.env');
+    if (!MONGO_DEPLOYMENT || MONGO_DEPLOYMENT === MONGO_DEPLOYMENTS.LOCAL)
+      return baseEnv;
+
+    const filePath = `${baseEnv}.${MONGO_DEPLOYMENT}`.toLowerCase();
+    return existsSync(filePath) ? filePath : baseEnv;
+  })();
+  // Loads vars in .env into process.env
+  dotenv.config({ path: envPath });
+}
+
+if (typeof process.env.DB_REPLICA_SET_NAME !== 'undefined') {
   const { default: resolveDns } = await import('./discoverReplicaSet.js');
   try {
     const replicaSetAddress = await resolveDns();
-    process.env.DB_URI = `mongodb://${replicaSetAddress}/${process.env.DB_NAME}?replicaSet=${process.env.DB_REPLICA_SET}`;
+    process.env.DB_URI = `mongodb://${replicaSetAddress}/${process.env.DB_NAME}?replicaSet=${process.env.DB_REPLICA_SET_NAME}`;
   } catch (error) {
     console.error(`Error discovering replica set: ${error.message}`);
     // logger.fatal(`Error discovering replica set: ${error.message}`);
@@ -33,9 +48,9 @@ const DB_URI =
 // default values
 const env = {
   NODE_ENV: 'dev',
-  MONGO_DEPLOYMENT: 'local',
   API_URL: 'http://localhost',
   SERVER_PORT: 8080,
+  MONGO_DEPLOYMENT: MONGO_DEPLOYMENTS.LOCAL,
   DB_URI: DB_URI ?? 'mongodb://localhost:27017',
   DB_NAME: 'ecommerce',
   JWT_PRIVATE_KEY: '',
