@@ -1,5 +1,12 @@
 /* eslint-disable no-undef */
-const socket = io();
+const {
+  hostname,
+  env: { WS_CLIENT_HOST, WS_CLIENT_PATH },
+} = window;
+
+const socket = io(WS_CLIENT_HOST, { path: WS_CLIENT_PATH });
+
+console.log(`This came from ${hostname}`);
 
 function addProductToFrontend(data) {
   const productsList = document.getElementById('productsList');

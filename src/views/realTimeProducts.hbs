@@ -82,5 +82,21 @@
   </div>
 </main>
 
-<script src="socket.io/socket.io.js"></script>
+<script>
+  window.hostname =
+  {{{json hostname}}}; window.env =
+  {{{json env}}};
+</script>
+
+{{#if env.USE_BUILT_IN_WS}}
+  <script src="socket.io/socket.io.js"></script>
+{{else}}
+  {{! Socket.io CDN }}
+  <script
+    src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+    integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+    crossorigin="anonymous"
+  ></script>
+{{/if}}
+
 <script src="/static/js/realTimeProducts.js"></script>

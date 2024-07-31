@@ -10,6 +10,5 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm i --omit-dev
 
-# COPY . .
-COPY ./src/ ./src/
+COPY server.js .
 CMD ["npm", "run", "server"]

@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: websocket-service
+spec:
+  selector:
+    app: websocket
+  ports:
+  - protocol: TCP
+    port: 80 # exposing port 80
+    targetPort: 3000 # connecting to port 3000 of the container
+  type: ClusterIP

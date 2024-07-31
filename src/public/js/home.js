@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 
-const { pagination } = window;
+const { pagination, hostname } = window;
+console.log(`This came from this pod: ${hostname}`);
 const params = new URLSearchParams(window.location.search);
 
 function attatchListenerToCartButton() {

@@ -44,6 +44,8 @@ if (typeof process.env.DB_REPLICA_SET_NAME !== 'undefined') {
 const DB_URI =
   process.env.DB_URI ??
   `${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+const WS_CLIENT_HOST =
+  process.env.WS_CLIENT_HOST ?? `localhost:${process.env.SERVER_PORT}`;
 
 // default values
 const env = {
@@ -55,11 +57,15 @@ const env = {
   DB_NAME: 'ecommerce',
   JWT_PRIVATE_KEY: '',
   PERSISTENCE: 'MONGO',
+  USE_BUILT_IN_WS: false,
+  WS_CLIENT_HOST: WS_CLIENT_HOST ?? 'localhost:8080',
+  WS_CLIENT_PATH: '/socket.io',
+  WS_INTERNAL_HOST: 'localhost',
 };
 
 Object.keys(env).forEach((envKey) => {
   const valueFromEnvFile = process.env[envKey];
-  if (valueFromEnvFile) env[envKey] = valueFromEnvFile;
+  if (typeof valueFromEnvFile !== 'undefined') env[envKey] = valueFromEnvFile;
 });
 
 export default env;

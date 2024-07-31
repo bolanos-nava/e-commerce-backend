@@ -2,23 +2,42 @@ kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
   name: nginx-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
+  # annotations:
+  #   nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
 spec:
   rules:
   - http:
       paths:
-      - pathType: Prefix
-        path: /
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: express-server-lb
             port:
               number: 8080
-      # - pathType: Prefix
-      #   path: /
-      #   backend:
-      #     service:
-      #       name: express-server-service
-      #       port:
-      #         number: 8080
+              # - pathType: Prefix
+              #   path: /
+              #   backend:
+              #     service:
+              #       name: express-server-service
+              #       port:
+              #         number: 8080
+# ---
+# kind: Ingress
+# apiVersion: networking.k8s.io/v1
+# metadata:
+#   name: socket-nginx-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
+#     # nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /socket.io
+#         pathType: ImplementationSpecific
+#         backend:
+#           service:
+#             name: socket-express-lb
+#             port:
+#               number: 8080

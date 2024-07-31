@@ -1,5 +1,3 @@
-import { Server } from 'socket.io';
-
 import { env } from './configs/index.js';
 import ServerConfiguration from './serverConf.js';
 
@@ -19,20 +17,30 @@ async function start() {
   configuration.setupTemplateEngines();
 
   /* --------- SERVERS: HTTP AND WEBSOCKET ---------- */
-  const { SERVER_PORT } = env;
+  const { SERVER_PORT, USE_BUILT_IN_WS } = env;
   const { server } = configuration;
   const httpServer = server.listen(SERVER_PORT, () => {
     logger.info(`Server listening on port ${SERVER_PORT}`);
   });
 
-  const socketServer = new Server(httpServer);
+  let socketServer;
+  if (USE_BUILT_IN_WS) {
+    logger.info('Using built-in websocket server');
+    const { Server } = await import('socket.io');
+    socketServer = new Server(httpServer);
+    socketServer.on('connection', (socket) =>
+      logger.info(`Socket connected: ${socket.id}`),
+    );
+  }
 
   /* --------- PASSPORT --------- */
   configuration.setupPassport();
 
   /* --------------- ROUTERS ----------- */
   server.use('/', viewsRouter);
-  server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
+  if (socketServer) {
+    server.use('/api/v1', socketMiddleware(socketServer), apiRouter);
+  } else server.use('/api/v1', apiRouter);
   server.use('/test', testRouter);
 
   /* --------- ERROR HANDLING MIDDLEWARES ---------- */

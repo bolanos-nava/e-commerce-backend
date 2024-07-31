@@ -1,5 +1,6 @@
 import BaseController from './BaseController.js';
 import { productValidator } from '../../schemas/zod/product.validator.js';
+import { env } from '../../configs/index.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
@@ -25,12 +26,29 @@ export default class ProductsController extends BaseController {
    * @type {ExpressType['RequestHandlerWS']}
    */
   create = async (req, res, next) => {
+    const { WS_INTERNAL_HOST, USE_BUILT_IN_WS } = env;
     try {
       const { product: request } = req.body;
       const validProduct = productValidator.parse(request);
       const product = await this.#productsService.save(validProduct);
 
-      req.socketServer.emit('new_product', product);
+      req.logger.info('Emitting new_product event to websocket server');
+      if (USE_BUILT_IN_WS) {
+        req.socketServer.emit('new_product', savedResponse);
+      } else {
+        fetch(WS_INTERNAL_HOST, {
+          method: 'POST',
+          body: JSON.stringify({
+            event: 'new_product',
+            payload: savedResponse,
+          }),
+          headers: { 'Content-Type': 'application/json' },
+        }).then((response) =>
+          req.logger.http(
+            `Websocket service responded with status ${response.status}`,
+          ),
+        );
+      }
 
       res.status(201).json({
         status: 'created',

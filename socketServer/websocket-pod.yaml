@@ -1,0 +1,22 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: websocket
+  labels:
+    app: websocket
+    svc: websocket-service
+spec:
+  nodeSelector:
+    tier: server
+  containers:
+  - name: websocket
+    image: bolanosnava/websocket:latest
+    ports:
+    - containerPort: 3000 # we are defining port 8080 as the one that will be exposed
+    resources:
+      requests:
+        cpu: "1"
+        memory: "512Mi"
+      limits:
+        cpu: "1.5"
+        memory: "1Gi"

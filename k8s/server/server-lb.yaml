@@ -6,7 +6,21 @@ spec:
   selector:
     app: express-server
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: 8080 # port that will be exposed
+    targetPort: 8080 # container ports of the pods
   type: LoadBalancer
   externalTrafficPolicy: Local
+  sessionAffinity: None
+# ---
+# kind: Service
+# apiVersion: v1
+# metadata:
+#   name: socket-express-lb
+# spec:
+#   selector:
+#     app: express-server
+#   ports:
+#   - port: 8080
+#     targetPort: 8080
+#   type: LoadBalancer
+#   sessionAffinity: ClientIP
