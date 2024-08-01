@@ -13,6 +13,7 @@ import {
 
 /**
  * Middleware to catch all errors
+ *
  * @type {ExpressType['ErrorRequestHandler']}
  */
 export function errorMiddleware(error, req, res, __) {
@@ -43,6 +44,12 @@ export function errorMiddleware(error, req, res, __) {
   });
 }
 
+/**
+ * Middleware to log incoming HTTP requests
+ *
+ * @param {string} message - Message to log
+ * @returns {ExpressType['RequestHandler']} Express middleware function with appended request logger
+ */
 export function logHttp(message) {
   return (req, _, next) => {
     req.requestLogger.http(message);
@@ -50,6 +57,13 @@ export function logHttp(message) {
   };
 }
 
+/**
+ * Wrapper function for Passport strategies. It handles errors and anonymous user authorization
+ *
+ * @param {string} strategy - Name of Passport strategy
+ * @param {{}} passportOpts - Options that can be passed to the passport.authenticate() method
+ * @returns {ExpressType['RequestHandler']} Express middleware function
+ */
 export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
   return (req, res, next) => {
     if (req.isAnonymous) return next();
@@ -77,6 +91,12 @@ export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
   };
 }
 
+/**
+ * Function to return an array of middlewares used for authorizing or denying requests based on the roles. Includes logic to allow anonymous users as well
+ *
+ * @param  {...string} roles
+ * @returns Array of authorization middlewares
+ */
 export function authorize(...roles) {
   return [
     (req, _, next) => {
@@ -95,21 +115,11 @@ export function authorize(...roles) {
       );
     },
   ];
-  // return (req, res, next) => {
-  //   if (!req?.user?.cookies && roles.includes('anon')) return next();
-
-  //   // the next() function should be empty so it doesn't trigger
-  //   passportStrategyErrorWrapper('jwt')(req, res, () => {});
-  //   const { role } = req.user;
-  //   if (roles.includes(role)) return next();
-  //   return next(
-  //     new ForbiddenError('You are not allowed to perform this action'),
-  //   );
-  // };
 }
 
 /**
- * Makes the websocket server instance available in the request object
+ * Appends the websocket server instance to the request object
+ *
  * @param {WSServer} socketServer Websocket server
  * @returns {ExpressType['RequestHandlerWS']} Middleware handler function to add the websocket server instance to the request object
  */
