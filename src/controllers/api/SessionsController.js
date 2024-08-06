@@ -39,7 +39,9 @@ export default class SessionsController extends BaseController {
   };
 
   /**
-   * Generates JWT and sends it to the client
+   * Login process of a user.
+   * - If the client has an anonymous cart adds its products to the cart of the user and deletes the anonymous cart
+   * - Generates JWT and sends it as cookie
    *
    * @type {ExpressType['RequestHandler']}
    */
@@ -48,6 +50,7 @@ export default class SessionsController extends BaseController {
       const anonymousCartId = req?.query?.cart;
       const userCartId = req?.user?.cart;
 
+      // Merging anonymous cart with the cart of the registered user
       if (anonymousCartId) {
         const { products: prodsOfAnonCart } = await this.#cartsService.get(
           anonymousCartId,
