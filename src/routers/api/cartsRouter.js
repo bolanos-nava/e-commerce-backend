@@ -1,9 +1,6 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
-import {
-  authorize,
-  passportStrategyErrorWrapper,
-} from '../../middlewares/index.js';
+import { authorize } from '../../middlewares/index.js';
 
 const router = Router();
 

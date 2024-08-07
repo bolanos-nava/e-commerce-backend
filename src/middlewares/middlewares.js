@@ -35,7 +35,7 @@ export function errorMiddleware(error, req, res, __) {
   res.status(error.statusCode || 500).json({
     status: 'error',
     code: error.name || 'Error',
-    message: message || 'Internal server error',
+    message: message || ['Internal server error'],
   });
 }
 
@@ -46,6 +46,7 @@ export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
       strategy,
       { session: false, ...(passportOpts || {}) },
       (error, sessionData, info) => {
+        console.error(error, sessionData, info);
         if (error) return next(error);
         if (!sessionData && !info && !error)
           return next(new ResourceNotFoundError("Email doesn't exist"));

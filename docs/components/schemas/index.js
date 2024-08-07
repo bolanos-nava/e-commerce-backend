@@ -1,13 +1,13 @@
-import product from './productSchema.js';
-import { cart, cartProduct } from './cartSchema.js';
-import { JSONResponse, responseStatus } from './jsonResponseSchema.js';
+import * as cartSchemas from './CartSchemas.js';
+import * as paginationSchemas from './PaginationSchemas.js';
+import * as productSchemas from './ProductSchemas.js';
+import * as responseSchemas from './ResponseSchemas.js';
 
 const schemas = {
-  product,
-  cart,
-  cartProduct,
-  JSONResponse,
-  responseStatus,
+  ...cartSchemas,
+  ...paginationSchemas,
+  ...productSchemas,
+  ...responseSchemas,
 };
 
 export default schemas;

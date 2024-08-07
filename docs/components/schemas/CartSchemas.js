@@ -1,5 +1,5 @@
 /** @type {import('swagger-jsdoc').Schema} */
-export const cartProduct = {
+export const CartProduct = {
   type: 'object',
   properties: {
     product: {
@@ -21,7 +21,7 @@ export const cartProduct = {
 };
 
 /** @type {import('swagger-jsdoc').Schema} */
-export const cart = {
+export const Cart = {
   type: 'object',
   properties: {
     _id: {
@@ -31,24 +31,22 @@ export const cart = {
     products: {
       type: 'array',
       items: {
-        $ref: '#/components/schemas/cartProduct',
+        $ref: '#/components/schemas/CartProduct',
       },
     },
   },
-  required: ['products'],
-  examples: {
-    cart: {
-      _id: '5f7a775a9f77f5109a559248',
-      products: [
-        {
-          product: '5f7a775a9f77f5109a559248',
-          quantity: 2,
-        },
-        {
-          product: '5f7a775a9f77f5109a559249',
-          quantity: 1,
-        },
-      ],
-    },
+  required: ['_id', 'products'],
+  example: {
+    _id: '5f7a775a9f77f5109a559248',
+    products: [
+      {
+        product: '5f7a775a9f77f5109a559248',
+        quantity: 2,
+      },
+      {
+        product: '5f7a775a9f77f5109a559249',
+        quantity: 1,
+      },
+    ],
   },
 };
