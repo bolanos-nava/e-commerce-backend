@@ -92,27 +92,32 @@ const productPaths = {
               content: {
                 'application/json': {
                   schema: {
-                    type: 'object',
-                    properties: {
-                      status: {
-                        $ref: '#/components/schemas/ResponseStatus',
-                      },
-                      payload: {
+                    allOf: [
+                      { $ref: '#/components/schemas/BaseJsonResponse' },
+                      {
                         type: 'object',
                         properties: {
-                          products: {
-                            type: 'array',
-                            description: 'List of products',
-                            items: {
-                              $ref: '#/components/schemas/ProductResponse',
-                            },
+                          status: {
+                            default: 'success',
                           },
-                          pagination: {
-                            $ref: '#/components/schemas/Pagination',
+                          payload: {
+                            type: 'object',
+                            properties: {
+                              products: {
+                                type: 'array',
+                                description: 'List of products',
+                                items: {
+                                  $ref: '#/components/schemas/ProductResponse',
+                                },
+                              },
+                              pagination: {
+                                $ref: '#/components/schemas/Pagination',
+                              },
+                            },
                           },
                         },
                       },
-                    },
+                    ],
                   },
                   examples: {
                     success: {
@@ -165,9 +170,7 @@ const productPaths = {
                 },
               },
             },
-            500: {
-              $ref: '#/components/responses/500InternalServerError',
-            },
+            500: { $ref: '#/components/responses/500InternalServerError' },
           },
         },
         post: {
@@ -245,11 +248,11 @@ const productPaths = {
               in: 'path',
               name: 'productId',
               description: 'Id of the product to get',
+              required: true,
               schema: {
                 type: 'string',
                 format: 'ObjectId',
               },
-              required: true,
             },
           ],
           responses: {
@@ -259,12 +262,13 @@ const productPaths = {
                 'application/json': {
                   schema: {
                     allOf: [
-                      {
-                        $ref: '#/components/schemas/BaseJsonResponse',
-                      },
+                      { $ref: '#/components/schemas/BaseJsonResponse' },
                       {
                         type: 'object',
                         properties: {
+                          status: {
+                            default: 'success',
+                          },
                           payload: {
                             type: 'object',
                             properties: {
@@ -280,12 +284,8 @@ const productPaths = {
                 },
               },
             },
-            404: {
-              $ref: '#/components/responses/404ProductNotFound',
-            },
-            500: {
-              $ref: '#/components/responses/500InternalServerError',
-            },
+            404: { $ref: '#/components/responses/404ProductNotFound' },
+            500: { $ref: '#/components/responses/500InternalServerError' },
           },
         },
         put: {
@@ -298,11 +298,11 @@ const productPaths = {
               in: 'path',
               name: 'productId',
               description: 'Id of the product to update',
+              required: true,
               schema: {
                 type: 'string',
                 format: 'ObjectId',
               },
-              required: true,
             },
           ],
           requestBody: {
@@ -311,7 +311,12 @@ const productPaths = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Product',
+                  type: 'object',
+                  properties: {
+                    product: {
+                      $ref: '#/components/schemas/Product',
+                    },
+                  },
                 },
               },
             },
@@ -323,12 +328,13 @@ const productPaths = {
                 'application/json': {
                   schema: {
                     allOf: [
-                      {
-                        $ref: '#/components/schemas/BaseJsonResponse',
-                      },
+                      { $ref: '#/components/schemas/BaseJsonResponse' },
                       {
                         type: 'object',
                         properties: {
+                          status: {
+                            default: 'updated',
+                          },
                           payload: {
                             type: 'object',
                             properties: {
@@ -344,18 +350,10 @@ const productPaths = {
                 },
               },
             },
-            401: {
-              $ref: '#/components/responses/401Unauthorized',
-            },
-            403: {
-              $ref: '#/components/responses/403Forbidden',
-            },
-            404: {
-              $ref: '#/components/responses/404ProductNotFound',
-            },
-            500: {
-              $ref: '#/components/responses/500InternalServerError',
-            },
+            401: { $ref: '#/components/responses/401Unauthorized' },
+            403: { $ref: '#/components/responses/403Forbidden' },
+            404: { $ref: '#/components/responses/404ProductNotFound' },
+            500: { $ref: '#/components/responses/500InternalServerError' },
           },
         },
         delete: {
@@ -376,21 +374,11 @@ const productPaths = {
             },
           ],
           responses: {
-            204: {
-              description: 'Product deleted successfully',
-            },
-            401: {
-              $ref: '#/components/responses/401Unauthorized',
-            },
-            403: {
-              $ref: '#/components/responses/403Forbidden',
-            },
-            404: {
-              $ref: '#/components/responses/404ProductNotFound',
-            },
-            500: {
-              $ref: '#/components/responses/500InternalServerError',
-            },
+            204: { description: 'Product deleted successfully' },
+            401: { $ref: '#/components/responses/401Unauthorized' },
+            403: { $ref: '#/components/responses/403Forbidden' },
+            404: { $ref: '#/components/responses/404ProductNotFound' },
+            500: { $ref: '#/components/responses/500InternalServerError' },
           },
         },
       },

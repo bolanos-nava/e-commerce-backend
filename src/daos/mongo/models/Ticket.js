@@ -17,15 +17,17 @@ const ticketSchema = {
       amount: {
         type: Number,
         required: true,
-        min: 1,
+        
       },
       purchaser: {
+        // TODO: add reference to user email
         type: String,
         required: true,
         index: true,
       },
       products: [
         {
+          // TODO: add reference to product id
           product: Schema.Types.ObjectId,
           quantity: Number,
         },

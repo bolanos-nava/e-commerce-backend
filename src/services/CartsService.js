@@ -81,18 +81,29 @@ export default class CartsService {
     const cart = await this.get(cartId);
 
     // TODO: add check of status (i.e. only products with status === true are available)
-    /** @type CartProduct[] */
+    /** @type {(CartProduct & {price: number; totalPrice: number;})[]} */
     const availableProducts = [];
-    /** @type CartProduct[] */
+    /** @type {CartProduct[]} */
     const unavailableProducts = [];
+    let amount = 0;
     cart.products.forEach((p) => {
-      const prodObj = { product: p.product.id, quantity: p.quantity };
-      if (p.quantity <= p.product.stock) availableProducts.push(prodObj);
-      else unavailableProducts.push(prodObj);
+      const prodObj = {
+        product: p.product.id,
+        quantity: p.quantity,
+      };
+      if (p.quantity <= p.product.stock) {
+        availableProducts.push({
+          ...prodObj,
+          price: p.product.price,
+          totalPrice: p.quantity * p.product.price,
+        });
+        amount += p.quantity * p.product.price;
+      } else unavailableProducts.push(prodObj);
     });
 
     return {
       ...cart,
+      amount,
       products: {
         available: availableProducts,
         unavailable: unavailableProducts,
@@ -150,13 +161,13 @@ export default class CartsService {
   }
 
   /**
-   * Idempotent operation to update the quantity of a product in a cart
+   * Idempotent operation to set the quantity of a product in a cart
    *
    * @param {MongoIdType} cartId - Id of cart
    * @param {MongoIdType} productId - Id of product whose quantity to change
    * @param {number} quantity - New quantity
    */
-  async updateProductQuantity(cartId, productId, quantity) {
-    await this.#cartsDao.updateProductQuantity(cartId, productId, quantity);
+  async setProductQuantity(cartId, productId, quantity) {
+    await this.#cartsDao.setProductQuantity(cartId, productId, quantity);
   }
 }

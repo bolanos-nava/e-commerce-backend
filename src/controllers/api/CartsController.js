@@ -132,10 +132,13 @@ export default class CartsController extends BaseController {
         { throws: true },
       );
 
-      const ticket = await this.#ticketsService.save(purchaser, {
-        _id: filteredCart._id,
-        filteredProducts: filteredCart.products,
-      });
+      const ticket = await this.#ticketsService.save(
+        { purchaser, amount: filteredCart.amount },
+        {
+          _id: filteredCart._id,
+          filteredProducts: filteredCart.products,
+        },
+      );
 
       await filteredCart.products.available.reduce(
         async (prevPromise, availableProduct) => {
@@ -225,11 +228,11 @@ export default class CartsController extends BaseController {
   };
 
   /**
-   * Changes the quantity of a product in a cart. It is an idempotent operation
+   * Sets the quantity of a product in a cart. It is an idempotent operation
    *
    * @type ExpressType['RequestHandler']
    */
-  updateProductQuantity = async (req, res, next) => {
+  setProductQuantity = async (req, res, next) => {
     req.requestLogger.http('Updating product quantity in cart');
     try {
       const { cartId, productId } = req.params;
@@ -242,11 +245,7 @@ export default class CartsController extends BaseController {
         quantity = 1;
       }
 
-      await this.#cartsService.updateProductQuantity(
-        cartId,
-        productId,
-        quantity,
-      );
+      await this.#cartsService.setProductQuantity(cartId, productId, quantity);
 
       // No content
       res.status(204).send();

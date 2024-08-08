@@ -327,8 +327,8 @@ export class CartsMongoDao {
    * @param {number} quantity
    * @returns
    */
-  async updateProductQuantity(cartId, productId, quantity) {
-    /* Endpoint assumes the cart exists */
+  async setProductQuantity(cartId, productId, quantity) {
+    /* Method assumes cart exists */
 
     const productInCart = await this.#Cart.findProductInCart(
       cartId,
