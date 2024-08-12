@@ -29,13 +29,13 @@ export default class ProductsController extends BaseController {
     try {
       const { product: request } = req.body;
       const validProduct = productValidator.parse(request);
-      const savedResponse = await this.#productsService.save(validProduct);
+      const product = await this.#productsService.save(validProduct);
 
-      req.socketServer.emit('new_product', savedResponse);
+      req.socketServer.emit('new_product', product);
 
       res.status(201).json({
         status: 'created',
-        payload: savedResponse,
+        payload: { product },
       });
     } catch (error) {
       next(error);
@@ -102,7 +102,6 @@ export default class ProductsController extends BaseController {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
-      req.logger.http(`GET /products/${productId}`);
 
       const product = await this.#productsService.get(productId);
 
@@ -127,14 +126,14 @@ export default class ProductsController extends BaseController {
       this.validateIds({ productId });
       const newData = productValidator.partial().parse(req.body.product);
 
-      const updatedResponse = await this.#productsService.update(
+      const updatedProduct = await this.#productsService.update(
         productId,
         newData,
       );
 
       res.json({
         status: 'updated',
-        payload: updatedResponse,
+        payload: { product: updatedProduct },
       });
     } catch (error) {
       next(error);

@@ -1,9 +1,6 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
-import {
-  authorize,
-  passportStrategyErrorWrapper,
-} from '../../middlewares/index.js';
+import { authorize } from '../../middlewares/index.js';
 
 const router = Router();
 
@@ -21,14 +18,14 @@ router
   .delete(controllers.carts.removeProducts);
 
 router
-  .route('/:cartId/tickets') // path
-  .post(authorize('user'), controllers.carts.createTicket);
-
-router
   .route('/:cartId/products/:productId') // path
   .post(authorize('user', 'anon'), controllers.carts.addProductToCart)
-  .put(controllers.carts.updateProductQuantity) // PUT because idempotent
+  .put(controllers.carts.setProductQuantity) // PUT because idempotent
   .delete(controllers.carts.removeProduct);
+
+router
+  .route('/:cartId/tickets') // path
+  .post(authorize('user'), controllers.carts.createTicket);
 
 export const cartsRouter = {
   basePath: '/carts',

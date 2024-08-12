@@ -80,6 +80,7 @@ web_modules/
 .env.local
 .env.*
 *.env
+!.env.schema
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -131,4 +132,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-!.env.schema
+# In-memory data store
+carts.json
+products.json

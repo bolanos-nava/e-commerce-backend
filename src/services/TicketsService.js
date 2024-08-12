@@ -21,20 +21,25 @@ export default class TicketsService {
   }
 
   /**
+   * Saves a new ticket
    *
-   * @param {string} purchaser - Email of purchaser
+   * @param {{purchaser: string; amount: number;}} ticket - Object containing purchaser's email and total purchase amount
    * @param {{
    *    _id: MongoIdType;
-   *    filteredProducts: {available: CartProduct[]; unavailable: CartProduct[];};
-   * }} cart - Cart with filtered products
+   *    amount: number;
+   *    filteredProducts: {
+   *      available: (
+   *          CartProduct & {
+   *            price: number;
+   *            totalPrice: number;
+   *          }
+   *      )[];
+   *      unavailable: CartProduct[];};
+   * }} cart - Cart with filtered products and total purchase amount
    * @returns
    */
-  async save(purchaser, cart) {
+  async save({ purchaser, amount }, cart) {
     const code = randomUUID();
-    const amount = cart.filteredProducts.available.reduce(
-      (sum, { quantity }) => sum + quantity,
-      0,
-    );
     return this.#ticketsDao.save({ purchaser, code, amount }, cart);
   }
 }
