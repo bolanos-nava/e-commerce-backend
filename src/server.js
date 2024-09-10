@@ -1,3 +1,4 @@
+import './commander.js';
 import { env } from './configs/index.js';
 import ServerConfiguration from './ServerConfiguration.js';
 

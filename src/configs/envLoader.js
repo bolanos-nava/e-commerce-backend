@@ -68,4 +68,17 @@ Object.keys(env).forEach((envKey) => {
   if (typeof valueFromEnvFile !== 'undefined') env[envKey] = valueFromEnvFile;
 });
 
+const envsToLog = [
+  'NODE_ENV',
+  'SERVER_PORT',
+  'MONGO_DEPLOYMENT',
+  'DB_NAME',
+  'USE_BUILT_IN_WS',
+].reduce((map, key) => {
+  // eslint-disable-next-line no-param-reassign
+  map[key] = env[key];
+  return map;
+}, {});
+logger.debug(envsToLog);
+
 export default env;

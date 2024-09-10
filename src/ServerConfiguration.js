@@ -108,8 +108,8 @@ export default class ServerConfiguration {
       attempts = 0;
       logger.info(
         DB_URI.includes('mongodb+srv')
-          ? `Connected to database ${dbName} on Atlas cluster`
-          : `Connected to database ${dbName} on ${DB_URI}`,
+          ? `Connected to database '${dbName}' on Atlas cluster`
+          : `Connected to local database '${dbName}' on ${DB_URI}`,
       );
     });
     db.on('disconnected', () => {

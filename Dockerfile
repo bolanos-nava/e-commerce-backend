@@ -8,7 +8,7 @@ RUN apk add --no-cache curl
 WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
-RUN npm i --omit-dev
+RUN ["npm", "i", "--omit=dev"]
 
 # COPY . .
 COPY ./src/ ./src/
