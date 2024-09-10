@@ -17,7 +17,7 @@ export default class MessagesViewsController extends BaseViewsController {
     this.#messagesService = messagesService;
   }
 
-  renderChatView = async (_, res, __) => {
+  async renderChatView(_, res, __) {
     const messages = await this.#messagesService.getAll({ lean: true });
     const context = {
       messages,
@@ -26,5 +26,5 @@ export default class MessagesViewsController extends BaseViewsController {
     };
 
     res.render('chat', context);
-  };
+  }
 }

@@ -30,13 +30,13 @@ export default class SessionsController extends BaseController {
    *
    * @type ExpressType['RequestHandler']
    */
-  currentSession = async (req, res, next) => {
+  currentSession(req, res, next) {
     try {
       res.json({ status: 'success', payload: { user: req.user } });
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Login process of a user.
@@ -45,7 +45,7 @@ export default class SessionsController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  login = async (req, res, next) => {
+  async login(req, res, next) {
     try {
       const anonymousCartId = req?.query?.cart;
       const userCartId = req?.user?.cart;
@@ -65,34 +65,34 @@ export default class SessionsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Generates JWT after logging in with GitHub
    *
    * @type ExpressType['RequestHandler']
    */
-  loginGitHub = async (req, res, next) => {
+  loginGitHub(req, res, next) {
     try {
       this.#generateTokenAndSaveToCookie(req.user, res);
       res.redirect('/?logged=true');
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Logs out, clears the token from the client
    *
    * @type {ExpressType['RequestHandler']}
    */
-  logout = async (req, res, next) => {
+  logout(_, res, next) {
     try {
       res.clearCookie('token').status(204).send();
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Generates JWT and adds cookie to response object
@@ -100,7 +100,7 @@ export default class SessionsController extends BaseController {
    * @param user - User from request object
    * @param res - Response object
    */
-  #generateTokenAndSaveToCookie = (user, res) => {
+  #generateTokenAndSaveToCookie(user, res) {
     const jwt = this.#jwtTokenFactory.generateToken({
       user: new UserDto(user),
     });
@@ -109,5 +109,5 @@ export default class SessionsController extends BaseController {
       httpOnly: true,
     });
     return jwt;
-  };
+  }
 }

@@ -14,7 +14,6 @@ import {
 } from '../customErrors/index.js';
 
 function cookieJwtExtractor(req) {
-  console.log(req.headers);
   const token = req?.cookies?.token || null;
   if (!token) {
     throw new UnauthorizedError('No token present');

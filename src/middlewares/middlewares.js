@@ -32,7 +32,6 @@ export function errorMiddleware(error, req, res, __) {
     message = [message];
   }
 
-  // eslint-disable-next-line no-console
   req.logger.error({
     message,
     code: error.name,
@@ -72,7 +71,7 @@ export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
       strategy,
       { session: false, ...(passportOpts || {}) },
       (error, sessionData, info) => {
-        console.error(error, sessionData, info);
+        console.log(error, sessionData, info);
         if (error) return next(error);
         if (!sessionData && !info && !error)
           return next(new ResourceNotFoundError("Email doesn't exist"));

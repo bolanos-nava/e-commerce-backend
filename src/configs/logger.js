@@ -1,5 +1,4 @@
 import { transports, format, createLogger } from 'winston';
-import env from './envLoader.js';
 
 const LEVELS = {
   fatal: 0,
@@ -10,6 +9,7 @@ const LEVELS = {
   debug: 5,
 };
 
+// Colors for printing to console in standard format
 const COLORS = {
   fatal: 'magenta',
   error: 'red',
@@ -19,16 +19,11 @@ const COLORS = {
   debug: 'cyan',
 };
 
-const minLevel = (() => {
-  switch (env.NODE_ENV) {
-    case 'dev':
-      return 'debug';
-    case 'prod':
-      return 'info';
-    default:
-      return 'info';
-  }
-})();
+const envLevelsMapping = {
+  dev: 'debug',
+  prod: 'info',
+};
+const minLevel = envLevelsMapping[process.env.NODE_ENV || 'prod'];
 
 const logger = createLogger({
   levels: LEVELS,

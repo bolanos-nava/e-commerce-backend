@@ -8,12 +8,12 @@ sessionsViewsRouter
   .route('/register')
   .get(
     logHttp('Rendering register view'),
-    controllers.sessionViews.renderRegisterView,
+    controllers.sessionViews.renderRegisterView.bind(controllers.sessionViews),
   );
 
 sessionsViewsRouter
   .route('/login')
   .get(
     logHttp('Rendering login view'),
-    controllers.sessionViews.renderLoginView,
+    controllers.sessionViews.renderLoginView.bind(controllers.sessionViews),
   );

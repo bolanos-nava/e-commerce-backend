@@ -25,22 +25,22 @@ export default class ProductsController extends BaseController {
    * Creates a new product
    * @type {ExpressType['RequestHandlerWS']}
    */
-  create = async (req, res, next) => {
+  async create(req, res, next) {
     const { WS_INTERNAL_HOST, USE_BUILT_IN_WS } = env;
     try {
       const { product: request } = req.body;
       const validProduct = productValidator.parse(request);
       const product = await this.#productsService.save(validProduct);
 
-      req.logger.info('Emitting new_product event to websocket server');
+      req.logger.debug('Emitting new_product event to websocket server');
       if (USE_BUILT_IN_WS) {
-        req.socketServer.emit('new_product', savedResponse);
+        req.socketServer.emit('new_product', product);
       } else {
         fetch(WS_INTERNAL_HOST, {
           method: 'POST',
           body: JSON.stringify({
             event: 'new_product',
-            payload: savedResponse,
+            payload: product,
           }),
           headers: { 'Content-Type': 'application/json' },
         }).then((response) =>
@@ -57,13 +57,13 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Deletes a single product
    * @type {ExpressType['RequestHandler']}
    */
-  delete = async (req, res, next) => {
+  async delete(req, res, next) {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
@@ -73,13 +73,13 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Returns list of products
    * @type {ExpressType['RequestHandler']}
    */
-  list = async (req, res, next) => {
+  async list(req, res, next) {
     try {
       const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
         req.query;
@@ -105,14 +105,14 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Returns data of a single product
    *
    * @type {ExpressType['RequestHandler']}
    */
-  show = async (req, res, next) => {
+  async show(req, res, next) {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
@@ -127,13 +127,13 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Updates a single product
    * @type {ExpressType['RequestHandler']}
    */
-  update = async (req, res, next) => {
+  async update(req, res, next) {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
@@ -151,5 +151,5 @@ export default class ProductsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 }

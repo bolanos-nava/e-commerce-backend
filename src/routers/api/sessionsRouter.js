@@ -16,9 +16,12 @@ router
     passportStrategyErrorWrapper('login', {
       failureRedirect: '/login?error=bad_credentials',
     }),
-    controllers.sessions.login,
+    controllers.sessions.login.bind(controllers.sessions),
   )
-  .delete(logHttp('Logging out'), controllers.sessions.logout);
+  .delete(
+    logHttp('Logging out'),
+    controllers.sessions.logout.bind(controllers.sessions),
+  );
 
 /* ****************************** */
 // PATH /current
@@ -27,7 +30,7 @@ router
   .get(
     logHttp('Getting current session'),
     passportStrategyErrorWrapper('jwt'),
-    controllers.sessions.currentSession,
+    controllers.sessions.currentSession.bind(controllers.sessions),
   );
 
 /* ****************************** */
@@ -48,7 +51,7 @@ router
   .get(
     passportStrategyErrorWrapper('github'),
     // TODO: add error handling and show appropriate error messages in frontend when passport auth fails
-    controllers.sessions.loginGitHub,
+    controllers.sessions.loginGitHub.bind(controllers.sessions),
   );
 
 export const sessionsRouter = {

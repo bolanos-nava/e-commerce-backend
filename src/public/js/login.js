@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-/* eslint-disable no-param-reassign */
 import { LOGIN_DICTIONARIES } from './utils/errors.js';
 
 const { SERVER_ERRORS_DICTIONARY, PARAMS_MESSAGES_DICTIONARY } =

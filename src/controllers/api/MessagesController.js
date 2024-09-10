@@ -21,7 +21,7 @@ export default class MessagesController extends BaseController {
    *
    * @type {ExpressType['RequestHandlerWS']}
    */
-  create = async (req, res, next) => {
+  async create(req, res, next) {
     try {
       const { message: request } = req.body;
       const validMessage = messageValidator.parse(request);
@@ -36,5 +36,5 @@ export default class MessagesController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 }

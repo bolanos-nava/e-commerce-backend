@@ -11,7 +11,7 @@ router
   .post(
     logHttp('Creating message'),
     authorize('user'),
-    controllers.messages.create,
+    controllers.messages.create.bind(controllers.messages),
   );
 
 export const messagesRouter = {

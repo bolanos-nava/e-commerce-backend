@@ -39,7 +39,7 @@ export default class CartsController extends BaseController {
    *
    * @type ExpressType['RequestHandler']
    */
-  addProductToCart = async (req, res, next) => {
+  async addProductToCart(req, res, next) {
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
@@ -63,7 +63,7 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Adds an array of products to a cart. Pushes the ones which don't exist and increases the quantity of the ones which exist.
@@ -71,7 +71,7 @@ export default class CartsController extends BaseController {
    *
    * @type ExpressType['RequestHandler']
    */
-  addProductsToCart = async (req, res, next) => {
+  async addProductsToCart(req, res, next) {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -88,14 +88,14 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Creates a new cart
    *
    * @type ExpressType['RequestHandler']
    */
-  create = async (req, res, next) => {
+  async create(_, res, next) {
     try {
       const cart = await this.#cartsService.save();
 
@@ -106,14 +106,14 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Creates a new ticket based on the products of a cart
    *
    * @type ExpressType['RequestHandler']
    */
-  createTicket = async (req, res, next) => {
+  async createTicket(req, res, next) {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -160,14 +160,14 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Removes a product from a cart
    *
    * @type ExpressType['RequestHandler']
    */
-  removeProduct = async (req, res, next) => {
+  async removeProduct(req, res, next) {
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
@@ -179,14 +179,14 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Removes all products from a cart
    *
    * @type ExpressType['RequestHandler']
    */
-  removeProducts = async (req, res, next) => {
+  async removeProducts(req, res, next) {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -198,14 +198,14 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Returns data of a single cart
    *
    * @type ExpressType['RequestHandler']
    */
-  show = async (req, res, next) => {
+  async show(req, res, next) {
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });
@@ -219,14 +219,14 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
   /**
    * Sets the quantity of a product in a cart. It is an idempotent operation
    *
    * @type ExpressType['RequestHandler']
    */
-  setProductQuantity = async (req, res, next) => {
+  async setProductQuantity(req, res, next) {
     try {
       const { cartId, productId } = req.params;
       this.validateIds({ cartId }, { productId });
@@ -245,5 +245,5 @@ export default class CartsController extends BaseController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 }

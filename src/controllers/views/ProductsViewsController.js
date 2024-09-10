@@ -20,7 +20,7 @@ export default class ProductsViewsController extends BaseViewsController {
     this.#productsService = productsService;
   }
 
-  renderProductsView = async (req, res, next) => {
+  async renderProductsView(req, res, next) {
     try {
       const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
         req.query;
@@ -49,9 +49,9 @@ export default class ProductsViewsController extends BaseViewsController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 
-  renderRealTimeProductsView = async (req, res, _) => {
+  async renderRealTimeProductsView(req, res, _) {
     const { WS_CLIENT_HOST, WS_CLIENT_PATH, USE_BUILT_IN_WS } = env;
     const { limit, page, sort, ...filter } = req.query;
     const response = await this.#productsService.getAll(filter, {
@@ -74,5 +74,5 @@ export default class ProductsViewsController extends BaseViewsController {
     };
 
     res.render('realTimeProducts', context);
-  };
+  }
 }

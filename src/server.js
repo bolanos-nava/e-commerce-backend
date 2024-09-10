@@ -1,5 +1,5 @@
 import { env } from './configs/index.js';
-import ServerConfiguration from './serverConf.js';
+import ServerConfiguration from './ServerConfiguration.js';
 
 import { viewsRouter, apiRouter, testRouter } from './routers/index.js';
 import {
@@ -29,7 +29,7 @@ async function start() {
     const { Server } = await import('socket.io');
     socketServer = new Server(httpServer);
     socketServer.on('connection', (socket) =>
-      logger.info(`Socket connected: ${socket.id}`),
+      logger.debug(`Socket connected: ${socket.id}`),
     );
   }
 

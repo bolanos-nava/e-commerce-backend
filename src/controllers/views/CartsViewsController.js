@@ -18,7 +18,7 @@ export default class CartsViewsController extends BaseViewsController {
     this.#cartsService = cartsService;
   }
 
-  renderCartDetailView = async (req, res, next) => {
+  async renderCartDetailView(req, res, next) {
     try {
       const { cartId } = req.params;
 
@@ -33,5 +33,5 @@ export default class CartsViewsController extends BaseViewsController {
     } catch (error) {
       next(error);
     }
-  };
+  }
 }

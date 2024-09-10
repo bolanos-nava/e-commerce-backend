@@ -8,13 +8,16 @@ const router = Router();
 // PATH /
 router
   .route('/') // path
-  .post(logHttp('Creating new cart'), controllers.carts.create);
+  .post(
+    logHttp('Creating new cart'),
+    controllers.carts.create.bind(controllers.carts),
+  );
 
 /* ****************************** */
 // PATH /:cartId
 router
   .route('/:cartId') // path
-  .get(logHttp('Showing cart'), controllers.carts.show);
+  .get(logHttp('Showing cart'), controllers.carts.show.bind(controllers.carts));
 
 /* ****************************** */
 // PATH /:cartId/products
@@ -23,11 +26,11 @@ router
   .post(
     logHttp('Adding product to cart'),
     authorize('user'),
-    controllers.carts.addProductsToCart,
+    controllers.carts.addProductsToCart.bind(controllers.carts),
   ) // POST because NOT idempotent
   .delete(
     logHttp('Removing products from cart'),
-    controllers.carts.removeProducts,
+    controllers.carts.removeProducts.bind(controllers.carts),
   );
 
 /* ****************************** */
@@ -37,7 +40,7 @@ router
   .post(
     logHttp('Creating ticket from cart'),
     authorize('user'),
-    controllers.carts.createTicket,
+    controllers.carts.createTicket.bind(controllers.carts),
   );
 
 /* ****************************** */
@@ -48,21 +51,24 @@ router
     // POST because not idempotent adds new products and increments quantity in others
     logHttp('Adding product to cart'),
     authorize('user', 'anon'),
-    controllers.carts.addProductToCart,
+    controllers.carts.addProductToCart.bind(controllers.carts),
   )
   .put(
     // PUT because idempotent, updates quantity in absolute manner
     logHttp('Updating product quantity in cart'),
-    controllers.carts.setProductQuantity,
+    controllers.carts.setProductQuantity.bind(controllers.carts),
   )
   .delete(
     logHttp('Removing product from cart'),
-    controllers.carts.removeProduct,
+    controllers.carts.removeProduct.bind(controllers.carts),
   );
 
 router
   .route('/:cartId/tickets') // path
-  .post(authorize('user'), controllers.carts.createTicket);
+  .post(
+    authorize('user'),
+    controllers.carts.createTicket.bind(controllers.carts),
+  );
 
 export const cartsRouter = {
   basePath: '/carts',

@@ -1,6 +1,7 @@
 import os from 'node:os';
 import path from 'node:path';
 import { existsSync, readdirSync } from 'node:fs';
+import logger from './logger.js';
 
 const { MONGO_DEPLOYMENT } = process.env;
 const MONGO_DEPLOYMENTS = {
@@ -8,7 +9,7 @@ const MONGO_DEPLOYMENTS = {
   ATLAS: 'atlas',
 };
 
-console.log('were in this pod:', os.hostname());
+logger.debug('were in this pod:', os.hostname());
 
 const envFileExists = readdirSync(path.resolve()).some((filename) =>
   filename.startsWith('.env'),
@@ -35,8 +36,7 @@ if (typeof process.env.DB_REPLICA_SET_NAME !== 'undefined') {
     const replicaSetAddress = await resolveDns();
     process.env.DB_URI = `mongodb://${replicaSetAddress}/${process.env.DB_NAME}?replicaSet=${process.env.DB_REPLICA_SET_NAME}`;
   } catch (error) {
-    console.error(`Error discovering replica set: ${error.message}`);
-    // logger.fatal(`Error discovering replica set: ${error.message}`);
+    logger.fatal(`Error discovering replica set: ${error.message}`);
     process.exit(1);
   }
 }

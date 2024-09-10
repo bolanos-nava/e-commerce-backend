@@ -16,7 +16,7 @@ router
       next();
     },
     passportStrategyErrorWrapper('register'),
-    controllers.users.create,
+    controllers.users.create.bind(controllers.users),
   );
 
 export const usersRouter = {

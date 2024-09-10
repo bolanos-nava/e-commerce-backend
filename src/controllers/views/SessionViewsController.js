@@ -1,5 +1,5 @@
 export default class SessionViewsController {
-  async renderRegisterView(req, res, next) {
+  renderRegisterView(_, res, next) {
     try {
       res.render('register');
     } catch (error) {
@@ -7,7 +7,7 @@ export default class SessionViewsController {
     }
   }
 
-  async renderLoginView(req, res, next) {
+  renderLoginView(_, res, next) {
     try {
       res.render('login');
     } catch (error) {
