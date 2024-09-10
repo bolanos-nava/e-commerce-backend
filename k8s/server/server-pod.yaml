@@ -1,16 +1,16 @@
 kind: Pod
 apiVersion: v1
 metadata:
-  name: express-server
+  name: ecommerce-api
   labels:
-    app: express-server
-    svc: express-server-service
+    app: ecommerce-api
+    svc: ecommerce-api-svc
 spec:
   nodeSelector:
     tier: server
   containers:
-  - name: express-server
-    image: bolanosnava/express-server:latest
+  - name: ecommerce-api
+    image: bolanosnava/ecommerce-api:latest
     ports:
     - containerPort: 8080 # we are defining port 8080 as the one that will be exposed
     # command to keep container alive while idle
@@ -19,10 +19,10 @@ spec:
     # - -c
     # - tail -f /dev/null
 
-    # We are loading envs from the secret we created, called server-env. This secret should be created from the .env file of whoever wants to deploy this cluster, so as to keep the .env file from being embedded into the Docker image
+    # We are loading envs from the secret we created, called ecommerce-env. This secret should be created from the .env file of whoever wants to deploy this cluster, so as to keep the .env file from being embedded into the Docker image
     envFrom:
     - secretRef:
-        name: server-env
+        name: ecommerce-env
     resources:
       requests:
         cpu: "1"

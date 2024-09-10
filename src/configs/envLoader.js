@@ -1,6 +1,6 @@
+import os from 'node:os';
 import path from 'node:path';
 import { existsSync, readdirSync } from 'node:fs';
-import os from 'node:os';
 
 const { MONGO_DEPLOYMENT } = process.env;
 const MONGO_DEPLOYMENTS = {

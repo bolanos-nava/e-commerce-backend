@@ -1,0 +1,76 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  # annotations:
+  #   nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/foo(/|$)(.*)"
+        backend:
+          service:
+            name: foo-service
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/bar(/|$)(.*)"
+        backend:
+          service:
+            name: bar-service
+            port:
+              number: 5000 # this port number must match that of the service
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: express-server-service
+            port:
+              number: 8080
+              # - pathType: ImplementationSpecific
+              #   path: "/db(/|$)(.*)"
+              #   backend:
+              #     service:
+              #       name: mongodb-service
+              #       port:
+              #         number: 27017
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: nginx-ingress-static
+#   # annotations:
+#   #   nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - # pathType: ImplementationSpecific
+#         # path: /static(/|$)(.*)
+#         pathType: Prefix
+#         path: /
+#         backend:
+#           service:
+#             name: express-server-service
+#             port:
+#               number: 8080
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: nginx-ingress-api
+#   # annotations:
+#   #   nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - pathType: ImplementationSpecific
+#         path: /api(/|$)(.*)
+#         backend:
+#           service:
+#             name: express-server-service
+#             port:
+#               number: 8080

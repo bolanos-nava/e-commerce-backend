@@ -1,0 +1,47 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: baz-app
+  labels:
+    app: baz
+    svc: foo-bar
+spec:
+  # nodeName: multinode-worker # this is how you select a node to deploy this pod
+  nodeSelector:
+    tier: server
+  containers:
+  - name: baz-app
+    image: nginx:1.22.0
+    volumeMounts:
+    - name: config
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "250Mi"
+      limits:
+        cpu: "500m"
+        memory: "500Mi"
+  volumes:
+  - name: config
+    configMap:
+      name: baz-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: baz-config
+data:
+  index.html: |
+    baz
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: baz-service
+spec:
+  selector:
+    app: baz
+  ports:
+  - port: 80

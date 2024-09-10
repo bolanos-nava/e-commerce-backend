@@ -1,14 +1,15 @@
 import dns from 'dns';
 
-const headlessServiceName = 'mongodb-service';
-const namespace = 'default';
+const mongoSvcName = process.env.KUBE_MONGO_SVC_NAME || 'mongodb-svc';
+const namespace = process.env.KUBE_NAMESPACE || 'default';
 
-const dnsString = `${headlessServiceName}.${namespace}.svc.cluster.local`;
+const dnsString = `${mongoSvcName}.${namespace}.svc.cluster.local`;
 
 export default function discoverReplicaSet() {
   return new Promise((resolve, reject) => {
     dns.resolveSrv(dnsString, (err, addresses) => {
       if (err) reject(err);
+      if (!Array.isArray(addresses)) reject();
 
       const replicaSetAddress = addresses
         .map(({ name, port }) => {

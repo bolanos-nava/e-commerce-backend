@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: mongodb
-  serviceName: mongodb-service
+  serviceName: mongodb-svc
   replicas: 3
   template:
     metadata:

@@ -1,13 +1,13 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: express-server-lb
+  name: ecommerce-api-lb
 spec:
   selector:
-    app: express-server
+    app: ecommerce-api
   ports:
-  - port: 8080 # port that will be exposed
-    targetPort: 8080 # container ports of the pods
+  - port: 8080 # port that the service will expose
+    targetPort: 8080 # port that the pod exposes
   type: LoadBalancer
   externalTrafficPolicy: Local
   sessionAffinity: None
@@ -18,7 +18,7 @@ spec:
 #   name: socket-express-lb
 # spec:
 #   selector:
-#     app: express-server
+#     app: ecommerce-api
 #   ports:
 #   - port: 8080
 #     targetPort: 8080

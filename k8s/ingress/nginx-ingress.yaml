@@ -12,9 +12,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: express-server-lb
+            name: ecommerce-api-lb
             port:
-              number: 8080
+              number: 8080 # will route requests to port 8080 of the ecommerce-api-lb service
               # - pathType: Prefix
               #   path: /
               #   backend:

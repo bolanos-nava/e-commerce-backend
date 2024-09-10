@@ -9,6 +9,7 @@ import {
 /**
  * @typedef {import('../types').ExpressType} ExpressType
  * @typedef {import('../types').WSServer} WSServer
+ * @typedef {import('../types').ObjectType} ObjectType
  */
 
 /**
@@ -61,7 +62,7 @@ export function logHttp(message) {
  * Wrapper function for Passport strategies. It handles errors and anonymous user authorization
  *
  * @param {string} strategy - Name of Passport strategy
- * @param {{}} passportOpts - Options that can be passed to the passport.authenticate() method
+ * @param {ObjectType} passportOpts - Options that can be passed to the strategy
  * @returns {ExpressType['RequestHandler']} Express middleware function
  */
 export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {

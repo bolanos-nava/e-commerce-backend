@@ -1,0 +1,47 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: bar-app
+  labels:
+    app: bar
+    svc: foo-bar
+spec:
+  # nodeSelector:
+  #   tier: server
+  containers:
+  - name: bar-app
+    image: nginx:1.22.0
+    volumeMounts:
+    - name: config
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "250Mi"
+      limits:
+        cpu: "500m"
+        memory: "500Mi"
+  volumes:
+  - name: config
+    configMap:
+      name: bar-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bar-config
+data:
+  index.html: |
+    bar
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: bar-service
+spec:
+  selector:
+    app: bar
+  ports:
+  - port: 5000
+    targetPort: 80 # this is the port that receives the request in the pod
