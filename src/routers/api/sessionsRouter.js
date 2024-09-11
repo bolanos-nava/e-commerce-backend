@@ -3,6 +3,7 @@ import controllers from '../../controllers/api/index.js';
 import {
   logHttp,
   passportStrategyErrorWrapper,
+  updateLastActiveAtMiddleware,
 } from '../../middlewares/middlewares.js';
 
 const router = Router();
@@ -29,7 +30,7 @@ router
   .route('/current') // path
   .get(
     logHttp('Getting current session'),
-    passportStrategyErrorWrapper('jwt'),
+    updateLastActiveAtMiddleware(),
     controllers.sessions.currentSession.bind(controllers.sessions),
   );
 

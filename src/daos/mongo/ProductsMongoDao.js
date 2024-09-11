@@ -24,41 +24,25 @@ export class ProductsMongoDao {
   }
 
   /**
-   * Computes filters for Mongoose pagination
+   * Deletes product from the database
    *
-   * @param {ProductsFilterType} filter
-   * @returns {{categoryId?: string; price?: {$gte?: number; $lte?: number}; stock: {$gte: number};}} Filters for Mongoose
+   * @param {IProduct['_id']} productId
+   * @returns Response after deleting
    */
-  #computeFilters(filter) {
-    // eslint-disable-next-line no-param-reassign
-    filter = {
-      minPrice: z
-        .number()
-        .nonnegative()
-        .optional()
-        .default(0)
-        .parse(filter.minPrice),
-      maxPrice: z.number().nonnegative().optional().parse(filter.maxPrice),
-      categoryId: z.string().optional().parse(filter.categoryId),
-      minStock: z
-        .number()
-        .nonnegative()
-        .optional()
-        .default(0)
-        .parse(filter.minStock),
-    };
+  async delete(productId) {
+    const product = await this.#Product.findByIdAndThrow(productId);
+    return product.deleteOne();
+  }
 
-    const filterObject = {};
-    if (filter.categoryId) filterObject.categoryId = filter.categoryId;
-    if (filter.minPrice || filter.maxPrice) {
-      filterObject.price = {
-        ...(filter.minPrice ? { $gte: filter.minPrice } : {}),
-        ...(filter.maxPrice ? { $lte: filter.maxPrice } : {}),
-      };
-    }
-    if (filter.minStock) filterObject.stock = { $gte: filter.minStock };
-
-    return filterObject;
+  /**
+   * Returns data of a product
+   *
+   * @param {IProduct['_id']} productId
+   * @throws ResourceNotFoundError
+   * @returns Product from database
+   */
+  async get(productId) {
+    return this.#Product.findByIdAndThrow(productId);
   }
 
   /**
@@ -105,17 +89,6 @@ export class ProductsMongoDao {
   }
 
   /**
-   * Returns data of a product
-   *
-   * @param {IProduct['_id']} productId
-   * @throws ResourceNotFoundError
-   * @returns Product from database
-   */
-  async get(productId) {
-    return this.#Product.findByIdAndThrow(productId);
-  }
-
-  /**
    * Updates a product from the database
    *
    * @param {IProduct['_id']} productId
@@ -129,13 +102,40 @@ export class ProductsMongoDao {
   }
 
   /**
-   * Deletes product from the database
+   * Computes filters for Mongoose pagination
    *
-   * @param {IProduct['_id']} productId
-   * @returns Response after deleting
+   * @param {ProductsFilterType} filter
+   * @returns {{categoryId?: string; price?: {$gte?: number; $lte?: number}; stock: {$gte: number};}} Filters for Mongoose
    */
-  async delete(productId) {
-    const product = await this.#Product.findByIdAndThrow(productId);
-    return product.deleteOne();
+  #computeFilters(filter) {
+    // eslint-disable-next-line no-param-reassign
+    filter = {
+      minPrice: z
+        .number()
+        .nonnegative()
+        .optional()
+        .default(0)
+        .parse(filter.minPrice),
+      maxPrice: z.number().nonnegative().optional().parse(filter.maxPrice),
+      categoryId: z.string().optional().parse(filter.categoryId),
+      minStock: z
+        .number()
+        .nonnegative()
+        .optional()
+        .default(0)
+        .parse(filter.minStock),
+    };
+
+    const filterObject = {};
+    if (filter.categoryId) filterObject.categoryId = filter.categoryId;
+    if (filter.minPrice || filter.maxPrice) {
+      filterObject.price = {
+        ...(filter.minPrice ? { $gte: filter.minPrice } : {}),
+        ...(filter.maxPrice ? { $lte: filter.maxPrice } : {}),
+      };
+    }
+    if (filter.minStock) filterObject.stock = { $gte: filter.minStock };
+
+    return filterObject;
   }
 }

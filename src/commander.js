@@ -3,31 +3,40 @@ import { Command } from 'commander';
 
 const program = new Command();
 
-const options = program
+program
   .option(
-    '-m, --mode <mode>',
+    '-m, --mode <string>',
     'Set the mode for server start (dev|prod)',
     'dev',
   )
   .option(
-    '--mongo-type <mongoType>',
+    '--mongo-type <string>',
     'Set the MongoDB deployment type (atlas|local)',
     'local',
   )
-  .parse()
-  .opts();
+  .parse();
 
-const validOptions = {
-  mode: ['dev', 'prod'],
-  mongoType: ['atlas', 'local'],
-};
+const options = program.opts();
 
-Object.entries(validOptions).forEach(([arg, validValues]) => {
-  if (!validValues.includes(options[arg])) {
+const args = [
+  {
+    argName: 'mode',
+    envName: 'NODE_ENV',
+    validValues: ['dev', 'prod'],
+  },
+  {
+    argName: 'mongoType',
+    envName: 'MONGO_TYPE',
+    validValues: ['atlas', 'local'],
+  },
+];
+
+args.forEach(({ argName, envName, validValues }) => {
+  if (!validValues.includes(options[argName])) {
     console.error(
-      `Invalid value for ${arg} flag. Provided value: ${options[arg]}. Must be one of: ${validValues.join(', ')}`,
+      `Invalid value for ${argName} flag. Provided value: ${options[argName]}. Must be one of: ${validValues.join(', ')}`,
     );
     process.exit(1);
   }
-  process.env[arg.toUpperCase()] ??= options[arg]; // Assign value of arg to process.env if it's not already set
+  process.env[envName] ??= options[argName]; // Assign value of arg to process.env if it's not already set
 });

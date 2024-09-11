@@ -1,3 +1,4 @@
+import logger from '../../../configs/logger.js';
 import { ResourceNotFoundError } from '../../../customErrors/index.js';
 
 /**
@@ -20,6 +21,7 @@ export default class BaseModel {
     filter,
     { lean = false, errorMessage, errorProperty } = {},
   ) {
+    logger.debug(`findOneAndThrow called with: ${JSON.stringify(filter)}`);
     const resource = await this.findOne(filter, {}, { lean });
     if (!resource) {
       const customMessage = errorProperty

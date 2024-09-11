@@ -26,6 +26,25 @@ export default class ProductsService {
   }
 
   /**
+   * Deletes a product
+   * @param {MongoIdType} productId
+   * @returns
+   */
+  async delete(productId) {
+    return this.#productsDao.delete(productId);
+  }
+
+  /**
+   * Returns a product
+   *
+   * @param {MongoIdType} productId
+   * @returns
+   */
+  async get(productId) {
+    return this.#productsDao.get(productId);
+  }
+
+  /**
    * Returns list of products. The underlying DAO method should support pagination and filtering
    *
    * @param {ProductsFilterType} filter - Filter object to query products
@@ -89,16 +108,6 @@ export default class ProductsService {
   }
 
   /**
-   * Returns a product
-   *
-   * @param {MongoIdType} productId
-   * @returns
-   */
-  async get(productId) {
-    return this.#productsDao.get(productId);
-  }
-
-  /**
    * Updates a product
    *
    * @param {MongoIdType} productId
@@ -107,14 +116,5 @@ export default class ProductsService {
    */
   async update(productId, newData) {
     return this.#productsDao.update(productId, newData);
-  }
-
-  /**
-   * Deletes a product
-   * @param {MongoIdType} productId
-   * @returns
-   */
-  async delete(productId) {
-    return this.#productsDao.delete(productId);
   }
 }

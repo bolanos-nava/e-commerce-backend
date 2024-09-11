@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import paginate from 'mongoose-paginate-v2';
+import paginatePlugin from 'mongoose-paginate-v2';
 import BaseModel from './BaseModel.js';
 import { DuplicateResourceError } from '../../../customErrors/DuplicateResourceError.js';
 
@@ -53,7 +53,7 @@ const productSchema = {
     { timestamps: true },
   ),
 };
-productSchema.schema.plugin(paginate);
+productSchema.schema.plugin(paginatePlugin);
 
 productSchema.schema.post(
   ['save', 'update', 'findOneAndUpdate'],

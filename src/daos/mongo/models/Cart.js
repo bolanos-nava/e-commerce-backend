@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import paginatePlugin from 'mongoose-paginate-v2';
 import BaseModel from './BaseModel.js';
 
 /**
@@ -26,11 +27,12 @@ const cartSchema = {
           },
         ],
       },
-      user: Schema.Types.ObjectId,
     },
     { timestamps: true },
   ),
 };
+
+cartSchema.schema.plugin(paginatePlugin);
 
 class CartModel extends BaseModel {
   static async findProductInCart(cartId, productId, { populate = false } = {}) {

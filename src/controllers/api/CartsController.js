@@ -206,6 +206,7 @@ export default class CartsController extends BaseController {
    * @type ExpressType['RequestHandler']
    */
   async show(req, res, next) {
+    // TODO: add validation of cart ownership
     try {
       const { cartId } = req.params;
       this.validateIds({ cartId });

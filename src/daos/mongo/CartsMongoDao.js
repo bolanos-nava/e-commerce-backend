@@ -4,6 +4,7 @@ import {
   ResourceNotFoundError,
   InvalidFieldValueError,
 } from '../../customErrors/index.js';
+import logger from '../../configs/logger.js';
 
 /**
  * @typedef {import('../../types').ICart} ICart
@@ -172,13 +173,28 @@ export class CartsMongoDao {
    * @returns {Promise<ICartPopulated | ICart>} Populated cart object
    */
   async get(cartId, { lean = false, populated = true } = {}) {
-    const cartQuery = this.#Cart.findById(cartId);
-    if (populated) {
-      cartQuery.populate({
-        path: 'products',
-        populate: { path: 'product' },
-      });
-    }
+    logger.debug(`Getting cart with id ${cartId}`);
+    // const cartQuery = this.#Cart.findById(cartId);
+    // if (populated) {
+    //   cartQuery.populate({
+    //     path: 'products',
+    //     populate: { path: 'product' },
+    //   });
+    // }
+    const cartQuery = this.#Cart.paginateSubDocs(
+      { _id: cartId },
+      {
+        pagingOptions: {
+          populate: {
+            path: 'products',
+            populate: { path: 'product' },
+          },
+          page: 1,
+          limit: 2,
+        },
+      },
+    );
+    console.log(cartQuery);
 
     /** @type ICartPopulated | ICart */
     const cart = await cartQuery;

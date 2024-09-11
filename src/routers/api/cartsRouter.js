@@ -1,6 +1,11 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
-import { authorize, logHttp } from '../../middlewares/index.js';
+import {
+  authorize,
+  logHttp,
+  passportStrategyErrorWrapper,
+  updateLastActiveAtMiddleware,
+} from '../../middlewares/index.js';
 
 const router = Router();
 
@@ -10,6 +15,7 @@ router
   .route('/') // path
   .post(
     logHttp('Creating new cart'),
+    updateLastActiveAtMiddleware(),
     controllers.carts.create.bind(controllers.carts),
   );
 

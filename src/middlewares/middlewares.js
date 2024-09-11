@@ -5,6 +5,7 @@ import {
   ResourceNotFoundError,
   UnauthorizedError,
 } from '../customErrors/index.js';
+import services from '../services/index.js';
 
 /**
  * @typedef {import('../types').ExpressType} ExpressType
@@ -113,6 +114,30 @@ export function authorize(...roles) {
       return next(
         new ForbiddenError('You are not allowed to perform this action'),
       );
+    },
+  ];
+}
+
+/**
+ * Middleware to update the lastActiveAt field of the logged user
+ */
+export function updateLastActiveAtMiddleware() {
+  return [
+    (req, res, next) => {
+      if (req?.cookies?.token && !req.user) {
+        return passportStrategyErrorWrapper('jwt')(req, res, next);
+      }
+      next();
+    },
+    async (req, _, next) => {
+      try {
+        if (req.user) {
+          await services.users.updateLastConnection(req.user.email);
+        }
+        next();
+      } catch (error) {
+        next(error);
+      }
     },
   ];
 }

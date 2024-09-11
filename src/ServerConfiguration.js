@@ -96,8 +96,8 @@ export default class ServerConfiguration {
    * Sets up MongoDB
    */
   async setupDb() {
-    const { MONGO_DEPLOYMENT, DB_URI, DB_NAME: dbName } = env;
-    if (MONGO_DEPLOYMENT === 'atlas' && typeof DB_URI === 'undefined') {
+    const { MONGO_TYPE, DB_URI, DB_NAME: dbName } = env;
+    if (MONGO_TYPE === 'atlas' && typeof DB_URI === 'undefined') {
       logger.fatal('DB_URI is not defined in the environment variables');
       process.exit(1);
     }

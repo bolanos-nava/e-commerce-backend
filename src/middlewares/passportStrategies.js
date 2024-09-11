@@ -71,6 +71,7 @@ export function passportStrategies() {
           if (!user || !isValidPassword(password, user.password)) {
             return done(null, false);
           }
+          await services.users.updateLastConnection(username);
           return done(null, new dtos.UserDto(user));
         } catch (error) {
           return done(error);

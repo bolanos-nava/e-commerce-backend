@@ -25,6 +25,29 @@ export class UsersMongoDao {
   }
 
   /**
+   * Deletes users from database who haven't logged in for more than the specified time
+   *
+   * @param {number} numMilliseconds - Number of milliseconds of inactivity
+   */
+  async deleteInactiveUsers(numMilliseconds) {
+    /* @type  */
+    const inactiveUsers = await this.#User.find(
+      {
+        lastActiveAt: {
+          $lt: new Date(Date.now() - numMilliseconds),
+        },
+      },
+      // { _id: 1, cart: 1 },
+    );
+
+    const usersToDelete = inactiveUsers.map((user) => user.id);
+    const cartsToDelete = inactiveUsers.map((user) => user.cart);
+
+    await this.#User.deleteMany({ _id: { $in: usersToDelete } });
+    await this.#Cart.deleteMany({ _id: { $in: cartsToDelete } });
+  }
+
+  /**
    * Returns a user from the database
    *
    * @param {FilterQueryUser} filter -
@@ -51,5 +74,11 @@ export class UsersMongoDao {
     user.cart = cart._id;
     await cart.save();
     return user.save();
+  }
+
+  async update(filter, newData) {
+    const user = await this.#User.findOneAndThrow(filter);
+    const newUser = Object.assign(user, newData);
+    return newUser.save();
   }
 }

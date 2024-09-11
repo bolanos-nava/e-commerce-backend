@@ -3,8 +3,8 @@ import path from 'node:path';
 import { existsSync, readdirSync } from 'node:fs';
 import logger from './logger.js';
 
-const { MONGO_DEPLOYMENT } = process.env;
-const MONGO_DEPLOYMENTS = {
+const { MONGO_TYPE } = process.env;
+const MONGO_TYPES = {
   LOCAL: 'local',
   ATLAS: 'atlas',
 };
@@ -20,10 +20,9 @@ if (envFileExists) {
   const { default: dotenv } = await import('dotenv');
   const envPath = (() => {
     const baseEnv = path.join(path.resolve(), '.env');
-    if (!MONGO_DEPLOYMENT || MONGO_DEPLOYMENT === MONGO_DEPLOYMENTS.LOCAL)
-      return baseEnv;
+    if (!MONGO_TYPE || MONGO_TYPE === MONGO_TYPES.LOCAL) return baseEnv;
 
-    const filePath = `${baseEnv}.${MONGO_DEPLOYMENT}`.toLowerCase();
+    const filePath = `${baseEnv}.${MONGO_TYPE}`.toLowerCase();
     return existsSync(filePath) ? filePath : baseEnv;
   })();
   // Loads vars in .env into process.env
@@ -52,7 +51,7 @@ const env = {
   NODE_ENV: 'dev',
   API_URL: 'http://localhost',
   SERVER_PORT: 8080,
-  MONGO_DEPLOYMENT: MONGO_DEPLOYMENTS.LOCAL,
+  MONGO_TYPE: MONGO_TYPES.LOCAL,
   DB_URI: DB_URI ?? 'mongodb://localhost:27017',
   DB_NAME: 'ecommerce',
   JWT_PRIVATE_KEY: '',
@@ -71,7 +70,7 @@ Object.keys(env).forEach((envKey) => {
 const envsToLog = [
   'NODE_ENV',
   'SERVER_PORT',
-  'MONGO_DEPLOYMENT',
+  'MONGO_TYPE',
   'DB_NAME',
   'USE_BUILT_IN_WS',
 ].reduce((map, key) => {
