@@ -18,7 +18,7 @@ const apiControllers = {
     usersService: services.users,
   }),
   messages: new MessagesController(services.messages),
-  users: new UsersController(),
+  users: new UsersController(services.users),
   sessions: new SessionsController(
     new JwtUtil(env.JWT_PRIVATE_KEY, '24h'),
     services.carts,

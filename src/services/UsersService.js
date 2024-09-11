@@ -1,4 +1,5 @@
 import { logger } from '../configs/index.js';
+import { ResourceNotFoundError } from '../customErrors/index.js';
 
 /**
  * @typedef {import('../types').MongoDaosType} DaosType
@@ -22,10 +23,12 @@ export default class UsersService {
    * Deletes users who have been inactive for the specified time
    *
    * @param {number} numMilliseconds - Number of milliseconds of inactivity
-   * @returns Result of deleting inactive users
+   * @returns Number of deleted users
    */
   async deleteInactiveUsers(numMilliseconds) {
-    return this.#usersDao.deleteInactiveUsers(numMilliseconds);
+    const numUsersDeleted =
+      await this.#usersDao.deleteInactiveUsers(numMilliseconds);
+    return numUsersDeleted;
   }
 
   getByEmail(email, { throws = false } = {}) {
@@ -44,9 +47,20 @@ export default class UsersService {
     return this.#usersDao.save(request);
   }
 
-  updateLastConnection(email) {
-    logger.info(`Updating last connection for user with email: ${email}`);
-    return this.#usersDao.update({ email }, { lastActiveAt: new Date() });
+  async updateLastConnection(email) {
+    logger.debug(`Updating last connection for user with email: ${email}`);
+    try {
+      return await this.#usersDao.update(
+        { email },
+        { lastActiveAt: new Date() },
+      );
+    } catch (error) {
+      logger.debug(`User with email ${email} doesn't exist`);
+      if (error instanceof ResourceNotFoundError) {
+        return null;
+      }
+      throw error;
+    }
   }
 
   updateByEmail(email, newData) {

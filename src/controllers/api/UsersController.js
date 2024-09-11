@@ -35,7 +35,13 @@ export default class UsersController extends BaseController {
     try {
       // const numMilliseconds = 1000 * 60 * 60 * 24 * 2;
       const numMilliseconds = 1000 * 60 * 2; // 2 minutes
-      await this.#usersService.deleteInactiveUsers(numMilliseconds);
+      const numUsersDeleted =
+        await this.#usersService.deleteInactiveUsers(numMilliseconds);
+      req.requestLogger.http(`Deleted ${numUsersDeleted} inactive users.`);
+      res.status(200).send({
+        status: 'ok',
+        payload: { numUsersDeleted },
+      });
     } catch (error) {
       next(error);
     }

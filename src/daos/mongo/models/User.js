@@ -42,7 +42,10 @@ const userSchema = {
         type: Schema.Types.ObjectId,
         required: true,
       },
-      lastActiveAt: Date,
+      lastActiveAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
     { timestamps: true },
   ),

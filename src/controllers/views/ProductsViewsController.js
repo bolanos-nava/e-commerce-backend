@@ -37,12 +37,17 @@ export default class ProductsViewsController extends BaseViewsController {
         sort,
         lean: true,
       });
+
+      req.requestLogger.debug(
+        `Is there a token? ${Boolean(req.cookies.token)}`,
+      );
       const context = {
         products: response.products,
         pagination: response.pagination,
         title: 'Tienda | Inicio',
         stylesheet: '/static/css/index.css',
         hostname: os.hostname(),
+        isLogged: Boolean(req.cookies.token),
       };
 
       res.render('home', context);

@@ -54,6 +54,7 @@ export function errorMiddleware(error, req, res, __) {
 export function logHttp(message) {
   return (req, _, next) => {
     req.requestLogger.http(message);
+    req.requestLogger.debug(`Token exists? ${Boolean(req.cookies.token)}`);
     next();
   };
 }
@@ -129,10 +130,16 @@ export function updateLastActiveAtMiddleware() {
       }
       next();
     },
-    async (req, _, next) => {
+    async (req, res, next) => {
       try {
         if (req.user) {
-          await services.users.updateLastConnection(req.user.email);
+          const result = await services.users.updateLastConnection(
+            req.user.email,
+          );
+          if (!result) {
+            req.cookies.token = null;
+            res.clearCookie('token');
+          }
         }
         next();
       } catch (error) {

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-const { pagination, hostname } = window;
+const { pagination, hostname, isLogged } = window;
 console.log(`This came from this pod: ${hostname}`);
 const params = new URLSearchParams(window.location.search);
 
@@ -57,6 +57,11 @@ function hideLoginButtons() {
 }
 
 async function main() {
+  if (!isLogged) {
+    localStorage.removeItem('user');
+    localStorage.removeItem('isLogged');
+  }
+  
   if (
     params.get('logged') === 'true' ||
     (localStorage.getItem('isLogged') && !localStorage.getItem('user'))
