@@ -5,6 +5,7 @@ import hbs from 'express-handlebars';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
+import nodemailer from 'nodemailer';
 import { passportStrategies } from './middlewares/index.js';
 import { env, logger } from './configs/index.js';
 
@@ -157,5 +158,21 @@ export default class ServerConfiguration {
       next();
     });
     return logger;
+  }
+
+  setupMailing() {
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      port: 587,
+      auth: {
+        user: env.GMAIL_USER,
+        pass: env.GMAIL_APP_KEY,
+      },
+    });
+
+    this.server.use((req, _, next) => {
+      req.transport = transport;
+      next();
+    });
   }
 }

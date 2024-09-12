@@ -45,7 +45,7 @@ export class UsersMongoDao {
     await this.#User.deleteMany({ _id: { $in: usersToDelete } });
     await this.#Cart.deleteMany({ _id: { $in: cartsToDelete } });
 
-    return inactiveUsers.length;
+    return inactiveUsers;
   }
 
   /**

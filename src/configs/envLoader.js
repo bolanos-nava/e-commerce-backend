@@ -60,6 +60,8 @@ const env = {
   WS_CLIENT_HOST: WS_CLIENT_HOST ?? 'localhost:8080',
   WS_CLIENT_PATH: '/socket.io',
   WS_INTERNAL_HOST: 'localhost',
+  GMAIL_USER: '',
+  GMAIL_APP_KEY: '',
 };
 
 Object.keys(env).forEach((envKey) => {

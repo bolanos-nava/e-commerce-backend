@@ -25,10 +25,8 @@ export default class UsersService {
    * @param {number} numMilliseconds - Number of milliseconds of inactivity
    * @returns Number of deleted users
    */
-  async deleteInactiveUsers(numMilliseconds) {
-    const numUsersDeleted =
-      await this.#usersDao.deleteInactiveUsers(numMilliseconds);
-    return numUsersDeleted;
+  deleteInactiveUsers(numMilliseconds) {
+    return this.#usersDao.deleteInactiveUsers(numMilliseconds);
   }
 
   getByEmail(email, { throws = false } = {}) {

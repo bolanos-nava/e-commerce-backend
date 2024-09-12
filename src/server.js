@@ -16,6 +16,7 @@ async function start() {
   configuration.setupDb();
   configuration.setupMiddlewares();
   configuration.setupTemplateEngines();
+  configuration.setupMailing();
 
   /* --------- SERVERS: HTTP AND WEBSOCKET ---------- */
   const { SERVER_PORT, USE_BUILT_IN_WS } = env;

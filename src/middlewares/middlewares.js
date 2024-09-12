@@ -6,6 +6,7 @@ import {
   UnauthorizedError,
 } from '../customErrors/index.js';
 import services from '../services/index.js';
+import logger from '../configs/logger.js';
 
 /**
  * @typedef {import('../types').ExpressType} ExpressType
@@ -68,6 +69,7 @@ export function logHttp(message) {
  */
 export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
   return (req, res, next) => {
+    logger.debug(`Passport strategy: ${strategy}`);
     if (req.isAnonymous) return next();
     return passport.authenticate(
       strategy,
@@ -125,6 +127,7 @@ export function authorize(...roles) {
 export function updateLastActiveAtMiddleware() {
   return [
     (req, res, next) => {
+      logger.debug('Checking if there is JWT');
       if (req?.cookies?.token && !req.user) {
         return passportStrategyErrorWrapper('jwt')(req, res, next);
       }
@@ -133,10 +136,12 @@ export function updateLastActiveAtMiddleware() {
     async (req, res, next) => {
       try {
         if (req.user) {
+          logger.debug('Updating last active at');
           const result = await services.users.updateLastConnection(
             req.user.email,
           );
           if (!result) {
+            logger.debug('Clearing cookies');
             req.cookies.token = null;
             res.clearCookie('token');
           }

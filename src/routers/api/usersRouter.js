@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import controllers from '../../controllers/api/index.js';
 import {
+  authorize,
   logHttp,
   passportStrategyErrorWrapper,
-  updateLastActiveAtMiddleware,
 } from '../../middlewares/middlewares.js';
 
 const router = Router();
@@ -21,7 +21,7 @@ router
   )
   .delete(
     logHttp('Deleting inactive users'),
-    updateLastActiveAtMiddleware(),
+    authorize('admin'),
     controllers.users.deleteInactiveUsers.bind(controllers.users),
   );
 
