@@ -21,6 +21,8 @@ export default class ServerConfiguration {
   static PATHS = {
     PUBLIC: `${ServerConfiguration.BASE_DIR}/src/public`,
     VIEWS: `${ServerConfiguration.BASE_DIR}/src/views`,
+    LAYOUTS: `${ServerConfiguration.BASE_DIR}/src/views/layouts`,
+    PARTIALS: `${ServerConfiguration.BASE_DIR}/src/views/partials`,
   };
 
   /** @type {ExpressInstance} */
@@ -86,7 +88,10 @@ export default class ServerConfiguration {
       'hbs',
       hbs.engine({
         extname: '.hbs',
+        defaultLayout: 'main',
         helpers: hbsHelpers,
+        layoutsDir: ServerConfiguration.PATHS.LAYOUTS,
+        partialsDir: ServerConfiguration.PATHS.PARTIALS,
       }),
     );
     this.server.set('views', ServerConfiguration.PATHS.VIEWS);

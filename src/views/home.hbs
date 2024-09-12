@@ -1,14 +1,5 @@
 <main>
-  <div class="d-flex justify-content-between">
-    <h1>Productos</h1>
-    <div class="d-flex justify-content-right gap-4">
-      <button type="button" id="btnCart" class="btn btn-secondary">Carrito</button>
-      <a id="btnLogin" class="btn btn-primary d-flex align-items-center d-none" href="/login" style="text-decoration:none; color:white">Iniciar sesión</a>
-      <a id="btnRegister" class="btn btn-primary d-flex align-items-center d-none" href="/register" style="text-decoration:none; color:white">Registrarse</a>
-      <button id="btnLogout" type="button" id="btnLogout" class="btn btn-primary d-none">Cerrar sesión</button>
-    </div>
-  </div>
-
+  <h1>{{pageHeader}}</h1>
   <ul class="products__list">
     {{#each products}}
       <li data-id={{this._id}} class="item">
@@ -56,8 +47,6 @@
 
 <script>
   window.pagination = {{{json pagination}}};
-  window.hostname = {{{json hostname}}};
-  window.isLogged = {{{json isLogged}}};
 </script>
 <script type="module" src="/static/js/utils/cartUtils.js"></script>
 <script type="module" src="/static/js/home.js"></script>

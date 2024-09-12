@@ -80,7 +80,7 @@ export class UsersMongoDao {
    * @returns Users from database
    */
   getAll() {
-    return this.#User.find({});
+    return this.#User.find({}, {}, { lean: true });
   }
 
   /**

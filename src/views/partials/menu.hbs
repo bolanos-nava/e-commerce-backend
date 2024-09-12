@@ -1,0 +1,44 @@
+<div class="d-flex justify-content-between mb-4 align-items-stretch">
+  <a
+    href="/"
+    class="fw-bold m-0 text-decoration-none text-body"
+    style="font-size: 3rem;"
+  >CoderStore</a>
+  <div class="d-flex justify-content-right gap-4">
+    <a
+      id="btnAdmin"
+      class="btn btn-secondary d-flex align-items-center d-none"
+      href="/users"
+    >Administración</a>
+    <button
+      type="button"
+      id="btnCart"
+      class="btn btn-secondary"
+    >Carrito</button>
+    <a
+      id="btnLogin"
+      class="btn btn-primary d-flex align-items-center d-none"
+      href="/login"
+      style="text-decoration:none; color:white"
+    >Iniciar sesión</a>
+    <a
+      id="btnRegister"
+      class="btn btn-primary d-flex align-items-center d-none"
+      href="/register"
+      style="text-decoration:none; color:white"
+    >Registrarse</a>
+    <button
+      id="btnLogout"
+      type="button"
+      id="btnLogout"
+      class="btn btn-primary d-none"
+    >Cerrar sesión</button>
+  </div>
+</div>
+<script>
+  window.hostname =
+  {{{json hostname}}}; window.isLogged =
+  {{{json isLogged}}}; window.isAdmin =
+  {{{json isAdmin}}};
+</script>
+<script type="module" src="/static/js/menu.js"></script>

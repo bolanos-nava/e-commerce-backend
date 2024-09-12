@@ -39,14 +39,17 @@ export default class ProductsViewsController extends BaseViewsController {
       });
 
       req.requestLogger.debug(
-        `Is there a token? ${Boolean(req.cookies.token)}`,
+        `Current user has token: ${Boolean(req.cookies.token)}`,
       );
+      req.requestLogger.debug(req.user);
       const context = {
         products: response.products,
         pagination: response.pagination,
         title: 'Tienda | Inicio',
+        pageHeader: 'Productos',
         stylesheet: '/static/css/index.css',
         hostname: os.hostname(),
+        isAdmin: req?.user?.role === 'admin',
         isLogged: Boolean(req.cookies.token),
       };
 

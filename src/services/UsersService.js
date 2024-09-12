@@ -56,8 +56,9 @@ export default class UsersService {
    *
    * @returns List of users
    */
-  getAll() {
-    return this.#usersDao.getAll();
+  async getAll() {
+    const users = await this.#usersDao.getAll();
+    return { users };
   }
 
   /**

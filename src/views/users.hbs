@@ -1,0 +1,14 @@
+<main>
+  <h1>{{pageHeader}}</h1>
+  <ul class="users__list">
+    {{#each users}}
+      <li data-id={{this._id}} class="item">
+        <p class="item__data">Primer nombre:
+          {{{this.firstName}}}</p>
+        <p class="item__data">Apellidos:
+          {{{this.lastName}}}</p>
+        <p class="item__data">Rol: {{{this.role}}}</p>
+      </li>
+    {{/each}}
+  </ul>
+</main>

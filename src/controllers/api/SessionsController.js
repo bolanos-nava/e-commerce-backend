@@ -106,8 +106,8 @@ export default class SessionsController extends BaseController {
     });
     // TODO: prefer jwt expiration over cookie expiration. This will allow us to know if the user was logged before the token expired, and show error messages based on that
     res.cookie('token', jwt, {
-      // maxAge: 1000 * 60 * 60 * 24 * 1,
-      maxAge: 1000 * 2,
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+      // maxAge: 1000 * 2,
       httpOnly: true,
     });
     return jwt;
