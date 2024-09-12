@@ -1,2 +1,11 @@
+### GETs users
+GET http://localhost:8080/api/v1/users
+
+### GETs one user
+GET http://localhost:8080/api/v1/users/66e2477dca1fb40abe95902c
+
+### DELETEs one user
+DELETE http://localhost:8080/api/v1/users/66e2477dca1fb40abe95902c
+
 ### DELETEs inactive users
 DELETE http://localhost:8080/api/v1/users

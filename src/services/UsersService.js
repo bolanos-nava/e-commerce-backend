@@ -4,6 +4,8 @@ import { ResourceNotFoundError } from '../customErrors/index.js';
 /**
  * @typedef {import('../types').MongoDaosType} DaosType
  * @typedef {DaosType['users']} UsersDao
+ * @typedef {import('../types').UserType} UserType
+ * @typedef {import('../types').MongoIdType} MongoIdType
  */
 
 export default class UsersService {
@@ -20,6 +22,16 @@ export default class UsersService {
   }
 
   /**
+   * Deletes a user
+   *
+   * @param {MongoIdType} userId
+   * @returns
+   */
+  delete(userId) {
+    return this.#usersDao.delete(userId);
+  }
+
+  /**
    * Deletes users who have been inactive for the specified time
    *
    * @param {number} numMilliseconds - Number of milliseconds of inactivity
@@ -29,22 +41,61 @@ export default class UsersService {
     return this.#usersDao.deleteInactiveUsers(numMilliseconds);
   }
 
-  getByEmail(email, { throws = false } = {}) {
-    return this.#usersDao.get({ email }, { throws });
-  }
-
-  getById(id, { throws = false } = {}) {
-    return this.#usersDao.get({ _id: id }, { throws });
-  }
-
+  /**
+   * Returns a user
+   *
+   * @param {object} filter - Object containing query conditions
+   * @returns User, or throws if user not found
+   */
   get(filter, { throws = false } = {}) {
     return this.#usersDao.get(filter, { throws });
   }
 
-  save(request) {
-    return this.#usersDao.save(request);
+  /**
+   * Returns list of users
+   *
+   * @returns List of users
+   */
+  getAll() {
+    return this.#usersDao.getAll();
   }
 
+  /**
+   * Returns a user by email
+   *
+   * @param {string} email - Email of the user
+   * @param {boolean} [throws=false] - Throws an error if user not found
+   * @returns User, or throws if user not found
+   */
+  getByEmail(email, { throws = false } = {}) {
+    return this.#usersDao.get({ email }, { throws });
+  }
+
+  /**
+   * Returns a user by its id
+   *
+   * @param {MongoIdType} id - ID of the user
+   * @param {{throws?: boolean;}} options - Throws an error if user not found
+   */
+  getById(id, { throws = false } = {}) {
+    return this.#usersDao.get({ _id: id }, { throws });
+  }
+
+  /**
+   * Saves new user
+   *
+   * @param {UserType} user - User data
+   */
+  save(user) {
+    return this.#usersDao.save(user);
+  }
+
+  /**
+   * Updates user's last connection
+   *
+   * @param {string} email - Email of the user
+   * @returns Updated user, or null if user not found
+   */
   async updateLastConnection(email) {
     logger.debug(`Updating last connection for user with email: ${email}`);
     try {

@@ -101,7 +101,6 @@ export default class ProductsController extends BaseController {
         status: 'success',
         payload: response,
       });
-      req.logger.http('GET /products end');
     } catch (error) {
       next(error);
     }

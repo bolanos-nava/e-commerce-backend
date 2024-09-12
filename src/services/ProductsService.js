@@ -27,10 +27,11 @@ export default class ProductsService {
 
   /**
    * Deletes a product
+   *
    * @param {MongoIdType} productId
    * @returns
    */
-  async delete(productId) {
+  delete(productId) {
     return this.#productsDao.delete(productId);
   }
 
@@ -40,7 +41,7 @@ export default class ProductsService {
    * @param {MongoIdType} productId
    * @returns
    */
-  async get(productId) {
+  get(productId) {
     return this.#productsDao.get(productId);
   }
 
@@ -51,7 +52,7 @@ export default class ProductsService {
    * @param {ListOptions} options - Options to paginate products
    * @returns List of products
    */
-  async getAll(filter, { limit, page, sort, lean = false } = {}) {
+  getAll(filter, { limit, page, sort, lean = false } = {}) {
     const defaultOptions = {
       limit: 10,
       page: 1,
@@ -103,7 +104,7 @@ export default class ProductsService {
    * @param {ProductType} product - New product
    * @returns New product
    */
-  async save(product) {
+  save(product) {
     return this.#productsDao.save(product);
   }
 
@@ -112,9 +113,9 @@ export default class ProductsService {
    *
    * @param {MongoIdType} productId
    * @param {Partial<ProductType>} newData
-   * @returns
+   * @returns Updated product
    */
-  async update(productId, newData) {
+  update(productId, newData) {
     return this.#productsDao.update(productId, newData);
   }
 }

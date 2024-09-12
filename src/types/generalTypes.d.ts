@@ -53,7 +53,10 @@ export type ObjectType<T = any> = {
 
 export type WSServer = Server;
 
-type RequestLogger = Request & { logger: typeof logger };
+type RequestLogger = Request & {
+  logger: typeof logger;
+  requestLogger: typeof logger;
+};
 type RequestWS = RequestLogger & { socketServer: WSServer };
 
 export type ExpressType = {

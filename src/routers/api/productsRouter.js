@@ -23,16 +23,16 @@ router
 router
   .route('/:productId') // path
   .get(
-    logHttp('Showing product'),
+    logHttp('Showing a product'),
     controllers.products.show.bind(controllers.products),
   )
   .put(
-    logHttp('Updating product'),
+    logHttp('Updating a product'),
     authorize('admin'),
     controllers.products.update.bind(controllers.products),
   )
   .delete(
-    logHttp('Delete products'),
+    logHttp('Deleting a product'),
     authorize('admin'),
     controllers.products.delete.bind(controllers.products),
   );

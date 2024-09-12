@@ -25,6 +25,18 @@ export class UsersMongoDao {
   }
 
   /**
+   * Deletes a user from the database
+   *
+   * @param {IUser['_id']} userId
+   * @returns Response after deleting
+   */
+  async delete(userId) {
+    const user = await this.#User.findByIdAndThrow(userId);
+    await user.deleteOne();
+    return user;
+  }
+
+  /**
    * Deletes users from database who haven't logged in for more than the specified time
    *
    * @param {number} numMilliseconds - Number of milliseconds of inactivity
@@ -60,6 +72,15 @@ export class UsersMongoDao {
     return throws
       ? this.#User.findOneAndThrow(filter, { errorMessage: 'User not found' })
       : this.#User.findOne(filter);
+  }
+
+  /**
+   * REturns list of users from the database
+   *
+   * @returns Users from database
+   */
+  getAll() {
+    return this.#User.find({});
   }
 
   /**

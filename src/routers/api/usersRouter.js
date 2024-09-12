@@ -10,6 +10,11 @@ const router = Router();
 
 router
   .route('/') // path
+  .get(
+    logHttp('Listing users'),
+    // authorize('admin'),
+    controllers.users.list.bind(controllers.users),
+  )
   .post(
     logHttp('Registering user'),
     (req, _, next) => {
@@ -23,6 +28,19 @@ router
     logHttp('Deleting inactive users'),
     authorize('admin'),
     controllers.users.deleteInactiveUsers.bind(controllers.users),
+  );
+
+router
+  .route('/:userId') // path
+  .get(
+    logHttp('Showing user'),
+    // authorize('admin'),
+    controllers.users.show.bind(controllers.users),
+  )
+  .delete(
+    logHttp('Deleting user'),
+    // authorize('admin'),
+    controllers.users.delete.bind(controllers.users),
   );
 
 export const usersRouter = {
