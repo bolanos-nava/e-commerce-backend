@@ -1,15 +1,20 @@
 /* eslint-disable no-param-reassign */
+const btnAdmin = document.getElementById('btnAdmin');
+const btnCart = document.getElementById('btnCart');
+const btnLogin = document.getElementById('btnLogin');
+const btnRegister = document.getElementById('btnRegister');
+const btnLogout = document.getElementById('btnLogout');
 
 const { hostname, isLogged, isAdmin } = window;
-console.log(`This came from this pod: ${hostname}`);
 const params = new URLSearchParams(window.location.search);
+console.log(`This came from this pod: ${hostname}`);
 
 function toggleAdminButtons() {
-  const btnAdmin = document.getElementById('btnAdmin');
-  const btnCart = document.getElementById('btnCart');
   if (isAdmin) {
     btnAdmin.classList.remove('d-none'); // show button admin
     btnCart.classList.add('d-none'); // hide button cart
+    btnLogin.classList.add('d-none'); // hide login
+    btnRegister.classList.add('d-none'); // hide register
   } else {
     btnAdmin.classList.add('d-none'); // hide button admin
   }
@@ -17,23 +22,41 @@ function toggleAdminButtons() {
 
 function attatchListenerToCartButton() {
   document.getElementById('btnCart').addEventListener('click', async () => {
-    let cartId = JSON.parse(localStorage.getItem('user'))?.cart;
-
-    if (!cartId) {
-      try {
-        const response = await (
-          await fetch('/api/v1/carts', {
-            method: 'POST',
-          })
-        ).json();
-        cartId = response.payload.cart._id;
-        localStorage.setItem('user', JSON.stringify({ cart: cartId }));
-      } catch (error) {
-        console.error(error);
-      }
+    let cartId =
+      localStorage.getItem('cartId') ||
+      JSON.parse(localStorage.getItem('user'))?.cart;
+    if (cartId) {
+      window.location.href = `/cart/${cartId}`;
+      return;
     }
 
-    if (cartId) window.location.href = `/cart/${cartId}`;
+    try {
+      const sessionData = await fetch('/api/v1/sessions/current');
+      console.log(sessionData);
+      if (sessionData.ok) {
+        const sessionUser = (await sessionData.json()).payload.user;
+        localStorage.setItem('user', JSON.stringify(sessionUser));
+        localStorage.setItem('isLogged', true);
+        cartId = sessionUser.cart;
+        window.location.href = `/cart/${cartId}`;
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      const response = await (
+        await fetch('/api/v1/carts', {
+          method: 'POST',
+        })
+      ).json();
+      cartId = response.payload.cart._id;
+      localStorage.setItem('cartId', cartId);
+      window.location.href = `/cart/${cartId}`;
+    } catch (error) {
+      console.error(error);
+    }
   });
 }
 
@@ -48,9 +71,6 @@ function attatchListenerToLogoutButton() {
 }
 
 function hideLoginButtons() {
-  const btnLogin = document.getElementById('btnLogin');
-  const btnRegister = document.getElementById('btnRegister');
-  const btnLogout = document.getElementById('btnLogout');
   if (localStorage.getItem('isLogged')) {
     btnLogin.classList.add('d-none'); // hide login
     btnRegister.classList.add('d-none'); // hide register
@@ -68,10 +88,7 @@ async function main() {
     localStorage.removeItem('isLogged');
   }
 
-  if (
-    params.get('logged') === 'true' ||
-    (localStorage.getItem('isLogged') && !localStorage.getItem('user'))
-  ) {
+  if (localStorage.getItem('isLogged') && !localStorage.getItem('user')) {
     try {
       const sessionData = await (
         await fetch('/api/v1/sessions/current')
@@ -79,6 +96,7 @@ async function main() {
       const sessionUser = sessionData.payload.user;
       localStorage.setItem('user', JSON.stringify(sessionUser));
       localStorage.setItem('isLogged', true);
+      localStorage.removeItem('cartId');
       const url = new URL(window.location.href);
       url.searchParams.delete('logged');
       window.history.replaceState(window.history.state, '', url.href);
@@ -89,8 +107,8 @@ async function main() {
 
   attatchListenerToCartButton();
   attatchListenerToLogoutButton();
-  hideLoginButtons();
   toggleAdminButtons();
+  hideLoginButtons();
 }
 
 main();

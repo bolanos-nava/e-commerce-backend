@@ -98,6 +98,11 @@ export class ProductsMongoDao {
   async update(productId, newData) {
     const product = await this.#Product.findByIdAndThrow(productId);
     const newProduct = Object.assign(product, newData);
+
+    if (newProduct.stock <= 0) {
+      newProduct.status = false;
+    }
+
     return newProduct.save();
   }
 
@@ -124,6 +129,7 @@ export class ProductsMongoDao {
         .optional()
         .default(0)
         .parse(filter.minStock),
+      status: z.boolean().optional().parse(filter.status),
     };
 
     const filterObject = {};
@@ -135,6 +141,8 @@ export class ProductsMongoDao {
       };
     }
     if (filter.minStock) filterObject.stock = { $gte: filter.minStock };
+    if (typeof filter.status !== 'undefined')
+      filterObject.status = filter.status;
 
     return filterObject;
   }

@@ -40,6 +40,10 @@ export default class TicketsService {
    */
   async save({ purchaser, amount }, cart) {
     const code = randomUUID();
-    return this.#ticketsDao.save({ purchaser, code, amount }, cart);
+    const ticket = await this.#ticketsDao.save(
+      { purchaser, code, amount },
+      cart,
+    );
+    return { ticket };
   }
 }

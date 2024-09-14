@@ -35,7 +35,7 @@ const userSchema = {
       },
       role: {
         type: String,
-        enum: ['admin', 'user'],
+        enum: ['admin', 'user', 'user_premium'],
         default: 'user',
       },
       cart: {

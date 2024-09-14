@@ -1,15 +1,17 @@
-export default class SessionViewsController {
-  renderRegisterView(_, res, next) {
+import BaseViewsController from './BaseViewsController.js';
+
+export default class SessionViewsController extends BaseViewsController {
+  renderRegisterView(req, res, next) {
     try {
-      res.render('register');
+      res.render('register', this.getBaseContext(req));
     } catch (error) {
       next(error);
     }
   }
 
-  renderLoginView(_, res, next) {
+  renderLoginView(req, res, next) {
     try {
-      res.render('login');
+      res.render('login', this.getBaseContext(req));
     } catch (error) {
       next(error);
     }

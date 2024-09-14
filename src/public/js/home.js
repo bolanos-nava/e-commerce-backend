@@ -58,29 +58,43 @@ async function main() {
     });
 
     btnAddToCart.addEventListener('click', async () => {
-      let cartId = JSON.parse(localStorage.getItem('user'))?.cart;
-      if (!cartId) {
-        try {
-          cartId = (
-            await (
-              await fetch('/api/v1/carts', {
-                method: 'POST',
-              })
-            ).json()
-          ).payload.cart._id;
-          localStorage.setItem('user', JSON.stringify({ cart: cartId }));
-        } catch (error) {
-          console.log(error);
-        }
-      }
-
-      if (cartId) {
+      const createTicketFetch = (cartId) =>
         fetch(`/api/v1/carts/${cartId}/products/${productItem.dataset.id}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ quantity: quantityDisplay.textContent }),
         });
+
+      let cartId =
+        localStorage.getItem('cartId') ||
+        JSON.parse(localStorage.getItem('user'))?.cart;
+      if (cartId) return createTicketFetch(cartId);
+
+      try {
+        const sessionData = await fetch('/api/v1/sessions/current');
+        if (sessionData.ok) {
+          const sessionUser = (await sessionData.json()).payload.user;
+          localStorage.setItem('user', JSON.stringify(sessionUser));
+          localStorage.setItem('isLogged', true);
+          cartId = sessionUser.cart;
+        }
+      } catch (error) {
+        console.error(error);
       }
+      if (cartId) return createTicketFetch(cartId);
+
+      try {
+        const response = await (
+          await fetch('/api/v1/carts', {
+            method: 'POST',
+          })
+        ).json();
+        cartId = response.payload.cart._id;
+        localStorage.setItem('cartId', cartId);
+      } catch (error) {
+        console.error(error);
+      }
+      if (cartId) return createTicketFetch(cartId);
     });
   });
 }

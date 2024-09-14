@@ -21,6 +21,9 @@ export default class ProductsViewsController extends BaseViewsController {
   }
 
   async renderProductsView(req, res, next) {
+    const logParams = {
+      function: `${ProductsViewsController.name}::${this.renderProductsView.name}`,
+    };
     try {
       const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
         req.query;
@@ -29,6 +32,7 @@ export default class ProductsViewsController extends BaseViewsController {
         maxPrice,
         categoryId,
         minStock,
+        status: true,
       };
 
       const response = await this.#productsService.getAll(filter, {
@@ -40,17 +44,21 @@ export default class ProductsViewsController extends BaseViewsController {
 
       req.requestLogger.debug(
         `Current user has token: ${Boolean(req.cookies.token)}`,
+        logParams,
       );
-      req.requestLogger.debug(req.user);
+      req.requestLogger.debug(
+        'User from req',
+        { payload: req.user },
+        logParams,
+      );
       const context = {
+        ...this.getBaseContext(req),
         products: response.products,
         pagination: response.pagination,
         title: 'Tienda | Inicio',
         pageHeader: 'Productos',
         stylesheet: '/static/css/index.css',
         hostname: os.hostname(),
-        isAdmin: req?.user?.role === 'admin',
-        isLogged: Boolean(req.cookies.token),
       };
 
       res.render('home', context);

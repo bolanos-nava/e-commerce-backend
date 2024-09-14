@@ -27,6 +27,7 @@ const cartSchema = {
           },
         ],
       },
+      user: Schema.Types.ObjectId,
     },
     { timestamps: true },
   ),

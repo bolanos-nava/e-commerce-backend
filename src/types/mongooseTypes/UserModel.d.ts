@@ -8,7 +8,9 @@ export type UserType = {
   lastName?: string;
   email: string;
   password: string;
+  role: 'admin' | 'user' | 'user_premium';
   cart: ICart['_id'];
+  lastActiveAt: Date;
 };
 
 interface IUser extends Document<UserType>, UserType {

@@ -24,6 +24,7 @@ export default class CartsViewsController extends BaseViewsController {
 
       const cart = await this.#cartsService.get(cartId, { lean: true });
       const context = {
+        ...this.getBaseContext(req),
         products: cart.products,
         title: 'Tienda | Carrito',
         stylesheet: '/static/css/index.css',

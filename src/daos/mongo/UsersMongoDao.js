@@ -45,6 +45,7 @@ export class UsersMongoDao {
   async deleteInactiveUsers(numMilliseconds) {
     const inactiveUsers = await this.#User.find(
       {
+        role: { $ne: 'admin' },
         lastActiveAt: {
           $lt: new Date(Date.now() - numMilliseconds),
         },

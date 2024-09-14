@@ -52,6 +52,9 @@ export default class SessionsController extends BaseController {
 
       // Merging anonymous cart with the cart of the registered user
       if (anonymousCartId) {
+        req.requestLogger.debug(
+          `Merging anon cart (${anonymousCartId}) with cart ${userCartId}`,
+        );
         const { products: prodsOfAnonCart } = await this.#cartsService.get(
           anonymousCartId,
           { populated: false },
@@ -60,8 +63,11 @@ export default class SessionsController extends BaseController {
         await this.#cartsService.delete(anonymousCartId);
       }
 
-      this.#generateTokenAndSaveToCookie(req.user, res);
-      res.status(204).send();
+      this.#generateTokenAndSaveToCookie(req.user, res, req.logger);
+      res.json({
+        status: 'success',
+        payload: { user: req.user },
+      });
     } catch (error) {
       next(error);
     }
@@ -100,7 +106,10 @@ export default class SessionsController extends BaseController {
    * @param user - User from request object
    * @param res - Response object
    */
-  #generateTokenAndSaveToCookie(user, res) {
+  #generateTokenAndSaveToCookie(user, res, logger) {
+    logger.debug('Generating JWT for a user', {
+      function: `${SessionsController.name}#${this.#generateTokenAndSaveToCookie.name}`,
+    });
     const jwt = this.#jwtTokenFactory.generateToken({
       user: new UserDto(user),
     });

@@ -23,6 +23,7 @@ export default class ProductsController extends BaseController {
 
   /**
    * Creates a new product
+   *
    * @type {ExpressType['RequestHandlerWS']}
    */
   async create(req, res, next) {
@@ -130,6 +131,7 @@ export default class ProductsController extends BaseController {
 
   /**
    * Updates a single product
+   *
    * @type {ExpressType['RequestHandler']}
    */
   async update(req, res, next) {

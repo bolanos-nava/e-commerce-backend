@@ -99,6 +99,10 @@ export class CartsMongoDao {
     // TODO: Check which products actually exist?
 
     const cart = await this.#Cart.findByIdAndThrow(cartId);
+    logger.debug('This is the cart');
+    logger.debug(cart);
+    logger.debug('These are the products to add');
+    logger.debug(products);
 
     const { products: productsInCart } = cart;
     const productsInCartIds = productsInCart.map(({ product }) =>
@@ -171,30 +175,31 @@ export class CartsMongoDao {
    *
    * @param {ICart['_id']} cartId
    * @returns {Promise<ICartPopulated | ICart>} Populated cart object
+   *
+   * TODO: implement pagination to the products of the cart
    */
   async get(cartId, { lean = false, populated = true } = {}) {
     logger.debug(`Getting cart with id ${cartId}`);
-    // const cartQuery = this.#Cart.findById(cartId);
-    // if (populated) {
-    //   cartQuery.populate({
-    //     path: 'products',
-    //     populate: { path: 'product' },
-    //   });
-    // }
-    const cartQuery = this.#Cart.paginateSubDocs(
-      { _id: cartId },
-      {
-        pagingOptions: {
-          populate: {
-            path: 'products',
-            populate: { path: 'product' },
-          },
-          page: 1,
-          limit: 2,
-        },
-      },
-    );
-    console.log(cartQuery);
+    const cartQuery = this.#Cart.findById(cartId);
+    if (populated) {
+      cartQuery.populate({
+        path: 'products',
+        populate: { path: 'product' },
+      });
+    }
+    // const cartQuery = this.#Cart.paginateSubDocs(
+    //   { _id: cartId },
+    //   {
+    //     pagingOptions: {
+    //       populate: {
+    //         path: 'products',
+    //         populate: { path: 'product' },
+    //       },
+    //       page: 1,
+    //       limit: 2,
+    //     },
+    //   },
+    // );
 
     /** @type ICartPopulated | ICart */
     const cart = await cartQuery;

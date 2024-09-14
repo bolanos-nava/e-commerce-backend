@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import BaseController from './BaseController.js';
 import { cartValidator } from '../../schemas/zod/cart.validator.js';
 import { InvalidFieldValueError } from '../../customErrors/index.js';
@@ -11,6 +12,37 @@ import { InvalidFieldValueError } from '../../customErrors/index.js';
  * @typedef {import('../../types').ServicesType['tickets']} TicketsServiceType
  * @typedef {import('../../types').ServicesType['products']} ProductsServiceType
  */
+
+const TEMPLATE_TICKET_SUCCESS = (args) => `
+  <h2
+    style="
+      padding-bottom: 0.2em;
+      margin-bottom: 1em;
+      border-bottom: 0.1em solid black;
+    "
+  >
+    CoderStore
+  </h2>
+
+  <p>Hola ${args.to_name},</p>
+
+  <p>
+    Te enviamos un resumen de tu compra con id <strong>${args.id}</strong> en
+    CoderStore.
+  </p>
+
+  <ul>
+    <li>Productos: ${args.quantity}</li>
+    <li>Total: $${args.amount}</li>
+  </ul>
+
+  <p>
+    Atentamente,
+    <br />
+    <em>CoderStore Communications Team</em>
+  </p>
+  `;
+
 export default class CartsController extends BaseController {
   /** @type CartsServiceType */
   #cartsService;
@@ -123,12 +155,16 @@ export default class CartsController extends BaseController {
       if (!filteredCart.user) {
         throw new InvalidFieldValueError("Cart doesn't have associated user");
       }
-      const { email: purchaser } = await this.#usersService.getById(
-        filteredCart.user,
-        { throws: true },
+      const { user } = await this.#usersService.getById(filteredCart.user, {
+        throws: true,
+      });
+      const purchaser = user.email;
+
+      req.requestLogger.debug(
+        `Creating ticket for user with email: ${purchaser}`,
       );
 
-      const ticket = await this.#ticketsService.save(
+      const { ticket } = await this.#ticketsService.save(
         { purchaser, amount: filteredCart.amount },
         {
           _id: filteredCart._id,
@@ -149,6 +185,20 @@ export default class CartsController extends BaseController {
         },
         Promise.resolve(),
       );
+
+      const templateFull = TEMPLATE_TICKET_SUCCESS({
+        to_name: req.user.fullName,
+        id: ticket._id,
+        quantity: ticket.products.reduce((acc, prod) => acc + prod.quantity, 0),
+        amount: ticket.amount.toFixed(2),
+      });
+
+      req.transport.sendMail({
+        from: `CoderStore Communications <noreply@coderstore.com>`,
+        to: req.user.email,
+        subject: `Resumen de compra #${ticket._id}`,
+        html: templateFull,
+      });
 
       res.status(201).json({
         status: 'created',

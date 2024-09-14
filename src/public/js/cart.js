@@ -57,7 +57,8 @@ function main() {
           headers: { 'Content-Type': 'application/json' },
         });
         if (response.status === 201) {
-          window.location = '/';
+          const responseJson = await response.json();
+          window.location = `/tickets/${responseJson.payload.ticket._id}/success`;
         }
         const respJson = await response.json();
       } catch (error) {

@@ -22,7 +22,7 @@ loginForm.addEventListener('submit', async (event) => {
 
   const loginData = Object.fromEntries(new FormData(loginForm));
 
-  const cart = JSON.parse(localStorage.getItem('user'))?.cart;
+  const cart = localStorage.getItem('cartId');
   const path = new URL('/api/v1/sessions', document.location);
   cart && path.searchParams.append('cart', cart);
   const response = await fetch(path.href, {
@@ -42,6 +42,10 @@ loginForm.addEventListener('submit', async (event) => {
       );
       window.location.search = params.toString();
     }
+
+    localStorage.setItem('user', JSON.stringify(jsonResponse.payload.user));
+    localStorage.setItem('isLogged', true);
+    localStorage.removeItem('cartId');
   } catch (error) {
     console.error(error);
   } finally {

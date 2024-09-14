@@ -21,7 +21,12 @@ export default class BaseModel {
     filter,
     { lean = false, errorMessage, errorProperty } = {},
   ) {
-    logger.debug(`findOneAndThrow called with: ${JSON.stringify(filter)}`);
+    logger.debug(
+      `${BaseModel.findOneAndThrow.name} called with: ${JSON.stringify(filter)}`,
+      {
+        function: `${BaseModel.name}#${BaseModel.findOneAndThrow.name}`,
+      },
+    );
     const resource = await this.findOne(filter, {}, { lean });
     if (!resource) {
       const customMessage = errorProperty

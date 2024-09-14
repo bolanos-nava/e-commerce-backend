@@ -80,6 +80,8 @@ export default class ServerConfiguration {
   setupTemplateEngines() {
     const hbsHelpers = {
       json(content) {
+        // eslint-disable-next-line no-param-reassign
+        if (typeof content === 'undefined' || content === null) content = {};
         return JSON.stringify(content);
       },
     };
@@ -157,7 +159,7 @@ export default class ServerConfiguration {
       req.logger = logger;
       req.requestLogger = logger.child({
         method: req.method,
-        path: req.path,
+        path: req.originalUrl,
         host: hostname(),
       });
       next();

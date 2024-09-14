@@ -37,6 +37,11 @@ router
     // authorize('admin'),
     controllers.users.show.bind(controllers.users),
   )
+  .put(
+    logHttp('Updating user'),
+    // authorize('admin'),
+    controllers.users.update.bind(controllers.users),
+  )
   .delete(
     logHttp('Deleting user'),
     // authorize('admin'),

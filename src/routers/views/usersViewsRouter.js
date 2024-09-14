@@ -11,3 +11,11 @@ usersViewsRouter
     authorize('admin'),
     controllers.usersViews.renderUsersView.bind(controllers.usersViews),
   );
+
+usersViewsRouter
+  .route('/users/:userId/edit') // path;
+  .get(
+    logHttp('Rendering user edit view'),
+    authorize('admin'),
+    controllers.usersViews.renderUserEditView.bind(controllers.usersViews),
+  );

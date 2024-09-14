@@ -1,14 +1,44 @@
 <main>
   <h1>{{pageHeader}}</h1>
-  <ul class="users__list">
+  <ul class="users__list px-4">
     {{#each users}}
-      <li data-id={{this._id}} class="item">
-        <p class="item__data">Primer nombre:
-          {{{this.firstName}}}</p>
-        <p class="item__data">Apellidos:
-          {{{this.lastName}}}</p>
-        <p class="item__data">Rol: {{{this.role}}}</p>
+      <li class="d-flex justify-content-between item">
+        <div>
+          <p class="item__data">Primer nombre:
+            {{{this.firstName}}}</p>
+          <p class="item__data">Apellidos:
+            {{{this.lastName}}}</p>
+          <p class="item__data">Email: {{{this.email}}}</p>
+          <p class="item__data">Rol: {{{this.role}}}</p>
+        </div>
+        <a
+          class="btn-edit btn btn-primary d-flex align-items-center"
+          href="/users/{{this._id}}/edit"
+          style="text-decoration:none; color:white"
+        >Editar</a>
       </li>
     {{/each}}
   </ul>
+  <div class="d-flex justify-content-end">
+    <button
+      id="btnDeleteInactiveUsers"
+      type="button"
+      class="btn btn-danger"
+    >Borrar usuarios inactivos</button>
+  </div>
 </main>
+
+<div
+  id="successAlert"
+  class="container alert alert-success alert-dismissible d-flex justify-content-between d-none px-2 mt-1"
+>
+  <div>
+    <strong>¡Operación exitosa! </strong>
+    <span id="alertSpan"></span>
+  </div>
+  <button id="btnSuccessAlert" type="button" class="close" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<script type="module" src="/static/js/users.js"></script>

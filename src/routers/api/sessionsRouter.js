@@ -13,14 +13,14 @@ const router = Router();
 router
   .route('/') // path
   .post(
-    logHttp('Logging in'),
+    logHttp('Route: Logging in'),
     passportStrategyErrorWrapper('login', {
       failureRedirect: '/login?error=bad_credentials',
     }),
     controllers.sessions.login.bind(controllers.sessions),
   )
   .delete(
-    logHttp('Logging out'),
+    logHttp('Route: Logging out'),
     controllers.sessions.logout.bind(controllers.sessions),
   );
 
@@ -29,7 +29,7 @@ router
 router
   .route('/current') // path
   .get(
-    logHttp('Getting current session'),
+    logHttp('Route: Getting current session'),
     updateLastActiveAtMiddleware(),
     controllers.sessions.currentSession.bind(controllers.sessions),
   );

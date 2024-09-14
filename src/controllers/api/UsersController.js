@@ -85,8 +85,7 @@ export default class UsersController extends BaseController {
     try {
       const { userId } = req.params;
       this.validateIds({ userId });
-      const userDeleted = await this.#usersService.delete(userId);
-      console.log(userDeleted);
+      const { user: userDeleted } = await this.#usersService.delete(userId);
 
       const templateFull = TEMPLATE_USER_DELETED.replace(
         '{{to_name}}',
@@ -115,13 +114,11 @@ export default class UsersController extends BaseController {
     try {
       // const numMilliseconds = 1000 * 60 * 60 * 24 * 2;
       const numMilliseconds = 1000 * 5; // 10 seconds
-      const usersDeletedResponse =
+      const { users: inactiveUsers } =
         await this.#usersService.deleteInactiveUsers(numMilliseconds);
-      req.requestLogger.http(
-        `Deleted ${usersDeletedResponse.length} inactive users.`,
-      );
+      req.requestLogger.http(`Deleted ${inactiveUsers.length} inactive users.`);
 
-      usersDeletedResponse.forEach((user) => {
+      inactiveUsers.forEach((user) => {
         const templateFull = TEMPLATE_USERS_INACTIVE.replace(
           '{{to_name}}',
           user.firstName,
@@ -137,7 +134,7 @@ export default class UsersController extends BaseController {
       res.status(200).send({
         status: 'success',
         payload: {
-          numUsersDeleted: usersDeletedResponse.length,
+          numUsersDeleted: inactiveUsers.length,
         },
       });
     } catch (error) {
@@ -150,22 +147,42 @@ export default class UsersController extends BaseController {
    *
    * @type {ExpressType['RequestHandler']}
    */
-  async list(_, res, next) {
+  async list(req, res, next) {
     try {
-      const users = await this.#usersService.getAll();
-      res.json({ status: 'success', payload: users });
+      const response = await this.#usersService.getAll();
+      res.json({ status: 'success', payload: response });
     } catch (error) {
       next(error);
     }
   }
 
+  /**
+   * Returns data of a single user
+   *
+   * @type {ExpressType['RequestHandler']}
+   */
   async show(req, res, next) {
     try {
       const { userId } = req.params;
       this.validateIds({ userId });
 
-      const user = await this.#usersService.get({ _id: userId });
-      res.json({ status: 'success', payload: user });
+      const response = await this.#usersService.dtoWrapper(() =>
+        this.#usersService.get({ _id: userId }),
+      );
+      res.json({ status: 'success', payload: response });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async update(req, res, next) {
+    try {
+      const { userId } = req.params;
+      this.validateIds({ userId });
+
+      const response = await this.#usersService.updateById(userId, req.body.user);
+
+      res.json({ status: 'updated', payload: response });
     } catch (error) {
       next(error);
     }

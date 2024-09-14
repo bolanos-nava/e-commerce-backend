@@ -45,7 +45,7 @@ export function passportStrategies() {
       { passReqToCallback: true, usernameField: 'email' },
       async (req, email, password, done) => {
         try {
-          const dbUser = await services.users.getByEmail(email);
+          const { user: dbUser } = await services.users.getByEmail(email);
           if (dbUser) {
             return done(new DuplicateResourceError('User already exists'));
           }
@@ -64,14 +64,17 @@ export function passportStrategies() {
   passport.use(
     'login',
     new LocalStrategy(
-      { usernameField: 'email' },
-      async (username, password, done) => {
+      { passReqToCallback: true, usernameField: 'email' },
+      async (req, username, password, done) => {
+        req.requestLogger.debug('Passport: login', {
+          function: 'passport:login',
+        });
         try {
-          const user = await services.users.getByEmail(username);
+          const { user } = await services.users.getByEmail(username);
           if (!user || !isValidPassword(password, user.password)) {
             return done(null, false);
           }
-          await services.users.updateLastConnection(username);
+          // await services.users.updateLastConnection(username);
           return done(null, new dtos.UserDto(user));
         } catch (error) {
           return done(error);
@@ -90,7 +93,7 @@ export function passportStrategies() {
       },
       async (_, __, profile, done) => {
         try {
-          const user = await services.users.getByEmail(profile._json.email);
+          const { user } = await services.users.getByEmail(profile._json.email);
           if (user) {
             return done(null, new dtos.UserDto(user));
           }
@@ -118,7 +121,7 @@ export function passportStrategies() {
 
   passport.deserializeUser(async (email, done) => {
     try {
-      const user = await services.users.getByEmail(email);
+      const { user } = await services.users.getByEmail(email);
       return done(
         null,
         user && {

@@ -1,0 +1,58 @@
+<main id="main" class="container" data-user-id="{{user._id}}">
+  <form id="editForm" class="w-100">
+    <label for="firstName" class="form-label">Nombre</label>
+    <input
+      type="text"
+      name="firstName"
+      id="firstName"
+      class="form-control"
+      disabled
+      value="{{user.firstName}}"
+    />
+
+    <label for="lastName" class="form-label">Apellido</label>
+    <input
+      type="text"
+      name="lastName"
+      id="lastName"
+      class="form-control"
+      disabled
+      value="{{user.lastName}}"
+    />
+
+    <label for="email" class="form-label">Email</label>
+    <input
+      type="text"
+      name="email"
+      id="email"
+      class="form-control"
+      disabled
+      value="{{user.email}}"
+    />
+
+    <label for="role" class="form-label">Rol</label>
+    <select
+      id="role"
+      data-value="{{user.role}}"
+      class="form-select"
+      aria-label="Lista desplegable para editar rol"
+    >
+      <option value="admin">Admin</option>
+      <option value="user">Usuario</option>
+      <option value="user_premium">Usuario premium</option>
+    </select>
+
+    <input type="submit" value="Guardar" />
+  </form>
+</main>
+<div
+  id="successAlert"
+  class="container alert alert-success alert-dismissible d-flex justify-content-between d-none"
+>
+  Cambios guardados con éxito
+  <button id="btnSuccessAlert" type="button" class="close" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<script type="module" src="/static/js/userEdit.js"></script>

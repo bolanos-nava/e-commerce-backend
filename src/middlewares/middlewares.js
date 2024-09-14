@@ -55,7 +55,6 @@ export function errorMiddleware(error, req, res, __) {
 export function logHttp(message) {
   return (req, _, next) => {
     req.requestLogger.http(message);
-    req.requestLogger.debug(`Token exists? ${Boolean(req.cookies.token)}`);
     next();
   };
 }
@@ -69,13 +68,14 @@ export function logHttp(message) {
  */
 export function passportStrategyErrorWrapper(strategy, passportOpts = {}) {
   return (req, res, next) => {
-    logger.debug(`Passport strategy: ${strategy}`);
+    logger.debug(`Utilizing passport strategy: ${strategy}`, {
+      function: passportStrategyErrorWrapper.name,
+    });
     if (req.isAnonymous) return next();
     return passport.authenticate(
       strategy,
       { session: false, ...(passportOpts || {}) },
       (error, sessionData, info) => {
-        console.log(error, sessionData, info);
         if (error) return next(error);
         if (!sessionData && !info && !error)
           return next(new ResourceNotFoundError("Email doesn't exist"));
@@ -123,11 +123,16 @@ export function authorize(...roles) {
 
 /**
  * Middleware to update the lastActiveAt field of the logged user
+ *
+ * @type {ExpressType['RequestHandler']}
+ *
+ * @returns {ExpressType['RequestHandler'][]}
  */
 export function updateLastActiveAtMiddleware() {
+  const logParams = { function: `${updateLastActiveAtMiddleware.name}` };
   return [
     (req, res, next) => {
-      logger.debug('Checking if there is JWT');
+      req.requestLogger.debug('Checking if there is JWT', logParams);
       if (req?.cookies?.token && !req.user) {
         return passportStrategyErrorWrapper('jwt')(req, res, next);
       }
@@ -136,12 +141,15 @@ export function updateLastActiveAtMiddleware() {
     async (req, res, next) => {
       try {
         if (req.user) {
-          logger.debug('Updating last active at');
+          req.requestLogger.debug('Updating last active at', logParams);
           const result = await services.users.updateLastConnection(
             req.user.email,
           );
           if (!result) {
-            logger.debug('Clearing cookies');
+            req.requestLogger.debug(
+              "Logged-in user doesn't exist, deleting session",
+              logParams,
+            );
             req.cookies.token = null;
             res.clearCookie('token');
           }
