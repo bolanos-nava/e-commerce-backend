@@ -11,6 +11,7 @@ import {
   InternalServerError,
   DuplicateResourceError,
   UnauthorizedError,
+  ResourceNotFoundError,
 } from '../customErrors/index.js';
 
 function cookieJwtExtractor(req) {
@@ -73,8 +74,9 @@ export function passportStrategies() {
         });
         try {
           const { user } = await services.users.getByEmail(username);
-          if (!user || !isValidPassword(password, user.password)) {
-            return done(null, false);
+          if (!user) return done(null, false);
+          if (!isValidPassword(password, user.password)) {
+            return done(new UnauthorizedError('Invalid credentials'));
           }
           // await services.users.updateLastConnection(username);
           return done(null, new dtos.UserDto(user));
