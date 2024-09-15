@@ -99,8 +99,9 @@ export default class UsersService {
    *
    * @param {UserType} user - User data
    */
-  save(user) {
-    return this.#usersDao.save(user);
+  async save(user) {
+    const newUser = await this.#usersDao.save(user);
+    return { user: newUser };
   }
 
   /**

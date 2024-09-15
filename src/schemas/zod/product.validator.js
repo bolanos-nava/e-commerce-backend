@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { z } from 'zod';
+import { Types } from 'mongoose';
 import { capitalize } from '../../utils/index.js';
 
 /**
@@ -76,6 +77,7 @@ export const productValidator = z.object({
   stock: z.coerce.number().gt(0),
   code: z.string().min(1),
   status: z.boolean().default(true),
+  createdBy: z.custom((value) => Types.ObjectId.isValid(value)),
   thumbnails: z.array(z.string().url()).default([]),
 });
 

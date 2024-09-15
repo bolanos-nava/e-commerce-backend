@@ -4,6 +4,7 @@ import { z } from 'zod';
  * @typedef {import('../types').MongoDaosType} DaosType
  * @typedef {DaosType['products']} ProductsDao
  * @typedef {import('../types').ProductsFilterType} ProductsFilterType
+ * @typedef {import('../types').IProductPopulated} IProductPopulated
  * @typedef {import('../types').ListOptions} ListOptions
  * @typedef {import('../types').ProductType} ProductType
  * @typedef {import('../types').MongoIdType} MongoIdType
@@ -31,7 +32,7 @@ export default class ProductsService {
    * @param {MongoIdType} productId
    * @returns
    */
-  delete(productId) {
+  async delete(productId) {
     return this.#productsDao.delete(productId);
   }
 
@@ -39,10 +40,11 @@ export default class ProductsService {
    * Returns a product
    *
    * @param {MongoIdType} productId
-   * @returns
+   * @returns Product
    */
-  get(productId) {
-    return this.#productsDao.get(productId);
+  async get(productId, { populated = false, lean = false } = {}) {
+    const product = await this.#productsDao.get(productId, { populated, lean });
+    return { product };
   }
 
   /**
@@ -53,10 +55,14 @@ export default class ProductsService {
    * @returns List of products
    */
   getAll(filter, { limit, page, sort, lean = false } = {}) {
+    // eslint-disable-next-line no-param-reassign
+    if (sort) sort = sort?.split(',').join(' ');
+
+    /** @type ListOptions */
     const defaultOptions = {
       limit: 10,
       page: 1,
-      sort: 'ASC',
+      sort: '-createdAt',
       lean: false,
     };
 
@@ -79,11 +85,11 @@ export default class ProductsService {
       .parse(page);
     if (validPage) defaultOptions.page = validPage;
     const validSort = z
-      .enum(['ASC', 'DESC'])
-      .default('ASC')
+      .string()
+      .default('-createdAt')
       .optional()
-      .catch('ASC')
-      .parse(sort?.toUpperCase());
+      .catch('-createdAt')
+      .parse(sort);
     if (validSort) defaultOptions.sort = validSort;
     const validLean = z
       .boolean()
@@ -104,8 +110,9 @@ export default class ProductsService {
    * @param {ProductType} product - New product
    * @returns New product
    */
-  save(product) {
-    return this.#productsDao.save(product);
+  async save(product) {
+    const newProduct = await this.#productsDao.save(product);
+    return { product: newProduct };
   }
 
   /**

@@ -8,8 +8,9 @@ const socket = io(WS_CLIENT_HOST, { path: WS_CLIENT_PATH });
 
 console.log(`This came from ${hostname}`);
 
+const productsList = document.getElementById('productsList');
+
 function addProductToFrontend(data) {
-  const productsList = document.getElementById('productsList');
   const product = productsList
     .getElementsByClassName('item')[0]
     .cloneNode(true);
@@ -28,13 +29,34 @@ function addProductToFrontend(data) {
   const productStock = product.getElementsByClassName('product__stock')[0];
   productStock.innerText = `Stock: ${data.stock}`;
 
-  productsList.appendChild(product);
+  productsList.prepend(product);
 
   window.scrollTo({
-    top: document.body.scrollHeight,
+    // top: document.body.scrollHeight,
+    top: 0,
     behavior: 'smooth',
   });
 }
+
+Array.from(productsList.getElementsByClassName('item')).forEach((item) => {
+  const productId = item.dataset.id;
+  const btnDelete = item.getElementsByClassName('btn-delete');
+  if (btnDelete.length) {
+    btnDelete[0].addEventListener('click', async () => {
+      try {
+        const response = await fetch(`/api/v1/products/${productId}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          // Reloads window
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Prohibido borrar este producto');
+      }
+    });
+  }
+});
 
 const productForm = document.getElementById('product-form');
 productForm.addEventListener('submit', async (event) => {

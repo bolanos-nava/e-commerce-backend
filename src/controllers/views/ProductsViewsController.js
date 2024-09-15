@@ -69,14 +69,34 @@ export default class ProductsViewsController extends BaseViewsController {
 
   async renderRealTimeProductsView(req, res, _) {
     const { WS_CLIENT_HOST, WS_CLIENT_PATH, USE_BUILT_IN_WS } = env;
-    const { limit, page, sort, ...filter } = req.query;
+    const { limit, page, sort, minPrice, maxPrice, categoryId, minStock } =
+      req.query;
+    const filter = {
+      minPrice,
+      maxPrice,
+      categoryId,
+      minStock,
+      status: true,
+    };
     const response = await this.#productsService.getAll(filter, {
       limit,
       page,
       sort,
       lean: true,
     });
+
+    response.products.forEach((product) => {
+      // eslint-disable-next-line no-param-reassign
+      product.price = product.price.toFixed(2);
+      // eslint-disable-next-line no-param-reassign
+      product.isOwn =
+        req.user &&
+        (req.user.role === 'admin' ||
+          req.user._id === product.createdBy.toString());
+    });
+
     const context = {
+      ...this.getBaseContext(req),
       products: response.products,
       pagination: response.pagination,
       title: 'Tienda | Inicio',

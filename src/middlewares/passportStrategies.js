@@ -15,6 +15,7 @@ import {
 
 function cookieJwtExtractor(req) {
   const token = req?.cookies?.token || null;
+  req.requestLogger.debug(`JWT token: ${token}`);
   if (!token) {
     throw new UnauthorizedError('No token present');
   }
@@ -45,6 +46,7 @@ export function passportStrategies() {
       { passReqToCallback: true, usernameField: 'email' },
       async (req, email, password, done) => {
         try {
+          req.requestLogger.debug(`Role is: ${req.body.role}`);
           const { user: dbUser } = await services.users.getByEmail(email);
           if (dbUser) {
             return done(new DuplicateResourceError('User already exists'));
@@ -52,8 +54,8 @@ export function passportStrategies() {
 
           const reqUser = userValidator.parse(req.body);
           reqUser.password = encryptPassword(password);
-          const savedResponse = await services.users.save(reqUser);
-          return done(null, new dtos.UserDto(savedResponse));
+          const { user } = await services.users.save(reqUser);
+          return done(null, new dtos.UserDto(user));
         } catch (error) {
           return done(error);
         }

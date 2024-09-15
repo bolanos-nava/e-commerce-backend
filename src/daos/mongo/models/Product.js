@@ -49,6 +49,11 @@ const productSchema = {
         default: true,
       },
       thumbnails: [String],
+      createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
     },
     { timestamps: true },
   ),

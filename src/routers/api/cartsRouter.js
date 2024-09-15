@@ -15,6 +15,7 @@ router
   .route('/') // path
   .post(
     logHttp('Creating new cart'),
+    authorize('user', 'user_premium', 'anon'),
     updateLastActiveAtMiddleware(),
     controllers.carts.create.bind(controllers.carts),
   );
@@ -23,30 +24,26 @@ router
 // PATH /:cartId
 router
   .route('/:cartId') // path
-  .get(logHttp('Showing cart'), controllers.carts.show.bind(controllers.carts));
+  .get(
+    logHttp('Showing cart'),
+    authorize('user', 'user_premium', 'anon'),
+    controllers.carts.show.bind(controllers.carts),
+  );
 
 /* ****************************** */
 // PATH /:cartId/products
 router
   .route('/:cartId/products') // path
   .post(
-    logHttp('Adding product to cart'),
-    authorize('user'),
+    // POST because NOT idempotent
+    logHttp('Adding array of products to cart'),
+    authorize('user', 'user_premium'),
     controllers.carts.addProductsToCart.bind(controllers.carts),
-  ) // POST because NOT idempotent
+  )
   .delete(
     logHttp('Removing products from cart'),
+    authorize('user', 'user_premium', 'anon'),
     controllers.carts.removeProducts.bind(controllers.carts),
-  );
-
-/* ****************************** */
-// PATH /:cartId/tickets
-router
-  .route('/:cartId/tickets') // path
-  .post(
-    logHttp('Creating ticket from cart'),
-    authorize('user'),
-    controllers.carts.createTicket.bind(controllers.carts),
   );
 
 /* ****************************** */
@@ -56,23 +53,28 @@ router
   .post(
     // POST because not idempotent adds new products and increments quantity in others
     logHttp('Adding product to cart'),
-    authorize('user', 'anon'),
+    authorize('user', 'user_premium', 'anon'),
     controllers.carts.addProductToCart.bind(controllers.carts),
   )
   .put(
     // PUT because idempotent, updates quantity in absolute manner
     logHttp('Updating product quantity in cart'),
+    authorize('user', 'user_premium', 'anon'),
     controllers.carts.setProductQuantity.bind(controllers.carts),
   )
   .delete(
     logHttp('Removing product from cart'),
+    authorize('user', 'user_premium', 'anon'),
     controllers.carts.removeProduct.bind(controllers.carts),
   );
 
+/* ****************************** */
+// PATH /:cartId/tickets
 router
   .route('/:cartId/tickets') // path
   .post(
-    authorize('user'),
+    logHttp('Creating ticket from cart'),
+    authorize('user', 'user_premium'),
     controllers.carts.createTicket.bind(controllers.carts),
   );
 

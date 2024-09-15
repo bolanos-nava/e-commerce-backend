@@ -38,11 +38,19 @@ export type ProductsFilterType = {
   minStock?: number;
 };
 
+type SortOptions = 'PRICE_ASC' | 'PRICE_DESC' | 'DATE_ASC' | 'DATE_DESC';
+
 export type ListOptions = {
   limit?: number;
   page?: number;
-  sort?: 'ASC' | 'DESC';
+  sort?: string;
   lean?: boolean;
+};
+
+export type PaginateOptions = ListOptions & {
+  sort?: {
+    [key: string]: 1 | -1;
+  };
 };
 
 export type JwtTokenFactoryType = JwtUtil;

@@ -10,7 +10,7 @@ router
   .route('/') // path
   .post(
     logHttp('Creating message'),
-    authorize('user'),
+    authorize('user', 'user_premium'),
     controllers.messages.create.bind(controllers.messages),
   );
 

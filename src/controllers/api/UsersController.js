@@ -5,7 +5,7 @@ import BaseController from './BaseController.js';
  * @typedef {import('../../types').ServicesType['users']} UsersServiceType
  */
 
-const TEMPLATE_USERS_INACTIVE = `
+const TEMPLATE_USERS_INACTIVE = (args = {}) => `
   <h2
     style="
       padding-bottom: 0.2em;
@@ -16,7 +16,7 @@ const TEMPLATE_USERS_INACTIVE = `
     CoderStore
   </h2>
 
-  <p>Hola {{to_name}},</p>
+  <p>Hola ${args.to_name},</p>
 
   <p>
     Tu cuenta ha sido eliminada debido a que no tuviste actividad por 30 días.
@@ -29,7 +29,7 @@ const TEMPLATE_USERS_INACTIVE = `
   </p>
 `;
 
-const TEMPLATE_USER_DELETED = `
+const TEMPLATE_USER_DELETED = (args = {}) => `
   <h2
     style="
       padding-bottom: 0.2em;
@@ -40,7 +40,7 @@ const TEMPLATE_USER_DELETED = `
     CoderStore
   </h2>
 
-  <p>Hola {{to_name}},</p>
+  <p>Hola ${args.to_name},</p>
 
   <p>
     Tu cuenta ha sido eliminada por un administrador.
@@ -87,10 +87,9 @@ export default class UsersController extends BaseController {
       this.validateIds({ userId });
       const { user: userDeleted } = await this.#usersService.delete(userId);
 
-      const templateFull = TEMPLATE_USER_DELETED.replace(
-        '{{to_name}}',
-        userDeleted.firstName,
-      );
+      const templateFull = TEMPLATE_USER_DELETED({
+        to_name: userDeleted.firstName,
+      });
 
       req.transport.sendMail({
         from: `CoderStore Communications <noreply@coderstore.com>`,
@@ -99,7 +98,7 @@ export default class UsersController extends BaseController {
         html: templateFull,
       });
 
-      res.status(204).send();
+      res.status(204).send(); 
     } catch (error) {
       next(error);
     }
@@ -119,10 +118,9 @@ export default class UsersController extends BaseController {
       req.requestLogger.http(`Deleted ${inactiveUsers.length} inactive users.`);
 
       inactiveUsers.forEach((user) => {
-        const templateFull = TEMPLATE_USERS_INACTIVE.replace(
-          '{{to_name}}',
-          user.firstName,
-        );
+        const templateFull = TEMPLATE_USERS_INACTIVE({
+          to_name: user.firstName,
+        })
         req.transport.sendMail({
           from: `CoderStore Communications <noreply@coderstore.com>`,
           to: user.email,
@@ -180,7 +178,10 @@ export default class UsersController extends BaseController {
       const { userId } = req.params;
       this.validateIds({ userId });
 
-      const response = await this.#usersService.updateById(userId, req.body.user);
+      const response = await this.#usersService.updateById(
+        userId,
+        req.body.user,
+      );
 
       res.json({ status: 'updated', payload: response });
     } catch (error) {

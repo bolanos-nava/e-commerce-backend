@@ -6,6 +6,11 @@
   >CoderStore</a>
   <div class="d-flex justify-content-right gap-4">
     <a
+      id="btnRealTimeProducts"
+      class="btn btn-secondary d-flex align-items-center d-none"
+      href="/realtimeproducts"
+    >Administrar productos</a>
+    <a
       id="btnAdmin"
       class="btn btn-secondary d-flex align-items-center d-none"
       href="/users"
@@ -36,8 +41,9 @@
   </div>
 </div>
 <script>
-  window.hostname = {{{json hostname}}};
-  window.isLogged = {{{json isLogged}}};
-  window.isAdmin = {{{json isAdmin}}};
+  window.hostname =
+  {{{json hostname}}}; window.isLogged =
+  {{{json isLogged}}}; window.isAdmin =
+  {{{json isAdmin}}};
 </script>
 <script type="module" src="/static/js/menu.js"></script>

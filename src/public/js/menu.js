@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+const btnRealTimeProducts = document.getElementById('btnRealTimeProducts');
 const btnAdmin = document.getElementById('btnAdmin');
 const btnCart = document.getElementById('btnCart');
 const btnLogin = document.getElementById('btnLogin');
@@ -6,17 +7,29 @@ const btnRegister = document.getElementById('btnRegister');
 const btnLogout = document.getElementById('btnLogout');
 
 const { hostname, isLogged, isAdmin } = window;
-const params = new URLSearchParams(window.location.search);
 console.log(`This came from this pod: ${hostname}`);
 
 function toggleAdminButtons() {
   if (isAdmin) {
+    console.log('Admin');
     btnAdmin.classList.remove('d-none'); // show button admin
     btnCart.classList.add('d-none'); // hide button cart
     btnLogin.classList.add('d-none'); // hide login
     btnRegister.classList.add('d-none'); // hide register
   } else {
+    console.log('Not admin');
     btnAdmin.classList.add('d-none'); // hide button admin
+  }
+}
+
+function toggleRealTimeProductsButton() {
+  const user = localStorage.getItem('user');
+  if (!user) return;
+  const { role } = JSON.parse(user);
+  if (['admin', 'user_premium'].includes(role)) {
+    btnRealTimeProducts.classList.remove('d-none'); // show button to go to real time products view
+  } else {
+    btnRealTimeProducts.classList.add('d-none'); // hide button
   }
 }
 
@@ -108,6 +121,7 @@ async function main() {
   attatchListenerToCartButton();
   attatchListenerToLogoutButton();
   toggleAdminButtons();
+  toggleRealTimeProductsButton();
   hideLoginButtons();
 }
 

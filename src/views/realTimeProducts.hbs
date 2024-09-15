@@ -70,12 +70,21 @@
 
     <ul class="items-list" id="productsList">
       {{#each products}}
-        <li class="item">
-          <p class="item__data product__title">{{{this.title}}}</p>
-          <p class="item__data product__description">Descripción:
-            {{{this.description}}}</p>
-          <p class="item__data product__price">Precio: ${{{this.price}}}</p>
-          <p class="item__data product__stock">Stock: {{{this.stock}}}</p>
+        <li data-id="{{this.id}}" class="item d-flex justify-content-between">
+          <div>
+            <p class="item__data product__title">{{{this.title}}}</p>
+            <p class="item__data product__description">Descripción:
+              {{{this.description}}}</p>
+            <p class="item__data product__price">Precio: ${{{this.price}}}</p>
+            <p class="item__data product__stock">Stock: {{{this.stock}}}</p>
+          </div>
+
+          {{#if this.isOwn}}
+            <button
+              type="button"
+              class="btn-delete btn btn-danger"
+            >Eliminar</button>
+          {{/if}}
         </li>
       {{/each}}
     </ul>

@@ -2,13 +2,17 @@
  * @typedef {import('mongoose').FilterQuery<IProduct>} FilterQueryProduct
  * @typedef {import('../../types').ProductType} ProductType
  * @typedef {import('../../types').IProduct} IProduct
+ * @typedef {import('../../types').IProductPopulated} IProductPopulated
  * @typedef {import('../../types').IProductModel} IProductModel
  * @typedef {import('../../customErrors')} ResourceNotFoundError
  * @typedef {import('../../types').ProductsFilterType} ProductsFilterType
  * @typedef {import('../../types').ListOptions} ListOptions
+ * @typedef {import('../../types').PaginateOptions} PaginateOptions
  */
 
 import { z } from 'zod';
+import { logger } from '../../configs/index.js';
+import { ResourceNotFoundError } from '../../customErrors/index.js';
 
 export class ProductsMongoDao {
   /** @type IProductModel */
@@ -39,10 +43,21 @@ export class ProductsMongoDao {
    *
    * @param {IProduct['_id']} productId
    * @throws ResourceNotFoundError
-   * @returns Product from database
+   * @returns {Promise<IProductPopulated>} Product from database
    */
-  async get(productId) {
-    return this.#Product.findByIdAndThrow(productId);
+  async get(productId, { lean = false, populated = false } = {}) {
+    const productQuery = this.#Product.findById(productId);
+    if (populated) {
+      productQuery.populate({
+        path: 'createdBy',
+      });
+    }
+
+    const product = await productQuery;
+    if (!product) {
+      throw new ResourceNotFoundError(`Product not found with id ${productId}`);
+    }
+    return lean ? product.toObject() : product;
   }
 
   /**
@@ -53,16 +68,7 @@ export class ProductsMongoDao {
    * @returns Products from database
    */
   async getAll(filters = {}, options = {}) {
-    const SORT_OPTIONS = {
-      ASC: { price: 1 },
-      DESC: { price: -1 },
-    };
-
-    if (options.sort) {
-      // eslint-disable-next-line no-param-reassign
-      options.sort = SORT_OPTIONS[options.sort.toUpperCase()];
-    }
-
+    logger.debug('Paginate options', { options });
     const paginationResponse = await this.#Product.paginate(
       this.#computeFilters(filters),
       { lean: false, ...options },

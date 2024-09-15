@@ -1,11 +1,44 @@
 import BaseController from './BaseController.js';
 import { productValidator } from '../../schemas/zod/product.validator.js';
 import { env } from '../../configs/index.js';
+import { ForbiddenError } from '../../customErrors/index.js';
+import UserDto from '../../entities/UserDto.js';
 
 /**
  * @typedef {import('../../types').ExpressType} ExpressType
  * @typedef {import('../../types').ServicesType['products']} ProductsServiceType
  */
+
+const TEMPLATE_PRODUCT_DELETED = (args) => `
+  <h2
+    style="
+      padding-bottom: 0.2em;
+      margin-bottom: 1em;
+      border-bottom: 0.1em solid black;
+    "
+  >
+    CoderStore
+  </h2>
+
+  <p>Hola ${args.to_name},</p>
+
+  <p>
+    Te informamos que tu producto con id <strong>${args.id}</strong> se ha
+    eliminado de CoderStore.
+  </p>
+
+  <p>A continuación, te dejamos un resumen del producto:</p>
+  <ul>
+    <li>Título: ${args.title}</li>
+    <li>Descripción: ${args.description}</li>
+  </ul>
+
+  <p>
+    Atentamente,
+    <br />
+    <em>CoderStore Communications Team</em>
+  </p>
+`;
 
 export default class ProductsController extends BaseController {
   /** @type ProductsServiceType */
@@ -29,9 +62,12 @@ export default class ProductsController extends BaseController {
   async create(req, res, next) {
     const { WS_INTERNAL_HOST, USE_BUILT_IN_WS } = env;
     try {
+      req.requestLogger.debug('Creating new product', { body: req.body });
       const { product: request } = req.body;
+      request.createdBy = req.user._id;
+      req.requestLogger.debug(`Product created by: ${req.user._id}`);
       const validProduct = productValidator.parse(request);
-      const product = await this.#productsService.save(validProduct);
+      const { product } = await this.#productsService.save(validProduct);
 
       req.logger.debug('Emitting new_product event to websocket server');
       if (USE_BUILT_IN_WS) {
@@ -68,7 +104,50 @@ export default class ProductsController extends BaseController {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
-      await this.#productsService.delete(productId);
+
+      const { product } = await this.#productsService.get(productId, {
+        populated: true,
+      });
+      const productUser = new UserDto(product.createdBy);
+
+      const { role: currentUserRole, _id: currentUserId } = req.user;
+
+      if (currentUserRole === 'admin') {
+        // Admin can delete any product
+        await this.#productsService.delete(productId);
+      } else if (
+        currentUserRole === 'user_premium' &&
+        productUser._id === currentUserId
+      ) {
+        // Non-admin can only delete their own products
+        await this.#productsService.delete(productId);
+      } else {
+        throw new ForbiddenError(
+          'You are not authorized to delete this product',
+        );
+      }
+
+      if (productUser.role === 'user_premium') {
+        const templateFull = TEMPLATE_PRODUCT_DELETED({
+          to_name: productUser.fullName,
+          id: product.id,
+          title: product.title,
+          description: product.description,
+        });
+
+        req.transport
+          .sendMail({
+            from: `CoderStore Communications <noreply@coderstore.com>`,
+            to: productUser.email,
+            subject: 'Tu producto ha sido eliminado',
+            html: templateFull,
+          })
+          .then(() => {
+            req.requestLogger.info(
+              `Deleted product successfully, sent email to ${productUser.email}`,
+            );
+          });
+      }
 
       res.status(204).send();
     } catch (error) {
@@ -117,7 +196,7 @@ export default class ProductsController extends BaseController {
       const { productId } = req.params;
       this.validateIds({ productId });
 
-      const product = await this.#productsService.get(productId);
+      const { product } = await this.#productsService.get(productId);
 
       res.json({
         status: 'success',

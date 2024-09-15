@@ -100,6 +100,8 @@ export default class CartsController extends BaseController {
   /**
    * Adds an array of products to a cart. Pushes the ones which don't exist and increases the quantity of the ones which exist.
    *
+   * Endpoint used to merge an anonymous cart to an existing user's cart.
+   *
    *
    * @type ExpressType['RequestHandler']
    */
@@ -172,11 +174,12 @@ export default class CartsController extends BaseController {
         },
       );
 
+      req.requestLogger.debug('Cart', { filteredCart });
       await filteredCart.products.available.reduce(
         async (prevPromise, availableProduct) => {
           await prevPromise;
 
-          const productFromDb = await this.#productsService.get(
+          const { product: productFromDb } = await this.#productsService.get(
             availableProduct.product,
           );
           await this.#productsService.update(availableProduct.product, {
@@ -193,12 +196,18 @@ export default class CartsController extends BaseController {
         amount: ticket.amount.toFixed(2),
       });
 
-      req.transport.sendMail({
-        from: `CoderStore Communications <noreply@coderstore.com>`,
-        to: req.user.email,
-        subject: `Resumen de compra #${ticket._id}`,
-        html: templateFull,
-      });
+      req.transport
+        .sendMail({
+          from: `CoderStore Communications <noreply@coderstore.com>`,
+          to: req.user.email,
+          subject: `Resumen de compra #${ticket._id}`,
+          html: templateFull,
+        })
+        .then(() => {
+          req.requestLogger.info(
+            `Sent purchase confirmation to ${req.user.email}`,
+          );
+        });
 
       res.status(201).json({
         status: 'created',

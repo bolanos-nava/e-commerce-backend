@@ -12,7 +12,7 @@ router
   .route('/') // path
   .get(
     logHttp('Listing users'),
-    // authorize('admin'),
+    authorize('admin'),
     controllers.users.list.bind(controllers.users),
   )
   .post(
@@ -34,17 +34,17 @@ router
   .route('/:userId') // path
   .get(
     logHttp('Showing user'),
-    // authorize('admin'),
+    authorize('admin'),
     controllers.users.show.bind(controllers.users),
   )
   .put(
     logHttp('Updating user'),
-    // authorize('admin'),
+    authorize('admin'),
     controllers.users.update.bind(controllers.users),
   )
   .delete(
     logHttp('Deleting user'),
-    // authorize('admin'),
+    authorize('admin'),
     controllers.users.delete.bind(controllers.users),
   );
 

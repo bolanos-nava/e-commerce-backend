@@ -14,7 +14,7 @@ router
   )
   .post(
     logHttp('Creating new product'),
-    // authorize('admin'),
+    authorize('admin', 'user_premium'),
     controllers.products.create.bind(controllers.products),
   );
 
@@ -28,12 +28,12 @@ router
   )
   .put(
     logHttp('Updating a product'),
-    authorize('admin'),
+    authorize('admin', 'user_premium'),
     controllers.products.update.bind(controllers.products),
   )
   .delete(
     logHttp('Deleting a product'),
-    authorize('admin'),
+    authorize('admin', 'user_premium'),
     controllers.products.delete.bind(controllers.products),
   );
 

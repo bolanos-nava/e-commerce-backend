@@ -20,6 +20,7 @@ registerForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const newUser = Object.fromEntries(new FormData(registerForm));
+  if (newUser.isUserPremium) newUser.role = 'user_premium';
 
   try {
     const response = await fetch('/api/v1/users', {

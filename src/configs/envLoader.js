@@ -25,6 +25,7 @@ if (envFileExists) {
     const filePath = `${baseEnv}.${MONGO_TYPE}`.toLowerCase();
     return existsSync(filePath) ? filePath : baseEnv;
   })();
+  logger.info(`Loaded environment variables from ${envPath} file.`);
   // Loads vars in .env into process.env
   dotenv.config({ path: envPath });
 }
