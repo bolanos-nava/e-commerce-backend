@@ -1,10 +1,12 @@
 /* eslint-disable no-undef */
 const {
   hostname,
-  env: { WS_CLIENT_HOST, WS_CLIENT_PATH },
+  env: { WS_CLIENT_HOST, WS_CLIENT_PATH, USE_BUILT_IN_WS },
 } = window;
 
-const socket = io(WS_CLIENT_HOST, { path: WS_CLIENT_PATH });
+const socket = USE_BUILT_IN_WS
+  ? io()
+  : io(WS_CLIENT_HOST, { path: WS_CLIENT_PATH });
 
 console.log(`This came from ${hostname}`);
 

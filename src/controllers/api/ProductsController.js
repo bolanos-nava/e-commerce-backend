@@ -104,22 +104,24 @@ export default class ProductsController extends BaseController {
     try {
       const { productId } = req.params;
       this.validateIds({ productId });
+      const { role: currentUserRole, _id: currentUserId } = req.user;
+
+      if (currentUserRole === 'admin') {
+        await this.#productsService.delete(productId);
+      }
 
       const { product } = await this.#productsService.get(productId, {
         populated: true,
       });
+      if (product.createdBy === null) {
+        return res.status(204).send();
+      }
+
       const productUser = new UserDto(product.createdBy);
-
-      const { role: currentUserRole, _id: currentUserId } = req.user;
-
-      if (currentUserRole === 'admin') {
-        // Admin can delete any product
-        await this.#productsService.delete(productId);
-      } else if (
+      if (
         currentUserRole === 'user_premium' &&
         productUser._id === currentUserId
       ) {
-        // Non-admin can only delete their own products
         await this.#productsService.delete(productId);
       } else {
         throw new ForbiddenError(
