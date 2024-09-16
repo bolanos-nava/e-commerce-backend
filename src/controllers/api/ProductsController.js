@@ -98,6 +98,7 @@ export default class ProductsController extends BaseController {
 
   /**
    * Deletes a single product
+   *
    * @type {ExpressType['RequestHandler']}
    */
   async delete(req, res, next) {
@@ -106,21 +107,23 @@ export default class ProductsController extends BaseController {
       this.validateIds({ productId });
       const { role: currentUserRole, _id: currentUserId } = req.user;
 
-      if (currentUserRole === 'admin') {
-        await this.#productsService.delete(productId);
-      }
-
       const { product } = await this.#productsService.get(productId, {
         populated: true,
       });
       if (product.createdBy === null) {
+        if (currentUserRole !== 'admin')
+          throw new ForbiddenError(
+            'You are not authorized to delete this product',
+          );
+        await this.#productsService.delete(productId);
         return res.status(204).send();
       }
 
       const productUser = new UserDto(product.createdBy);
       if (
-        currentUserRole === 'user_premium' &&
-        productUser._id === currentUserId
+        currentUserRole === 'admin' ||
+        (currentUserRole === 'user_premium' &&
+          productUser._id === currentUserId)
       ) {
         await this.#productsService.delete(productId);
       } else {
